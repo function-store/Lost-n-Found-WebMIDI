@@ -10,6 +10,9 @@ All notable changes to the **Lost+Found** MIDI Editor since the initial reposito
 - **Enhanced Store Logic**:
   - NEW: **Quick Store** - Fast hardware-only save (reduced MIDI traffic).
   - NEW: **Sync & Store** - Optional full software-to-hardware sync before saving.
+- **Knob Layout Overhaul**:
+  - REMOVED: "Secondary knobs" section.
+  - NEW: Unified 14-knob grid with logical grouping (L-Side, Center, R-Side) for better ergonomics.
 - **Visual Synergy**: 
   - NEW: Active-state highlighting in the manager (blue/green row indicators).
   - NEW: Full sync between the main dashboard dropdown and the manager table.

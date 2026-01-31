@@ -715,9 +715,7 @@
                       <div class="sectionTitle">Hidden 3-way options</div>
                       <div class="toggleRow" id="hiddenTriRow"></div>
 
-                      <div style="height:12px"></div>
-                      <div class="sectionTitle">Secondary knobs</div>
-                      <div class="advGrid" id="advKnobs"></div>
+
 
                       <div style="height:12px"></div>
                       <div class="sectionTitle">MIDI / Other</div>
@@ -1318,15 +1316,16 @@
                     ["Right FX", 23, ["Delay", "Synth", "Bend"]]].forEach(([t, cc, opts]) => createTriBlock(t, cc, opts, toggleRow));
 
                     const knobGrid = document.getElementById('knobGrid');
-                    [["L Time", 14, "knob"], ["Mix", 15, "knob"], ["R Time", 16, "knob"], ["L Modify", 17, "modify"], ["Blend", 18, "knob"], ["R Modify", 19, "modify"]]
-                      .forEach(([name, cc, kind]) => createKnobBlock(name, cc, kind, knobGrid));
+                    [
+                      ["L Time", 14, "knob"], ["Mix", 15, "knob"], ["R Time", 16, "knob"],
+                      ["L Modify", 17, "modify"], ["Blend", 18, "knob"], ["R Modify", 19, "modify"],
+                      ["L Alt", 24, "knob"], ["Spill", 25, "knob"], ["R Alt", 26, "knob"],
+                      ["L EQ", 27, "knob"], ["Glue", 28, "knob"], ["R EQ", 29, "knob"],
+                      ["Ramp Speed", 20, "knob"], ["Master Wet", 30, "knob"]
+                    ].forEach(([name, cc, kind]) => createKnobBlock(name, cc, kind || "knob", knobGrid));
 
                     const hiddenRow = document.getElementById('hiddenTriRow');
                     [["Spread (hidden)", 32, ["L ONLY", "BOTH", "R ONLY"]]].forEach(([t, cc, opts]) => createTriBlock(t, cc, opts, hiddenRow));
-
-                    const adv = document.getElementById('advKnobs');
-                    [["Ramp Speed", 20], ["L Alt", 24], ["Spill", 25], ["R Alt", 26], ["L EQ", 27], ["Glue", 28], ["R EQ", 29], ["Master Wet", 30]]
-                      .forEach(([name, cc]) => createKnobBlock(name, cc, "knob", adv));
 
                     const otherGrid = document.getElementById('otherGrid');
 

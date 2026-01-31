@@ -1345,7 +1345,7 @@
                       const now = performance.now();
                       tapModeActive = true;
 
-                      sendCCMapped(93, 127);
+                      sendCCRaw(93, 127);
                       if (lastTapMs !== null) {
                         const dt = now - lastTapMs;
                         if (dt > 120 && dt < 4000) {
@@ -1882,7 +1882,11 @@
                       KNOB_CCS.forEach((cc) => {
                         if (LOCKED_KNOBS.has(cc)) return;
                         if (ui[cc]?.type !== 'knob' && ui[cc]?.type !== 'modify') return;
-                        const v = Math.floor(Math.random() * 128);
+                        let v = Math.floor(Math.random() * 128);
+                        // Avoid 60-68 range for Modify knobs (effect off zone)
+                        if ((cc === 17 || cc === 19) && v >= 60 && v <= 68) {
+                          v = Math.random() < 0.5 ? Math.floor(Math.random() * 60) : (69 + Math.floor(Math.random() * 59));
+                        }
                         state[cc] = v;
                         ui[cc].set(v);
                         sendCCMapped(cc, v);
@@ -1964,7 +1968,11 @@
                       KNOB_CCS.forEach((cc) => {
                         if (LOCKED_KNOBS.has(cc)) return;
                         if (ui[cc]?.type !== 'knob' && ui[cc]?.type !== 'modify') return;
-                        const v = Math.floor(Math.random() * 128);
+                        let v = Math.floor(Math.random() * 128);
+                        // Avoid 60-68 range for Modify knobs (effect off zone)
+                        if ((cc === 17 || cc === 19) && v >= 60 && v <= 68) {
+                          v = Math.random() < 0.5 ? Math.floor(Math.random() * 60) : (69 + Math.floor(Math.random() * 59));
+                        }
                         state[cc] = v;
                         ui[cc].set(v);
                         sendCCMapped(cc, v);
@@ -2485,6 +2493,7 @@
                         midiAccess.onstatechange = populateOutputs;
                         document.getElementById('midiSelect').disabled = false;
                         document.getElementById('chanSelect').disabled = false;
+                        document.getElementById('btnTap').disabled = false;
                         document.getElementById('btnEnableMIDI').textContent = "MIDI Enabled";
                         document.getElementById('btnEnableMIDI').disabled = true;
                         setStatus('MIDI Enabled');

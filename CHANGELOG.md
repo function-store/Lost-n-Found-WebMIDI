@@ -2,16 +2,18 @@
 
 All notable changes to the **Lost+Found** MIDI Editor since the initial repository commit.
 
-## [1.3.0] - 2026-01-31 (Advanced Dynamic Labels)
+## [1.3.1] - 2026-01-31 (Persistence & Randomization)
 ### Added
-- **Enhanced Dynamic Labels**:
-  - NEW: **Sub-labels** for Time, Modify, and Alt knobs. Now shows specific hardware parameters (e.g., *SIZE*, *PITCH*, *FEEDBACK*) mapped directly from the official Mode manual.
-  - Improved Layout: Labels are now aligned horizontally with the percentage readout and properly margined.
-- **Reactive Interface**:
-  - The UI now immediately updates all context-aware labels when toggling **Swap** or changing effect types.
+- **Session Persistence Enhancements**:
+  - MIDI Channel selection now persists across page reloads.
+  - Selected MIDI Output device is remembered and auto-restored when available.
 ### Fixed
-- **Blend Knob**: Removed unintended parameter inversion on CC 18; the knob now operates linearly as expected.
-- **Alt Labels**: Corrected CC mapping (24/26) for Alt-knob sub-labels to ensure they reflect the current effect state.
+- **Tap Tempo**: Fixed Tap button not being enabled after MIDI initialization.
+- **Smart Randomization**:
+  - Modify knobs (L/R) now avoid the 60-68 range (effect off zone) during randomization, ensuring effects remain active.
+  - Tap Subdivisions and Unsync are now included in randomization for maximum chaos.
+
+## [1.3.0] - 2026-01-31 (Advanced Dynamic Labels)
 
 ## [1.2.2] - 2026-01-31 (Preset Swap)
 ### Added

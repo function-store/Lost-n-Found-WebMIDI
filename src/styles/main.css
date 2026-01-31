@@ -209,7 +209,7 @@ button:active:not(:disabled) {
   border-radius: 22px;
   background: linear-gradient(180deg, var(--sage-darker) 0%, var(--sage-dark) 50%, var(--sage-darker) 100%);
   padding: 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 
 /* ===== TOGGLE ROW ===== */
@@ -339,30 +339,48 @@ button:active:not(:disabled) {
   position: relative;
 }
 
-.lockToggle {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 9px;
+.rampToggleInline {
+  font-size: 10px;
   display: flex;
   align-items: center;
   gap: 3px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--cream-muted);
-  z-index: 5;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
-.lockToggle input {
-  transform: scale(0.85);
-  accent-color: var(--yellow);
+.rampToggleInline input {
+  transform: scale(0.9);
   margin: 0;
+}
+
+.lockIconBtn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 11px;
+  /* Smaller icon for stacking */
+  line-height: 1;
+  opacity: 0.3;
+  filter: grayscale(1);
+  transition: all 0.2s ease;
+  box-shadow: none;
+  align-self: flex-start;
+  /* Ensure left alignment */
+}
+
+.lockIconBtn:hover {
+  opacity: 0.7;
+  transform: scale(1.1);
+  background: transparent;
+  border: none;
+}
+
+.lockIconBtn.locked {
+  opacity: 0.9;
+  filter: grayscale(0);
 }
 
 .kLabel {
@@ -371,6 +389,7 @@ button:active:not(:disabled) {
   color: var(--cream);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  line-height: 1.2;
 }
 
 .kValue {
@@ -412,7 +431,7 @@ button:active:not(:disabled) {
   transform: translate(-50%, -50%);
   border-radius: 999px;
   background: rgba(60, 60, 60, 0.8);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .rot {
@@ -1033,4 +1052,131 @@ button:active:not(:disabled) {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--sage);
+}
+
+/* ===== COMPACT DESKTOP LAYOUT ===== */
+@media (min-width: 768px) {
+  .layout {
+    max-width: 800px;
+    padding: 16px;
+  }
+
+  /* Tighter grids */
+  .knobGrid {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .section {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  /* Smaller knobs */
+  .knob {
+    width: 48px !important;
+    height: 48px !important;
+    margin-top: 6px;
+  }
+
+  .indicator {
+    top: 4px;
+    height: 12px;
+    width: 2px;
+  }
+
+  .dialCenter {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Compact blocks */
+  .knobBlock {
+    padding: 6px;
+    border-radius: 12px;
+    gap: 2px;
+  }
+
+  .kLabel {
+    font-size: 9px;
+  }
+
+  .kValue {
+    font-size: 10px;
+    min-height: 12px;
+  }
+
+  /* Compact toggles section */
+  .toggleRow {
+    gap: 6px;
+  }
+
+  .toggleBlock {
+    padding: 6px;
+    border-radius: 12px;
+  }
+
+  .toggleTitle {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  /* Compact ramp section */
+  .rampControls:not(.collapsed) {
+    max-height: 120px;
+  }
+
+  .rampControls {
+    gap: 8px;
+  }
+
+  .rampToggle,
+  .stereoToggle,
+  .dipRow {
+    padding: 4px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .stereoControls {
+    flex-wrap: nowrap;
+    /* Prevent wrapping in compact mode */
+    gap: 8px;
+  }
+
+  /* Tighter toggle blocks for stereo section */
+  .stereoControls .toggleBlock {
+    padding: 4px 8px;
+    margin-bottom: 0;
+  }
+
+  .stereoControls .seg button {
+    padding: 4px 4px;
+    /* Even tighter for buttons */
+    font-size: 10px;
+  }
+
+  .lockIconBtn {
+    font-size: 12px;
+  }
+
+  .rampToggleInline {
+    font-size: 9px;
+  }
+
+  #otherGrid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px;
+  }
+
+  #otherGrid .dipRow {
+    padding: 6px 10px;
+    /* Increased padding to avoid edge overlap */
+    gap: 4px;
+  }
+
+  .drag-overlay {
+    display: none;
+    /* Hide on desktop */
+  }
 }

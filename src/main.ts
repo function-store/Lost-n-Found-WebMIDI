@@ -325,8 +325,12 @@ function updateReadout(): void {
 
 // Setup event listeners
 function setupEventListeners(): void {
-  // MIDI Enable
-  document.getElementById('btnEnableMIDI')?.addEventListener('click', enableMIDI);
+  // MIDI Toggle
+  const btnMIDI = document.getElementById('btnEnableMIDI');
+  if (btnMIDI) {
+    btnMIDI.textContent = midiService.isEnabled ? 'Disable MIDI' : 'Enable MIDI';
+    btnMIDI.addEventListener('click', toggleMIDI);
+  }
 
   // MIDI Output select
   document.getElementById('midiSelect')?.addEventListener('change', (e) => {
@@ -456,29 +460,47 @@ function setupEventListeners(): void {
   });
 }
 
-// Enable MIDI
-async function enableMIDI(): Promise<void> {
-  const success = await midiService.enable();
-  if (!success) {
-    alert('MIDI Access Failed');
-    return;
-  }
-
-  populateOutputs();
-  midiService.setOnStateChange(populateOutputs);
-
+// Toggle MIDI
+async function toggleMIDI(): Promise<void> {
+  const btnEnable = document.getElementById('btnEnableMIDI') as HTMLButtonElement;
   const midiSelect = document.getElementById('midiSelect') as HTMLSelectElement;
   const chanSelect = document.getElementById('chanSelect') as HTMLSelectElement;
   const btnTap = document.getElementById('btnTap') as HTMLButtonElement;
-  const btnEnable = document.getElementById('btnEnableMIDI') as HTMLButtonElement;
 
-  if (midiSelect) midiSelect.disabled = false;
-  if (chanSelect) chanSelect.disabled = false;
-  if (btnTap) btnTap.disabled = false;
-  if (btnEnable) {
-    btnEnable.textContent = 'MIDI Enabled';
-    btnEnable.disabled = true;
+  if (midiService.isEnabled) {
+    // Disable
+    midiService.disable();
+    if (btnEnable) {
+      btnEnable.textContent = 'Enable MIDI';
+      btnEnable.disabled = false;
+    }
+    if (midiSelect) {
+      midiSelect.disabled = true;
+      midiSelect.innerHTML = '<option value="">MIDI Output</option>';
+    }
+    if (chanSelect) chanSelect.disabled = true;
+    if (btnTap) btnTap.disabled = true;
+  } else {
+    // Enable
+    const success = await midiService.enable();
+    if (!success) {
+      alert('MIDI Access Failed');
+      return;
+    }
+
+    populateOutputs();
+    midiService.setOnStateChange(populateOutputs);
+
+    if (btnEnable) {
+      btnEnable.textContent = 'Disable MIDI';
+      btnEnable.disabled = false;
+    }
+    if (midiSelect) midiSelect.disabled = false;
+    if (chanSelect) chanSelect.disabled = false;
+    if (btnTap) btnTap.disabled = false;
   }
+
+  updateMidiStatusUI();
 }
 
 // Populate MIDI outputs

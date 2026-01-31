@@ -150,10 +150,17 @@ select {
   max-width: 120px;
   text-overflow: ellipsis;
   overflow: hidden;
+  color: var(--cream);
+}
+
+select option {
+  background: var(--bg-input);
+  color: var(--cream);
 }
 
 #midiSelect {
-  max-width: 140px;
+  width: 100px;
+  max-width: 100px;
 }
 
 #slotSelect {
@@ -165,6 +172,7 @@ select {
   /* Fixed width to prevent shift */
   white-space: nowrap;
   overflow: hidden;
+  text-align: center;
 }
 
 select:disabled,

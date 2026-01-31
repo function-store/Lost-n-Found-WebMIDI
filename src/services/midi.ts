@@ -53,6 +53,15 @@ class MIDIService {
     }
   }
 
+  disable(): void {
+    if (this.access) {
+      this.access.onstatechange = null;
+      this.access = null;
+    }
+    this.output = null;
+    this.onStateChange?.();
+  }
+
   getOutputs(): MIDIOutput[] {
     if (!this.access) return [];
     return Array.from(this.access.outputs.values());

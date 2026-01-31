@@ -1,0 +1,99 @@
+{
+  "triBlocks": [
+    {
+      "id": "leftFx",
+      "title": "Left FX",
+      "cc": 21,
+      "options": ["Reverb", "Pitch", "Warp"],
+      "swappedOptions": ["Delay", "Synth", "Bend"],
+      "side": "L",
+      "hasEngage": true,
+      "engageCC": 103,
+      "swapCC": 74,
+      "hasRandomize": true
+    },
+    {
+      "id": "routing",
+      "title": "Routing",
+      "cc": 22,
+      "options": ["L>R", "L+R", "L<R"],
+      "side": null,
+      "hasEngage": false
+    },
+    {
+      "id": "rightFx",
+      "title": "Right FX",
+      "cc": 23,
+      "options": ["Delay", "Synth", "Bend"],
+      "swappedOptions": ["Reverb", "Pitch", "Warp"],
+      "side": "R",
+      "hasEngage": true,
+      "engageCC": 102,
+      "swapCC": 75,
+      "hasRandomize": true
+    }
+  ],
+  "rampToggles": [
+    { "label": "Bounce", "cc": 66 },
+    { "label": "Sweep", "cc": 67 },
+    { "label": "Polarity", "cc": 68 }
+  ],
+  "rampSlider": {
+    "label": "Ramp Speed",
+    "cc": 20,
+    "min": 0,
+    "max": 127,
+    "default": 64
+  },
+  "rampEnabled": {
+    "label": "Enabled",
+    "cc": 52,
+    "inverted": true,
+    "default": 127
+  },
+  "stereoControls": {
+    "spread": {
+      "title": "Spread",
+      "cc": 32,
+      "options": ["L ONLY", "BOTH", "R ONLY"]
+    },
+    "toggles": [
+      { "label": "MISO", "cc": 71 },
+      { "label": "Spread DIP", "cc": 72 }
+    ]
+  },
+  "clockControls": [
+    { "type": "checkbox", "label": "MIDI Clock Follow", "cc": 51 },
+    { "type": "checkbox", "label": "Unsync", "cc": 76 }
+  ],
+  "subdivisions": [
+    { "label": "32nd", "value": 0 },
+    { "label": "16th", "value": 1 },
+    { "label": "16th Trip", "value": 2 },
+    { "label": "8th", "value": 3 },
+    { "label": "8th Trip", "value": 4 },
+    { "label": "Dotted 8th", "value": 5 },
+    { "label": "Quarter", "value": 6 },
+    { "label": "Quarter Trip", "value": 7 },
+    { "label": "Dotted Quarter", "value": 8 },
+    { "label": "Half", "value": 9 },
+    { "label": "Dotted Half", "value": 10 },
+    { "label": "Whole", "value": 11 },
+    { "label": "Double Whole", "value": 12 }
+  ],
+  "subdivisionSelects": [
+    { "label": "L Tap Subdivision", "cc": 53 },
+    { "label": "R Tap Subdivision", "cc": 54 }
+  ],
+  "dipSwitches": [
+    { "label": "Latch", "cc": 73 },
+    { "label": "Trails", "cc": 77 },
+    { "label": "Bank", "cc": 78 }
+  ],
+  "presetSlots": {
+    "min": 0,
+    "max": 122,
+    "liveSlot": 0,
+    "bufferSlot": 122
+  }
+}

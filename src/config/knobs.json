@@ -1,0 +1,38 @@
+{
+  "layout": [
+    { "label": "L Time", "cc": 14, "kind": "knob", "column": "left", "hasRamp": true },
+    { "label": "Mix", "cc": 15, "kind": "knob", "column": "center", "hasLock": true },
+    { "label": "R Time", "cc": 16, "kind": "knob", "column": "right", "hasRamp": true },
+    { "label": "L Modify", "cc": 17, "kind": "modify", "column": "left", "hasRamp": true },
+    { "label": "Blend", "cc": 18, "kind": "knob", "column": "center", "hasLock": true, "hasRamp": true },
+    { "label": "R Modify", "cc": 19, "kind": "modify", "column": "right", "hasRamp": true },
+    { "label": "L Alt", "cc": 24, "kind": "knob", "column": "left" },
+    { "label": "Spill", "cc": 25, "kind": "knob", "column": "center", "hasLock": true },
+    { "label": "R Alt", "cc": 26, "kind": "knob", "column": "right" },
+    { "label": "L EQ", "cc": 27, "kind": "knob", "column": "left", "hasLock": true },
+    { "label": "Glue", "cc": 28, "kind": "knob", "column": "center", "hasLock": true },
+    { "label": "R EQ", "cc": 29, "kind": "knob", "column": "right", "hasLock": true }
+  ],
+  "masterWet": {
+    "label": "Master Wet",
+    "cc": 30,
+    "kind": "knob",
+    "column": "center",
+    "hasLock": true
+  },
+  "defaults": {
+    "24": 0,
+    "25": 0,
+    "26": 0,
+    "28": 0,
+    "30": 127,
+    "27": 64,
+    "29": 64,
+    "default": 64
+  },
+  "lockableCCs": [15, 18, 25, 27, 28, 29, 30],
+  "columnMapping": {
+    "left": [14, 17, 24, 27],
+    "right": [16, 19, 26, 29]
+  }
+}

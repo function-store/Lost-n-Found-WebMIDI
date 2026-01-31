@@ -1,0 +1,52 @@
+{
+  "leftEffects": [
+    { "family": "Reverb", "A": "Slow-verb", "B": "Useful Ambience" },
+    { "family": "Pitch", "A": "Orchestral Swell", "B": "Pitch Repeater" },
+    { "family": "Warp", "A": "Pinging Phaser", "B": "Spectral Modulator" }
+  ],
+  "rightEffects": [
+    { "family": "Delay", "A": "Tape Echo", "B": "Grain Tumbler" },
+    { "family": "Synth", "A": "Impulse Synthesizer", "B": "Sympathetic Resonator" },
+    { "family": "Bend", "A": "Ensemble Expander", "B": "Gen Lite" }
+  ],
+  "routing": ["L>R (Series)", "L+R (Parallel)", "L<R (Series)"],
+  "routingShort": ["L>R", "L+R", "L<R"],
+  "leftFamilies": ["Reverb", "Pitch", "Warp"],
+  "rightFamilies": ["Delay", "Synth", "Bend"],
+  "leftSwappedFamilies": ["Delay", "Synth", "Bend"],
+  "rightSwappedFamilies": ["Reverb", "Pitch", "Warp"],
+  "modifyLabels": {
+    "Reverb": ["Slow-verb", "Ambience"],
+    "Pitch": ["Orchestral", "Repeater"],
+    "Warp": ["Phaser", "Modulator"],
+    "Delay": ["Tape", "Tumbler"],
+    "Synth": ["Impulse", "Resonator"],
+    "Bend": ["Ensemble", "Gen Lite"]
+  },
+  "effectDetails": {
+    "Reverb": {
+      "A": { "time": "SIZE", "modify": "DECAY", "alt": "DIFFUSION" },
+      "B": { "time": "SIZE", "modify": "DECAY", "alt": "DIFFUSION" }
+    },
+    "Pitch": {
+      "A": { "time": "SWELL TIME", "modify": "PITCH", "alt": "FEEDBACK" },
+      "B": { "time": "DELAY", "modify": "PITCH", "alt": "NUMBER OF REPEATS" }
+    },
+    "Warp": {
+      "A": { "time": "RATE", "modify": "POLES", "alt": "RESONANCE" },
+      "B": { "time": "RATE", "modify": "DEPTH", "alt": "RESONANCE" }
+    },
+    "Delay": {
+      "A": { "time": "DELAY TIME", "modify": "FEEDBACK", "alt": "STABILITY" },
+      "B": { "time": "GRAIN SIZE", "modify": "FEEDBACK", "alt": "GRAIN SHAPE" }
+    },
+    "Synth": {
+      "A": { "time": "PORTAMENTO", "modify": "TEXTURE", "alt": "ATTACK / RELEASE" },
+      "B": { "time": "ONSET", "modify": "FEEDBACK", "alt": "OCTAVE" }
+    },
+    "Bend": {
+      "A": { "time": "RATE", "modify": "DEPTH", "alt": "NUMBER OF VOICES" },
+      "B": { "time": "RATE", "modify": "DEPTH", "alt": "CRINKLES AND SNAGS" }
+    }
+  }
+}

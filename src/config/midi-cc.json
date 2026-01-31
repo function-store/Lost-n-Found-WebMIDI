@@ -1,0 +1,76 @@
+{
+  "knobs": {
+    "lTime": 14,
+    "mix": 15,
+    "rTime": 16,
+    "lModify": 17,
+    "blend": 18,
+    "rModify": 19,
+    "rampSpeed": 20,
+    "lAlt": 24,
+    "spill": 25,
+    "rAlt": 26,
+    "lEq": 27,
+    "glue": 28,
+    "rEq": 29,
+    "masterWet": 30
+  },
+  "controls": {
+    "lEffectsMode": 21,
+    "routing": 22,
+    "rEffectsMode": 23,
+    "spread": 32,
+    "midiClockFollow": 51,
+    "rampEnabled": 52,
+    "lTapSubdivision": 53,
+    "rTapSubdivision": 54,
+    "lockMix": 55
+  },
+  "rampDestinations": {
+    "lTime": 61,
+    "lModify": 62,
+    "blend": 63,
+    "rTime": 64,
+    "rModify": 65
+  },
+  "rampToggles": {
+    "bounce": 66,
+    "sweep": 67,
+    "polarity": 68
+  },
+  "stereo": {
+    "miso": 71,
+    "spreadDip": 72
+  },
+  "dip": {
+    "latch": 73,
+    "lSwap": 74,
+    "rSwap": 75,
+    "unsync": 76,
+    "trails": 77,
+    "bank": 78
+  },
+  "special": {
+    "tapTempo": 93,
+    "rEngage": 102,
+    "lEngage": 103,
+    "altMenu": 104,
+    "store": 111
+  },
+  "groups": {
+    "knobCCs": [14, 15, 16, 17, 18, 19, 24, 25, 26, 27, 28, 29, 30],
+    "hiddenCCs": [32, 51, 52, 53, 54],
+    "dipCCs": [66, 67, 68, 71, 72, 73, 76, 77, 78],
+    "controlCCs": [14, 15, 16, 17, 18, 19, 24, 25, 26, 27, 28, 29, 30, 32, 51, 52, 53, 54, 66, 67, 68, 71, 72, 73, 76, 77, 78, 21, 22, 23, 20, 61, 62, 63, 64, 65, 74, 75],
+    "blockedCCs": [93],
+    "neverRandomCCs": [51, 73, 77, 78, 32, 71, 72],
+    "rampCCs": [20, 52, 61, 62, 63, 64, 65, 66, 67, 68]
+  },
+  "knobRampMap": {
+    "14": 61,
+    "17": 62,
+    "18": 63,
+    "16": 64,
+    "19": 65
+  }
+}

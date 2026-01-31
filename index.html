@@ -1021,6 +1021,19 @@
                     white-space: nowrap;
                   }
 
+                  .subLabel {
+                    font-size: 10px;
+                    font-weight: 800;
+                    color: var(--green);
+                    text-transform: uppercase;
+                    margin-bottom: 2px;
+                    height: 12px;
+                    line-height: 1.2;
+                    text-align: center;
+                    width: 100%;
+                    pointer-events: none;
+                  }
+
                   /* Ensure knobBlock has relative positioning for labels */
                   .knobBlock {
                     position: relative;
@@ -1268,9 +1281,7 @@
                       }, 650);
                     }
                     function mapOutValue(cc, val) {
-                      val = Number(val) || 0;
-                      if (cc === 18) return 127 - val;
-                      return val;
+                      return Number(val) || 0;
                     }
                     function sendCCMapped(cc, val) {
                       // HARD BLOCK: never allow global/destructive commands.
@@ -1524,6 +1535,12 @@
                       block.appendChild(labRow);
                       block.appendChild(knob);
 
+                      // Secondary Label (Effect Specific Parameter)
+                      const subLab = document.createElement('div');
+                      subLab.className = 'subLabel';
+                      block.appendChild(subLab);
+                      ui[cc].subLabel = subLab;
+
                       // Value & Label Row
                       const vRow = document.createElement('div');
                       vRow.style.display = 'flex';
@@ -1732,15 +1749,18 @@
 
                     function updateReadout() {
                       const lSwap = state[74] === 127;
+                      const rSwap = state[75] === 127;
 
                       function getLabelFor(cc, options) {
                         const pos = triPosFromValueForCC(cc, state[cc]);
                         return options[pos] || options[0];
                       }
 
-                      const activeL = getLabelFor(21, ["Reverb", "Pitch", "Warp"]);
-                      const activeR = getLabelFor(23, ["Delay", "Synth", "Bend"]);
-                      document.getElementById('modeReadout').textContent = `Selected: L=[${activeL}]  R=[${activeR}]`;
+                      const L_NAMES = lSwap ? ["Delay", "Synth", "Bend"] : ["Reverb", "Pitch", "Warp"];
+                      const R_NAMES = rSwap ? ["Reverb", "Pitch", "Warp"] : ["Delay", "Synth", "Bend"];
+
+                      const activeL = getLabelFor(21, L_NAMES);
+                      const activeR = getLabelFor(23, R_NAMES);
 
                       // Update Modify Knob Labels
                       // Mappings based on Chase Bliss Lost+Found (Unified for Swapping)
@@ -1765,11 +1785,6 @@
                         ui[19].labels.R.textContent = rLabels[1];
                       }
 
-                      const rSwap = state[75] === 127;
-
-                      const L_NAMES = lSwap ? ["Delay", "Synth", "Bend"] : ["Reverb", "Pitch", "Warp"];
-                      const R_NAMES = rSwap ? ["Reverb", "Pitch", "Warp"] : ["Delay", "Synth", "Bend"];
-
                       const leftPos = triPosFromValueForCC(21, state[21] ?? 0);
                       const routePos = triPosFromValueForCC(22, state[22] ?? 0);
                       const rightPos = triPosFromValueForCC(23, state[23] ?? 0);
@@ -1791,6 +1806,48 @@
 
                       const el = document.getElementById('modeReadout');
                       if (el) el.textContent = 'Selected: ' + leftLabel + ' • Routing: ' + ROUTING[routePos] + ' • ' + rightLabel;
+
+                      // Secondary Effect-Specific Labels (from screenshot)
+                      const FX_DETAIL = {
+                        "Reverb": {
+                          "A": { time: "SIZE", modify: "DECAY", alt: "DIFFUSION" },
+                          "B": { time: "SIZE", modify: "DECAY", alt: "DIFFUSION" }
+                        },
+                        "Pitch": {
+                          "A": { time: "SWELL TIME", modify: "PITCH", alt: "FEEDBACK" },
+                          "B": { time: "DELAY", modify: "PITCH", alt: "NUMBER OF REPEATS" }
+                        },
+                        "Warp": {
+                          "A": { time: "RATE", modify: "POLES", alt: "RESONANCE" },
+                          "B": { time: "RATE", modify: "DEPTH", alt: "RESONANCE" }
+                        },
+                        "Delay": {
+                          "A": { time: "DELAY TIME", modify: "FEEDBACK", alt: "STABILITY" },
+                          "B": { time: "GRAIN SIZE", modify: "FEEDBACK", alt: "GRAIN SHAPE" }
+                        },
+                        "Synth": {
+                          "A": { time: "PORTAMENTO", modify: "TEXTURE", alt: "ATTACK / RELEASE" },
+                          "B": { time: "ONSET", modify: "FEEDBACK", alt: "OCTAVE" }
+                        },
+                        "Bend": {
+                          "A": { time: "RATE", modify: "DEPTH", alt: "NUMBER OF VOICES" },
+                          "B": { time: "RATE", modify: "DEPTH", alt: "CRINKLES AND SNAGS" }
+                        }
+                      };
+
+                      const lDetail = FX_DETAIL[leftFamily] ? FX_DETAIL[leftFamily][leftAB === 'B' ? 'B' : 'A'] : null;
+                      const rDetail = FX_DETAIL[rightFamily] ? FX_DETAIL[rightFamily][rightAB === 'B' ? 'B' : 'A'] : null;
+
+                      if (lDetail) {
+                        if (ui[14] && ui[14].subLabel) ui[14].subLabel.textContent = lDetail.time;
+                        if (ui[17] && ui[17].subLabel) ui[17].subLabel.textContent = lDetail.modify;
+                        if (ui[24] && ui[24].subLabel) ui[24].subLabel.textContent = lDetail.alt;
+                      }
+                      if (rDetail) {
+                        if (ui[16] && ui[16].subLabel) ui[16].subLabel.textContent = rDetail.time;
+                        if (ui[19] && ui[19].subLabel) ui[19].subLabel.textContent = rDetail.modify;
+                        if (ui[26] && ui[26].subLabel) ui[26].subLabel.textContent = rDetail.alt;
+                      }
                     }
 
                     function createDipRow(name, cc, parentEl) {
@@ -2405,6 +2462,7 @@
 
                     // Load state AFTER UI is built
                     initSlots(); // Ensure Slot dropdown is populated (allows restoring active slot)
+                    fillChannels(); // Ensure Channel dropdown is populated
                     loadEditorState();
                     updateReadout();
 
@@ -2462,8 +2520,12 @@
                       if (!midiAccess) return;
                       midiOut = midiAccess.outputs.get(document.getElementById('midiSelect').value) || null;
                       setStatus(midiOut ? 'MIDI ready' : 'No output selected');
+                      saveEditorState();
                     };
-                    document.getElementById('chanSelect').onchange = (e) => { channel = Number(e.target.value) || 0; };
+                    document.getElementById('chanSelect').onchange = (e) => {
+                      channel = Number(e.target.value) || 0;
+                      saveEditorState();
+                    };
 
                     document.getElementById('btnRandom').onclick = randomizeAll;
                     document.getElementById('btnRandomKnobs').onclick = randomizeKnobsOnly;
@@ -2480,21 +2542,6 @@
                     // Removed old Engage listeners (now handled in FX blocks)
                     document.getElementById('btnTap').onclick = handleTap;
 
-                    initSlots();
-                    populateChannels();
-
-                    function populateChannels() {
-                      const cs = document.getElementById('chanSelect');
-                      if (!cs) return;
-                      cs.innerHTML = '';
-                      for (let i = 1; i <= 16; i++) {
-                        const opt = document.createElement('option');
-                        opt.value = i - 1; // 0-indexed for MIDI
-                        opt.textContent = i;
-                        cs.appendChild(opt);
-                      }
-                      cs.value = "0"; // Default Ch 1
-                    }
 
                     // ===== PRESET EXPORT/IMPORT (added; leaves everything else unchanged) =====
                     function snapshotPreset() {

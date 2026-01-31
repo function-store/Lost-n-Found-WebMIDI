@@ -2,6 +2,17 @@
 
 All notable changes to the **Lost+Found** MIDI Editor since the initial repository commit.
 
+## [1.3.0] - 2026-01-31 (Advanced Dynamic Labels)
+### Added
+- **Enhanced Dynamic Labels**:
+  - NEW: **Sub-labels** for Time, Modify, and Alt knobs. Now shows specific hardware parameters (e.g., *SIZE*, *PITCH*, *FEEDBACK*) mapped directly from the official Mode manual.
+  - Improved Layout: Labels are now aligned horizontally with the percentage readout and properly margined.
+- **Reactive Interface**:
+  - The UI now immediately updates all context-aware labels when toggling **Swap** or changing effect types.
+### Fixed
+- **Blend Knob**: Removed unintended parameter inversion on CC 18; the knob now operates linearly as expected.
+- **Alt Labels**: Corrected CC mapping (24/26) for Alt-knob sub-labels to ensure they reflect the current effect state.
+
 ## [1.2.2] - 2026-01-31 (Preset Swap)
 ### Added
 - **Preset Swap Tool**:

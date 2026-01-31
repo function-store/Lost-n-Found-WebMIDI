@@ -2,6 +2,20 @@
 
 All notable changes to the **Lost+Found** MIDI Editor since the initial repository commit.
 
+## [1.2.2] - 2026-01-31 (Preset Swap)
+### Added
+- **Preset Swap Tool**:
+  - Found in Preset Manage modal (bottom-left footer).
+  - Use Slot 122 as a temporary buffer to swap any two hardware presets.
+  - Includes progress tracking and metadata (name) swapping.
+  - Safe timing delays to ensure hardware reliability.
+- **UI Improvements**:
+  - Renamed "Sync" button to **Push** and placed it next to Import (Export -> Import -> Push).
+  - Removed "Sync+" button to simplify workflow.
+  - "Store" prompt includes slot number.
+  - Added **Lock** option to L EQ and R EQ knobs.
+  - **Dynamic Labels**: Modify knobs now show context-aware function labels (e.g. Decay/Pitch) based on active effect.
+
 ## [1.2.1] - 2026-01-31 (State Persistence)
 ### Added
 - **Session Memory**: The editor now remembers your complete setup across reloads.

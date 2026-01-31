@@ -1011,6 +1011,20 @@
                   .pmBtn:active {
                     transform: scale(0.96);
                   }
+
+                  .modLabel {
+                    font-size: 12px;
+                    color: rgba(63, 95, 78, 0.72);
+                    line-height: 1;
+                    pointer-events: none;
+                    font-weight: 500;
+                    white-space: nowrap;
+                  }
+
+                  /* Ensure knobBlock has relative positioning for labels */
+                  .knobBlock {
+                    position: relative;
+                  }
                 </style>
               </div>
               <div data-replaced-tag="body">
@@ -1051,9 +1065,7 @@
                         <label class="pillLabel"><span>Slot</span><select id="slotSelect"></select></label>
                         <div class="segmented">
                           <button id="btnRecall">Recall</button>
-                          <button id="btnPushOnly" title="Send Settings to Pedal">Sync</button>
                           <button id="btnStore">Store</button>
-                          <button id="btnSyncStore" title="Sync & Store">Sync+</button>
                         </div>
                         <button id="btnShowManager" title="Open Preset Manager"
                           style="padding: 5px 10px; font-size: 11px;">Manage</button>
@@ -1063,6 +1075,8 @@
                       <div class="tbGroup">
                         <button id="btnExportPreset" title="Export Pattern to File">Export</button>
                         <button id="btnImportPreset" title="Import Pattern from File">Import</button>
+                        <button id="btnPushOnly" title="Send Settings to Pedal"
+                          style="margin-left: 4px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 8px;">Push</button>
                         <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
 
                         <div
@@ -1276,6 +1290,12 @@
 
                     function vToDeg(v) { return -135 + (v / 127) * 270; }
 
+                    function abFromModify(v) {
+                      if (v < 60) return "A";
+                      if (v > 68) return "B";
+                      return "—";
+                    }
+
                     function triValueForCC(cc, pos) {
                       // Per Chase Bliss Lost + Found MIDI manual:
                       // CC21 L Effects Mode: 1 = 0/1, 2 = 2, 3 = 3+
@@ -1390,9 +1410,9 @@
                         labRow.appendChild(rampLabel);
                       }
 
-                      // Lock toggle for middle column (Mix, Blend, Spill, Glue, Master Wet)
-                      // Mix (15), Blend (18), Spill (25), Glue (28), Master Wet (30)
-                      if ([15, 18, 25, 28, 30].includes(cc)) {
+                      // Lock toggle for middle column (Mix, Blend, Spill, Glue, Master Wet) + EQs
+                      // Mix (15), Blend (18), Spill (25), Glue (28), Master Wet (30), L EQ (27), R EQ (29)
+                      if ([15, 18, 25, 27, 28, 29, 30].includes(cc)) {
                         const lockLabel = document.createElement('label');
                         lockLabel.className = 'lockToggle';
                         // Check if already locked (from restored state)
@@ -1503,7 +1523,37 @@
 
                       block.appendChild(labRow);
                       block.appendChild(knob);
-                      block.appendChild(val);
+
+                      // Value & Label Row
+                      const vRow = document.createElement('div');
+                      vRow.style.display = 'flex';
+                      vRow.style.alignItems = 'center';
+                      vRow.style.justifyContent = 'center';
+                      vRow.style.marginTop = '2px';
+                      vRow.style.width = '100%';
+
+                      if (kind === 'modify') {
+                        const lblL = document.createElement('div');
+                        lblL.className = 'modLabel';
+                        lblL.style.textAlign = 'right';
+                        lblL.style.marginRight = '6px';
+                        lblL.style.flex = '1';
+
+                        const lblR = document.createElement('div');
+                        lblR.className = 'modLabel';
+                        lblR.style.textAlign = 'left';
+                        lblR.style.marginLeft = '6px';
+                        lblR.style.flex = '1';
+
+                        vRow.appendChild(lblL);
+                        vRow.appendChild(val);
+                        vRow.appendChild(lblR);
+                        ui[cc].labels = { L: lblL, R: lblR };
+                      } else {
+                        vRow.appendChild(val);
+                      }
+
+                      block.appendChild(vRow);
                       parentEl.appendChild(block);
                     }
 
@@ -1564,6 +1614,7 @@
                           state[swapCC] = v;
                           sendCCMapped(swapCC, v);
                           updateLabels();
+                          if (typeof updateReadout === 'function') updateReadout();
                         });
 
                         // Register in ui map for bidirectional sync
@@ -1572,6 +1623,7 @@
                           set(v) {
                             swapCheck.checked = (Number(v) === 127);
                             updateLabels();
+                            if (typeof updateReadout === 'function') updateReadout();
                           }
                         };
 
@@ -1615,6 +1667,7 @@
                           paint(i);
                           sendCCMapped(cc, v);
                           updateLabels();
+                          if (typeof updateReadout === 'function') updateReadout();
                         };
                         btns.push(b);
                         seg.appendChild(b);
@@ -1625,6 +1678,7 @@
                           state[cc] = Number(v) || 0;
                           paint(triPosFromValueForCC(cc, state[cc]));
                           updateLabels();
+                          if (typeof updateReadout === 'function') updateReadout();
                         }
                       };
 
@@ -1678,6 +1732,39 @@
 
                     function updateReadout() {
                       const lSwap = state[74] === 127;
+
+                      function getLabelFor(cc, options) {
+                        const pos = triPosFromValueForCC(cc, state[cc]);
+                        return options[pos] || options[0];
+                      }
+
+                      const activeL = getLabelFor(21, ["Reverb", "Pitch", "Warp"]);
+                      const activeR = getLabelFor(23, ["Delay", "Synth", "Bend"]);
+                      document.getElementById('modeReadout').textContent = `Selected: L=[${activeL}]  R=[${activeR}]`;
+
+                      // Update Modify Knob Labels
+                      // Mappings based on Chase Bliss Lost+Found (Unified for Swapping)
+                      const FX_PARAMS = {
+                        "Reverb": ["Slow-verb", "Ambience"],
+                        "Pitch": ["Orchestral", "Repeater"],
+                        "Warp": ["Phaser", "Modulator"],
+                        "Delay": ["Tape", "Tumbler"],
+                        "Synth": ["Impulse", "Resonator"],
+                        "Bend": ["Ensemble", "Gen Lite"]
+                      };
+
+                      const lLabels = FX_PARAMS[activeL] || ["", ""];
+                      const rLabels = FX_PARAMS[activeR] || ["", ""];
+
+                      if (ui[17] && ui[17].labels) {
+                        ui[17].labels.L.textContent = lLabels[0];
+                        ui[17].labels.R.textContent = lLabels[1];
+                      }
+                      if (ui[19] && ui[19].labels) {
+                        ui[19].labels.L.textContent = rLabels[0];
+                        ui[19].labels.R.textContent = rLabels[1];
+                      }
+
                       const rSwap = state[75] === 127;
 
                       const L_NAMES = lSwap ? ["Delay", "Synth", "Bend"] : ["Reverb", "Pitch", "Warp"];
@@ -2329,6 +2416,48 @@
                     });
 
                     // Setup Topbar Events
+                    const btnEnable = document.getElementById('btnEnableMIDI');
+                    if (btnEnable) btnEnable.onclick = enableMIDI;
+
+                    function enableMIDI() {
+                      if (!navigator.requestMIDIAccess) { alert('WebMIDI not supported'); return; }
+                      navigator.requestMIDIAccess({ sysex: true }).then((ma) => {
+                        midiAccess = ma;
+                        populateOutputs();
+                        midiAccess.onstatechange = populateOutputs;
+                        document.getElementById('midiSelect').disabled = false;
+                        document.getElementById('chanSelect').disabled = false;
+                        document.getElementById('btnEnableMIDI').textContent = "MIDI Enabled";
+                        document.getElementById('btnEnableMIDI').disabled = true;
+                        setStatus('MIDI Enabled');
+                        populateOutputs(); // Run once immediately
+                      }, (e) => {
+                        console.error(e);
+                        alert('MIDI Access Failed');
+                      });
+                    }
+
+                    function populateOutputs() {
+                      if (!midiAccess) return;
+                      const sel = document.getElementById('midiSelect');
+                      const oldVal = sel.value || window.lastMidiOutId;
+                      sel.innerHTML = '<option value="">Select Output...</option>';
+                      midiAccess.outputs.forEach((out) => {
+                        const opt = document.createElement('option');
+                        opt.value = out.id;
+                        opt.textContent = out.name;
+                        sel.appendChild(opt);
+                      });
+                      if (oldVal) {
+                        // Try to re-select
+                        const exists = Array.from(sel.options).some(o => o.value === oldVal);
+                        if (exists) {
+                          sel.value = oldVal;
+                          midiOut = midiAccess.outputs.get(oldVal);
+                        }
+                      }
+                    }
+
                     document.getElementById('midiSelect').onchange = () => {
                       if (!midiAccess) return;
                       midiOut = midiAccess.outputs.get(document.getElementById('midiSelect').value) || null;
@@ -2346,12 +2475,26 @@
                       });
                     };
                     document.getElementById('btnStore').onclick = () => window.storeToSlot(false);
-                    document.getElementById('btnSyncStore').onclick = () => window.storeToSlot(true);
+                    document.getElementById('btnStore').onclick = () => window.storeToSlot(false);
 
                     // Removed old Engage listeners (now handled in FX blocks)
                     document.getElementById('btnTap').onclick = handleTap;
 
                     initSlots();
+                    populateChannels();
+
+                    function populateChannels() {
+                      const cs = document.getElementById('chanSelect');
+                      if (!cs) return;
+                      cs.innerHTML = '';
+                      for (let i = 1; i <= 16; i++) {
+                        const opt = document.createElement('option');
+                        opt.value = i - 1; // 0-indexed for MIDI
+                        opt.textContent = i;
+                        cs.appendChild(opt);
+                      }
+                      cs.value = "0"; // Default Ch 1
+                    }
 
                     // ===== PRESET EXPORT/IMPORT (added; leaves everything else unchanged) =====
                     function snapshotPreset() {
@@ -2460,6 +2603,109 @@
                     };
 
                     function openManager() {
+                      const modalBody = document.getElementById('pmContent');
+                      const footerRow = modalBody.querySelector('div[style*="border-top:1px solid"]'); // Target the footer row
+
+                      // Check if swap box already exists in footer
+                      let swapBox = document.getElementById('pmSwapBox');
+                      if (!swapBox && footerRow) {
+                        swapBox = document.createElement('div');
+                        swapBox.id = 'pmSwapBox';
+                        swapBox.style.display = 'flex';
+                        swapBox.style.alignItems = 'center';
+                        swapBox.style.gap = '8px';
+                        swapBox.style.marginRight = 'auto'; // Push others to right if needed, or place in middle
+
+                        // Label
+                        const lbl = document.createElement('span');
+                        lbl.innerHTML = '<b>Swap</b> <span style="font-size:10px;color:#777">(uses #122)</span>: ';
+                        lbl.style.fontSize = '12px';
+
+                        const inputA = document.createElement('input');
+                        inputA.type = 'number'; inputA.min = 1; inputA.max = 122; inputA.placeholder = 'A';
+                        inputA.style.width = '36px'; inputA.style.padding = '2px'; inputA.style.borderRadius = '3px'; inputA.style.border = '1px solid #ccc';
+
+                        const inputB = document.createElement('input');
+                        inputB.type = 'number'; inputB.min = 1; inputB.max = 122; inputB.placeholder = 'B';
+                        inputB.style.width = '36px'; inputB.style.padding = '2px'; inputB.style.borderRadius = '3px'; inputB.style.border = '1px solid #ccc';
+
+                        const btnSwap = document.createElement('button');
+                        btnSwap.textContent = 'Go';
+                        btnSwap.className = 'pmBtn primary';
+                        btnSwap.style.padding = '2px 8px';
+
+                        const swapStatus = document.createElement('span');
+                        swapStatus.style.fontSize = '10px';
+                        swapStatus.style.color = 'var(--muted)';
+                        swapStatus.style.marginLeft = '4px';
+
+                        btnSwap.onclick = async () => {
+                          const a = parseInt(inputA.value);
+                          const b = parseInt(inputB.value);
+                          if (!midiAccess || !midiOut) { alert('Enable MIDI first.'); return; }
+                          if (!a || !b || a < 1 || a > 122 || b < 1 || b > 122 || a === b) {
+                            alert('Invalid slots.'); return;
+                          }
+                          if (a === 122 || b === 122) {
+                            if (!confirm('Warning: Slot 122 is used as buffer. Proceed?')) return;
+                          }
+                          if (!confirm(`Swap Slot ${a} and ${b}? Takes ~7s.`)) return;
+
+                          btnSwap.disabled = true;
+                          // --- Swap Logic ---
+                          const delay = ms => new Promise(res => setTimeout(res, ms));
+                          const sendCC = (cc, v) => midiOut.send([0xB0 + channel, cc, v]);
+                          const sendPC = (p) => midiOut.send([0xC0 + channel, p]);
+
+                          try {
+                            swapStatus.textContent = '1/6: Buffering A...';
+                            sendPC(a - 1); await delay(1200);
+                            sendCC(111, 122); await delay(1200);
+
+                            swapStatus.textContent = '3/6: Moving B->A...';
+                            sendPC(b - 1); await delay(1200);
+                            sendCC(111, a); await delay(1200);
+
+                            swapStatus.textContent = '5/6: Moving Buf->B...';
+                            sendPC(122 - 1); await delay(1200);
+                            sendCC(111, b); await delay(1200);
+
+                            const meta = getMeta();
+                            const dataA = meta[a] || {};
+                            const dataB = meta[b] || {};
+                            meta[a] = dataB;
+                            meta[b] = dataA;
+                            setMeta(meta);
+
+                            swapStatus.textContent = 'Done!';
+                            openManager();
+                            initSlots();
+                            window.currentActiveSlot = a;
+                            sendPC(a - 1);
+                          } catch (e) {
+                            swapStatus.textContent = 'Err';
+                            console.error(e);
+                          }
+                          btnSwap.disabled = false;
+                          setTimeout(() => { swapStatus.textContent = ''; }, 3000);
+                        };
+
+                        swapBox.appendChild(lbl);
+                        swapBox.appendChild(inputA);
+                        swapBox.appendChild(document.createTextNode('↔'));
+                        swapBox.appendChild(inputB);
+                        swapBox.appendChild(btnSwap);
+                        swapBox.appendChild(swapStatus);
+
+                        // Insert into footer row as first child
+                        if (footerRow) {
+                          footerRow.insertBefore(swapBox, footerRow.firstChild);
+                          // Adjust existing footer layout to wrap or fit
+                          footerRow.style.flexWrap = 'wrap';
+                          footerRow.style.gap = '12px';
+                        }
+                      }
+
                       const meta = getMeta();
                       const tbody = document.getElementById('pmTableBody');
                       tbody.innerHTML = '';
@@ -2469,10 +2715,11 @@
                         if (i === window.currentActiveSlot) {
                           row.classList.add('pmRowActive');
                         }
+                        const isBuffer = (i === 122);
                         row.innerHTML = `
                           <td><div class="pmCellWrap center"><span class="pmIndex">${i}</span></div></td>
                           <td><div class="pmCellWrap"><input type="text" class="pmName" data-slot="${i}" value="${m.name}" placeholder="Unnamed"></div></td>
-                          <td><div class="pmCellWrap center"><input type="checkbox" class="pmOccupied" data-slot="${i}" ${m.occupied ? 'checked' : ''}></div></td>
+                          <td><div class="pmCellWrap center">${isBuffer ? '<span style="color:var(--orange);font-size:10px;">BUFFER</span>' : `<input type="checkbox" class="pmOccupied" data-slot="${i}" ${m.occupied ? 'checked' : ''}>`}</div></td>
                           <td>
                             <div class="pmCellWrap center" style="gap:6px;">
                               <button class="pmBtn secondary" onclick="window.pmRecall(${i})">Recall</button>
@@ -2612,7 +2859,7 @@
               <tr>
                 <th>#</th>
                 <th>Name</th>
-                <th title="Mark as occupied in the dropdown">Status</th>
+                <th title="Mark as occupied in the dropdown">Used</th>
                 <th>Actions</th>
               </tr>
             </thead>

@@ -2679,11 +2679,11 @@
 
                         const inputA = document.createElement('input');
                         inputA.type = 'number'; inputA.min = 1; inputA.max = 122; inputA.placeholder = 'A';
-                        inputA.style.width = '36px'; inputA.style.padding = '2px'; inputA.style.borderRadius = '3px'; inputA.style.border = '1px solid #ccc';
+                        inputA.style.width = '48px'; inputA.style.padding = '2px'; inputA.style.borderRadius = '3px'; inputA.style.border = '1px solid #ccc';
 
                         const inputB = document.createElement('input');
                         inputB.type = 'number'; inputB.min = 1; inputB.max = 122; inputB.placeholder = 'B';
-                        inputB.style.width = '36px'; inputB.style.padding = '2px'; inputB.style.borderRadius = '3px'; inputB.style.border = '1px solid #ccc';
+                        inputB.style.width = '48px'; inputB.style.padding = '2px'; inputB.style.borderRadius = '3px'; inputB.style.border = '1px solid #ccc';
 
                         const btnSwap = document.createElement('button');
                         btnSwap.textContent = 'Go';
@@ -2698,32 +2698,33 @@
                         btnSwap.onclick = async () => {
                           const a = parseInt(inputA.value);
                           const b = parseInt(inputB.value);
-                          if (!midiAccess || !midiOut) { alert('Enable MIDI first.'); return; }
+
+                          if (!midiAccess || !midiOut) {
+                            alert('Enable MIDI first.');
+                            return;
+                          }
                           if (!a || !b || a < 1 || a > 122 || b < 1 || b > 122 || a === b) {
-                            alert('Invalid slots.'); return;
+                            alert('Invalid slots.');
+                            return;
                           }
-                          if (a === 122 || b === 122) {
-                            if (!confirm('Warning: Slot 122 is used as buffer. Proceed?')) return;
-                          }
-                          if (!confirm(`Swap Slot ${a} and ${b}? Takes ~7s.`)) return;
 
                           btnSwap.disabled = true;
-                          // --- Swap Logic ---
+                          btnSwap.textContent = 'Working...';
                           const delay = ms => new Promise(res => setTimeout(res, ms));
                           const sendCC = (cc, v) => midiOut.send([0xB0 + channel, cc, v]);
                           const sendPC = (p) => midiOut.send([0xC0 + channel, p]);
 
                           try {
                             swapStatus.textContent = '1/6: Buffering A...';
-                            sendPC(a - 1); await delay(1200);
+                            sendPC(a); await delay(1200);
                             sendCC(111, 122); await delay(1200);
 
                             swapStatus.textContent = '3/6: Moving B->A...';
-                            sendPC(b - 1); await delay(1200);
+                            sendPC(b); await delay(1200);
                             sendCC(111, a); await delay(1200);
 
                             swapStatus.textContent = '5/6: Moving Buf->B...';
-                            sendPC(122 - 1); await delay(1200);
+                            sendPC(122); await delay(1200);
                             sendCC(111, b); await delay(1200);
 
                             const meta = getMeta();
@@ -2737,12 +2738,13 @@
                             openManager();
                             initSlots();
                             window.currentActiveSlot = a;
-                            sendPC(a - 1);
+                            sendPC(a);
                           } catch (e) {
                             swapStatus.textContent = 'Err';
-                            console.error(e);
+                            alert('Swap failed: ' + e.message);
                           }
                           btnSwap.disabled = false;
+                          btnSwap.textContent = 'Go';
                           setTimeout(() => { swapStatus.textContent = ''; }, 3000);
                         };
 

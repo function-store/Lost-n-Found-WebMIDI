@@ -543,8 +543,97 @@ function showStoreDialog(): void {
 function openManager(): void {
   const meta = presetService.getMeta();
   const tbody = document.getElementById('pmTableBody');
+  const pmContent = document.getElementById('pmContent');
 
-  if (!tbody) return;
+  if (!tbody || !pmContent) return;
+
+  // Create swap box if it doesn't exist
+  let swapBox = document.getElementById('pmSwapBox');
+  if (!swapBox) {
+    swapBox = document.createElement('div');
+    swapBox.id = 'pmSwapBox';
+    swapBox.style.cssText = 'display:flex;align-items:center;gap:8px;margin-right:auto;';
+
+    const lbl = document.createElement('span');
+    lbl.innerHTML = '<b>Swap</b> <span style="font-size:10px;color:var(--cream-muted)">(uses #122)</span>: ';
+    lbl.style.fontSize = '12px';
+
+    const inputA = document.createElement('input');
+    inputA.type = 'number';
+    inputA.min = '1';
+    inputA.max = '122';
+    inputA.placeholder = 'A';
+    inputA.id = 'swapSlotA';
+    inputA.style.cssText = 'width:48px;padding:4px 6px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--cream);';
+
+    const inputB = document.createElement('input');
+    inputB.type = 'number';
+    inputB.min = '1';
+    inputB.max = '122';
+    inputB.placeholder = 'B';
+    inputB.id = 'swapSlotB';
+    inputB.style.cssText = 'width:48px;padding:4px 6px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--cream);';
+
+    const btnSwap = document.createElement('button');
+    btnSwap.textContent = 'Go';
+    btnSwap.className = 'pmBtn primary';
+    btnSwap.style.padding = '4px 10px';
+
+    const swapStatus = document.createElement('span');
+    swapStatus.id = 'swapStatus';
+    swapStatus.style.cssText = 'font-size:10px;color:var(--cream-muted);margin-left:4px;';
+
+    btnSwap.onclick = async () => {
+      const a = parseInt((document.getElementById('swapSlotA') as HTMLInputElement).value);
+      const b = parseInt((document.getElementById('swapSlotB') as HTMLInputElement).value);
+      const statusEl = document.getElementById('swapStatus');
+
+      if (!midiService.isEnabled) {
+        alert('Enable MIDI first.');
+        return;
+      }
+
+      if (!a || !b || a < 1 || a > 122 || b < 1 || b > 122 || a === b) {
+        alert('Invalid slots. Enter two different numbers between 1-122.');
+        return;
+      }
+
+      btnSwap.disabled = true;
+      btnSwap.textContent = 'Working...';
+
+      try {
+        await presetService.swapSlots(a, b, (step) => {
+          if (statusEl) statusEl.textContent = step;
+        });
+        openManager();
+        initSlots();
+      } catch (e) {
+        if (statusEl) statusEl.textContent = 'Error';
+        alert('Swap failed: ' + (e as Error).message);
+      }
+
+      btnSwap.disabled = false;
+      btnSwap.textContent = 'Go';
+      setTimeout(() => {
+        if (statusEl) statusEl.textContent = '';
+      }, 3000);
+    };
+
+    swapBox.appendChild(lbl);
+    swapBox.appendChild(inputA);
+    swapBox.appendChild(document.createTextNode(' ↔ '));
+    swapBox.appendChild(inputB);
+    swapBox.appendChild(btnSwap);
+    swapBox.appendChild(swapStatus);
+
+    // Insert into footer (the div with border-top)
+    const footer = pmContent.querySelector('div[style*="border-top"]');
+    if (footer) {
+      footer.insertBefore(swapBox, footer.firstChild);
+      (footer as HTMLElement).style.flexWrap = 'wrap';
+      (footer as HTMLElement).style.gap = '12px';
+    }
+  }
 
   tbody.innerHTML = '';
 

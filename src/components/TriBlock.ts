@@ -57,7 +57,7 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   let swapCheck: HTMLInputElement | null = null;
   if (side && swapCC) {
     const sLabel = createElement('label');
-    sLabel.style.cssText = 'font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:500;color:var(--muted)';
+    sLabel.style.cssText = 'font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:500;color:var(--cream-muted)';
     sLabel.innerHTML = `<input type="checkbox" id="${side.toLowerCase()}SwapToggle"> Swap`;
 
     swapCheck = sLabel.querySelector('input') as HTMLInputElement;
@@ -99,11 +99,11 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   function paint(pos: number) {
     btns.forEach((b, i) => {
       const on = i === pos;
-      b.style.border = on ? '1px solid rgba(63,95,78,.55)' : '1px solid rgba(95,125,106,.24)';
+      b.style.border = on ? '1px solid var(--sage)' : '1px solid var(--border)';
       b.style.background = on
-        ? 'linear-gradient(180deg, rgba(207,224,214,.95), rgba(207,224,214,.65))'
-        : 'rgba(255,255,255,.90)';
-      b.style.color = on ? 'var(--text)' : 'var(--muted)';
+        ? 'linear-gradient(180deg, var(--sage-dark), var(--sage-darker))'
+        : 'rgba(0, 0, 0, 0.25)';
+      b.style.color = on ? 'var(--cream)' : 'var(--cream-muted)';
     });
   }
 

@@ -1,12 +1,32 @@
-/* Lost + Found MIDI Editor Styles */
+/* Lost + Found MIDI Editor - Dark Mode */
+/* Color palette inspired by the Chase Bliss Lost+Found pedal */
 
 :root {
-  --bg: #ffffff;
-  --border: rgba(95, 125, 106, .35);
-  --text: #3f5f4e;
-  --muted: rgba(63, 95, 78, .72);
-  --green: #5f7d6a;
-  --shadow: 0 12px 28px rgba(0, 0, 0, .10), 0 -8px 20px rgba(0, 0, 0, .06);
+  /* Core colors from pedal */
+  --sage: #5f7d6a;
+  --sage-dark: #4a6354;
+  --sage-darker: #3a4f43;
+  --cream: #e8e4dc;
+  --cream-muted: rgba(232, 228, 220, 0.7);
+  --yellow: #c5d94e;
+  --yellow-muted: rgba(197, 217, 78, 0.6);
+
+  /* Dark mode backgrounds */
+  --bg: #1a1f1c;
+  --bg-elevated: #242a27;
+  --bg-card: #2a322e;
+  --bg-input: #1e2522;
+
+  /* Semantic colors */
+  --text: var(--cream);
+  --text-muted: var(--cream-muted);
+  --border: rgba(95, 125, 106, 0.3);
+  --border-light: rgba(95, 125, 106, 0.15);
+
+  /* Effects */
+  --shadow: 0 12px 28px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --glow: 0 0 20px rgba(197, 217, 78, 0.15);
 }
 
 * {
@@ -30,9 +50,9 @@ body {
   gap: 8px;
   align-items: center;
   padding: 10px 12px;
-  background: #ffffff;
-  border-bottom: 1px solid rgba(95, 125, 106, .30);
-  backdrop-filter: blur(6px);
+  background: rgba(36, 42, 39, 0.95);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
   justify-content: space-between;
 }
 
@@ -45,25 +65,27 @@ body {
 .sep {
   width: 1px;
   height: 24px;
-  background: rgba(95, 125, 106, .3);
+  background: var(--border);
   margin: 0 4px;
 }
 
 .grpLabel {
   font-size: 11px;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--text-muted);
   margin-right: 2px;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* ===== SEGMENTED CONTROLS ===== */
 .segmented {
   display: flex;
-  background: rgba(95, 125, 106, .15);
+  background: var(--bg-input);
   border-radius: 10px;
   padding: 3px;
   gap: 0;
+  border: 1px solid var(--border-light);
 }
 
 .segmented button {
@@ -73,37 +95,52 @@ body {
   box-shadow: none;
   font-size: 11px;
   padding: 5px 10px;
-  color: var(--text);
+  color: var(--text-muted);
   margin: 0;
   font-weight: 600;
 }
 
 .segmented button:hover {
-  background: rgba(255, 255, 255, 0.6);
-  transform: none;
+  background: var(--sage-darker);
+  color: var(--text);
 }
 
-.segmented button:active {
-  background: #fff;
-  transform: scale(0.98);
+.segmented button:active,
+.segmented button.active {
+  background: var(--sage-dark);
+  color: var(--cream);
 }
 
 /* ===== BUTTONS & INPUTS ===== */
 select,
 button {
   padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(95, 125, 106, .35);
-  background: linear-gradient(180deg, rgba(207, 224, 214, .90), rgba(207, 224, 214, .62));
-  color: var(--text);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, .10);
-}
-
-button {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--sage-dark), var(--sage-darker));
+  color: var(--cream);
+  box-shadow: var(--shadow-sm);
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-button:active {
+select {
+  background: var(--bg-input);
+}
+
+select:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--sage), var(--sage-dark));
+  border-color: var(--sage);
+}
+
+button:active:not(:disabled) {
   transform: translateY(1px);
 }
 
@@ -118,8 +155,8 @@ button:active {
   gap: 8px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(95, 125, 106, .28);
-  background: rgba(207, 224, 214, .70);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
 }
 
 .pillLabel.compact {
@@ -135,12 +172,20 @@ button:active {
 
 .pillLabel span {
   font-size: 12px;
-  color: var(--text);
+  color: var(--text-muted);
 }
 
 .pillLabel input {
   transform: scale(1.1);
-  accent-color: var(--green);
+  accent-color: var(--yellow);
+}
+
+.pillLabel select {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 2px 4px;
+  font-size: 12px;
 }
 
 /* ===== LAYOUT ===== */
@@ -151,8 +196,8 @@ button:active {
 }
 
 .card {
-  background: #ffffff;
-  border: 1px solid rgba(95, 125, 106, .26);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 18px;
   box-shadow: var(--shadow);
   padding: 14px;
@@ -160,10 +205,11 @@ button:active {
 
 .pedal {
   margin-top: 12px;
-  border: 1px solid rgba(95, 125, 106, .24);
+  border: 1px solid var(--border);
   border-radius: 22px;
-  background: #ffffff;
+  background: linear-gradient(180deg, var(--sage-darker) 0%, var(--sage-dark) 50%, var(--sage-darker) 100%);
   padding: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.2);
 }
 
 /* ===== TOGGLE ROW ===== */
@@ -175,8 +221,8 @@ button:active {
 }
 
 .toggleBlock {
-  border: 1px solid rgba(95, 125, 106, .22);
-  background: rgba(207, 224, 214, .35);
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 16px;
   padding: 10px;
 }
@@ -185,26 +231,28 @@ button:active {
   font-weight: 700;
   font-size: 11px;
   margin: 0 0 8px;
-  color: var(--muted);
+  color: var(--cream-muted);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .randomizeBtn {
   font-size: 14px;
   padding: 2px 6px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, .7);
-  border: 1px solid rgba(95, 125, 106, .2);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-light);
   cursor: pointer;
   transition: all 0.2s;
   line-height: 1;
 }
 
 .randomizeBtn:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(95, 125, 106, .4);
+  background: var(--sage-darker);
+  border-color: var(--sage);
   transform: scale(1.1);
 }
 
@@ -215,25 +263,26 @@ button:active {
   gap: 6px;
   padding: 6px 12px;
   border-radius: 10px;
-  border: 2px solid rgba(95, 125, 106, .3);
-  background: rgba(255, 255, 255, .8);
+  border: 2px solid var(--border);
+  background: rgba(0, 0, 0, 0.3);
   font-size: 12px;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--cream-muted);
   cursor: pointer;
   transition: all 0.2s;
   user-select: none;
+  margin-top: 8px;
 }
 
 .engageToggle.active {
-  background: linear-gradient(135deg, rgba(95, 125, 106, .85), rgba(63, 95, 78, .75));
-  border-color: var(--green);
-  color: white;
-  box-shadow: 0 2px 8px rgba(63, 95, 78, .3);
+  background: linear-gradient(135deg, var(--yellow), var(--yellow-muted));
+  border-color: var(--yellow);
+  color: #1a1f1c;
+  box-shadow: var(--glow);
 }
 
 .engageToggle:hover {
-  border-color: rgba(95, 125, 106, .5);
+  border-color: var(--sage);
   transform: translateY(-1px);
 }
 
@@ -250,17 +299,24 @@ button:active {
 
 .seg button {
   padding: 8px 8px;
-  border-radius: 12px;
-  border: 1px solid rgba(95, 125, 106, .24);
-  background: rgba(255, 255, 255, .90);
-  color: var(--muted);
-  font-size: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--cream-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.seg button:hover {
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--cream);
 }
 
 .readout {
   margin: 10px 0 0;
   font-size: 12px;
-  color: var(--text);
+  color: var(--cream-muted);
+  text-align: center;
 }
 
 /* ===== KNOB GRID ===== */
@@ -268,76 +324,82 @@ button:active {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
+  margin-top: 14px;
 }
 
 .knobBlock {
-  border: 1px solid rgba(95, 125, 106, .22);
-  background: rgba(207, 224, 214, .28);
+  border: 1px solid var(--border-light);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 18px;
   padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
   position: relative;
 }
 
 .lockToggle {
   position: absolute;
-  top: 13px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 10px;
+  font-size: 9px;
   display: flex;
   align-items: center;
   gap: 3px;
   cursor: pointer;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--cream-muted);
   z-index: 5;
-  padding: 0 4px;
+  padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .lockToggle input {
-  transform: scale(0.9);
-  accent-color: var(--green);
+  transform: scale(0.85);
+  accent-color: var(--yellow);
   margin: 0;
 }
 
 .kLabel {
-  font-weight: 750;
-  font-size: 13px;
-  color: var(--text);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .kValue {
   font-size: 12px;
-  color: var(--muted);
+  color: var(--cream-muted);
   min-height: 16px;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ===== KNOB ELEMENT ===== */
 .knob {
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
   border-radius: 999px;
   cursor: ns-resize;
   user-select: none;
   position: relative;
-  filter: drop-shadow(0 2px 7px rgba(0, 0, 0, .18));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 
 .dial {
   width: 100%;
   height: 100%;
   border-radius: 999px;
-  background: radial-gradient(circle at 35% 30%, #cfe0d6 0%, #8fae9d 55%, #5f7d6a 100%);
-  border: 2px solid rgba(63, 95, 78, .35);
+  background: radial-gradient(circle at 35% 30%, #3a3a3a 0%, #1a1a1a 60%, #0a0a0a 100%);
+  border: 2px solid rgba(80, 80, 80, 0.5);
   box-shadow:
-    inset 0 2px 10px rgba(255, 255, 255, .35),
-    inset 0 -10px 18px rgba(0, 0, 0, .12);
+    inset 0 2px 8px rgba(255, 255, 255, 0.1),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.4);
   position: relative;
 }
 
@@ -345,11 +407,12 @@ button:active {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   transform: translate(-50%, -50%);
   border-radius: 999px;
-  background: rgba(255, 255, 255, .55);
+  background: rgba(60, 60, 60, 0.8);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .rot {
@@ -362,15 +425,16 @@ button:active {
 .indicator {
   position: absolute;
   left: 50%;
-  top: 10px;
+  top: 8px;
   width: 3px;
-  height: 24px;
+  height: 18px;
   transform: translateX(-50%);
   border-radius: 2px;
-  background: #3f5f4e;
+  background: var(--cream);
+  box-shadow: 0 0 6px rgba(232, 228, 220, 0.4);
 }
 
-/* Force visibility (override host CSS) */
+/* Force visibility */
 .knob,
 .knob * {
   opacity: 1 !important;
@@ -379,13 +443,12 @@ button:active {
 
 .knob {
   display: block !important;
-  width: 96px !important;
-  height: 96px !important;
+  width: 80px !important;
+  height: 80px !important;
 }
 
 .dial {
   display: block !important;
-  background: radial-gradient(circle at 35% 30%, #cfe0d6 0%, #8fae9d 55%, #5f7d6a 100%) !important;
 }
 
 .rot {
@@ -396,21 +459,22 @@ button:active {
 
 .indicator {
   display: block !important;
-  background: #3f5f4e !important;
 }
 
 /* ===== SECTIONS ===== */
 .section {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid rgba(95, 125, 106, .22);
+  border-top: 1px solid var(--border);
 }
 
 .sectionTitle {
-  font-weight: 800;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 11px;
   margin: 0 0 10px;
-  color: var(--text);
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .advGrid {
@@ -437,37 +501,39 @@ button:active {
 .rampSection {
   margin-top: 14px;
   padding: 14px;
-  border: 1px solid rgba(95, 125, 106, .24);
+  border: 1px solid var(--border);
   border-radius: 18px;
-  background: linear-gradient(135deg, rgba(207, 224, 214, .15), rgba(207, 224, 214, .35));
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .rampHeader {
-  font-weight: 800;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 11px;
   margin: 0 0 12px;
-  color: var(--text);
+  color: var(--cream);
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   user-select: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .rampCollapseBtn {
-  font-size: 11px;
-  color: var(--muted);
+  font-size: 10px;
+  color: var(--cream-muted);
   font-weight: 600;
   padding: 4px 8px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, .6);
-  border: 1px solid rgba(95, 125, 106, .2);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-light);
   transition: all 0.2s;
 }
 
 .rampCollapseBtn:hover {
-  background: rgba(255, 255, 255, .9);
-  border-color: rgba(95, 125, 106, .35);
+  background: var(--sage-darker);
+  border-color: var(--sage);
 }
 
 .rampControls {
@@ -501,22 +567,22 @@ button:active {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(95, 125, 106, .22);
-  background: rgba(255, 255, 255, .85);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
   font-size: 12px;
-  color: var(--text);
+  color: var(--cream-muted);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .rampToggle:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(95, 125, 106, .35);
+  background: rgba(0, 0, 0, 0.4);
+  border-color: var(--sage);
 }
 
 .rampToggle input[type="checkbox"] {
-  accent-color: var(--green);
+  accent-color: var(--yellow);
   transform: scale(1.1);
 }
 
@@ -525,18 +591,18 @@ button:active {
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(95, 125, 106, .28);
-  background: rgba(255, 255, 255, .9);
-  font-size: 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text);
+  color: var(--cream-muted);
   cursor: pointer;
   white-space: nowrap;
 }
 
 .rampEnabled input[type="checkbox"] {
-  accent-color: var(--green);
+  accent-color: var(--yellow);
   transform: scale(1.2);
 }
 
@@ -547,18 +613,20 @@ button:active {
 }
 
 .rampSliderLabel {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--text);
+  color: var(--cream-muted);
   display: flex;
   justify-content: space-between;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .rampSlider {
   width: 100%;
-  height: 8px;
-  border-radius: 4px;
-  background: linear-gradient(to right, rgba(95, 125, 106, .2), var(--green));
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--sage-darker), var(--sage));
   outline: none;
   -webkit-appearance: none;
 }
@@ -566,21 +634,21 @@ button:active {
 .rampSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: var(--green);
+  background: var(--cream);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .rampSlider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: var(--green);
+  background: var(--cream);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   border: none;
 }
 
@@ -598,22 +666,22 @@ button:active {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(95, 125, 106, .22);
-  background: rgba(255, 255, 255, .85);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
   font-size: 12px;
-  color: var(--text);
+  color: var(--cream-muted);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .stereoToggle:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(95, 125, 106, .35);
+  background: var(--bg-elevated);
+  border-color: var(--sage);
 }
 
 .stereoToggle input[type="checkbox"] {
-  accent-color: var(--green);
+  accent-color: var(--yellow);
   transform: scale(1.1);
 }
 
@@ -624,19 +692,24 @@ button:active {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 12px;
-  border: 1px solid rgba(95, 125, 106, .22);
-  border-radius: 14px;
-  background: rgba(207, 224, 214, .28);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-input);
 }
 
 .dipRow label {
-  font-size: 13px;
-  color: var(--text);
+  font-size: 12px;
+  color: var(--cream-muted);
 }
 
 .dipRow input[type="checkbox"] {
-  accent-color: var(--green);
+  accent-color: var(--yellow);
   transform: scale(1.15);
+}
+
+.dipRow select {
+  flex: 1;
+  min-width: 120px;
 }
 
 #otherGrid {
@@ -670,6 +743,7 @@ button:active {
 .card .topbar {
   border-radius: 14px;
   margin: 0 0 12px;
+  background: var(--bg-elevated);
 }
 
 /* ===== BUILD BADGE ===== */
@@ -678,12 +752,12 @@ button:active {
   bottom: 10px;
   right: 10px;
   z-index: 999999;
-  background: #000;
-  color: #fff;
-  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--cream-muted);
+  padding: 6px 10px;
   border-radius: 8px;
-  font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  opacity: .85;
+  font: 11px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  border: 1px solid var(--border-light);
 }
 
 /* ===== MODALS ===== */
@@ -693,28 +767,28 @@ button:active {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, .85);
+  background: rgba(0, 0, 0, 0.9);
   z-index: 999999;
   display: none;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   padding: 20px;
 }
 
 #pmContent {
-  background: #fff;
+  background: var(--bg-card);
   width: 100%;
   max-width: 760px;
   height: 90vh;
   max-height: 800px;
-  border-radius: 28px;
-  padding: 28px;
+  border-radius: 24px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
   border: 1px solid var(--border);
-  color: #333;
+  color: var(--cream);
   position: relative;
   overflow: hidden;
 }
@@ -722,10 +796,10 @@ button:active {
 .pmTableContainer {
   flex: 1;
   overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
   margin: 16px 0;
-  background: #fafafa;
+  background: var(--bg-input);
 }
 
 .pmTable {
@@ -737,15 +811,15 @@ button:active {
 .pmTable th {
   position: sticky;
   top: 0;
-  background: #f4f6f5;
+  background: var(--bg-elevated);
   padding: 14px 10px;
   text-align: center;
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--muted);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+  color: var(--cream-muted);
+  border-bottom: 1px solid var(--border);
   z-index: 10;
 }
 
@@ -755,21 +829,21 @@ button:active {
 
 .pmTable td {
   padding: 0 10px;
-  height: 52px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  height: 48px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .pmTable tr:hover {
-  background: #fff;
+  background: rgba(95, 125, 106, 0.1);
 }
 
 .pmRowActive {
-  background: rgba(26, 115, 232, 0.08) !important;
-  box-shadow: inset 4px 0 0 var(--green);
+  background: rgba(197, 217, 78, 0.1) !important;
+  box-shadow: inset 4px 0 0 var(--yellow);
 }
 
 .pmRowActive .pmIndex {
-  color: var(--green);
+  color: var(--yellow);
   font-weight: 800;
 }
 
@@ -805,25 +879,33 @@ button:active {
 
 .pmIndex {
   font-weight: 600;
-  color: #aaa;
+  color: var(--cream-muted);
   font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 
 .pmName {
   width: 100%;
-  height: 36px;
+  height: 34px;
   padding: 0 12px;
-  border-radius: 9px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  border: 1px solid var(--border);
   font-size: 13px;
-  background: #fff;
+  background: var(--bg-input);
+  color: var(--cream);
+}
+
+.pmName::placeholder {
+  color: var(--cream-muted);
+  opacity: 0.5;
 }
 
 .pmOccupied {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
   margin: 0;
+  accent-color: var(--yellow);
 }
 
 .pmActionCell {
@@ -835,50 +917,61 @@ button:active {
 
 .pmBtn {
   padding: 0 14px;
-  height: 36px;
-  line-height: 36px;
-  border-radius: 9px;
+  height: 34px;
+  line-height: 34px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 11px;
-  transition: all 0.2s;
+  transition: all 0.15s;
   display: inline-block;
 }
 
 .pmBtn.primary {
-  background: var(--green);
-  color: #fff;
+  background: linear-gradient(180deg, var(--yellow), var(--yellow-muted));
+  color: #1a1f1c;
+}
+
+.pmBtn.primary:hover {
+  filter: brightness(1.1);
 }
 
 .pmBtn.secondary {
-  background: #f0f2f1;
-  color: #555;
+  background: var(--bg-elevated);
+  color: var(--cream-muted);
+  border: 1px solid var(--border);
+}
+
+.pmBtn.secondary:hover {
+  background: var(--sage-darker);
+  color: var(--cream);
 }
 
 .pmBtn:hover {
-  filter: brightness(0.95);
   transform: translateY(-1px);
 }
 
 .pmBtn:active {
-  transform: scale(0.96);
+  transform: scale(0.98);
 }
 
 /* ===== LABELS ===== */
 .modLabel {
-  font-size: 12px;
-  color: rgba(63, 95, 78, 0.72);
+  font-size: 10px;
+  color: var(--cream-muted);
   line-height: 1;
   pointer-events: none;
   font-weight: 500;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .subLabel {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--green);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--yellow);
   text-transform: uppercase;
   margin-bottom: 2px;
   height: 12px;
@@ -886,6 +979,7 @@ button:active {
   text-align: center;
   width: 100%;
   pointer-events: none;
+  letter-spacing: 0.05em;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -910,4 +1004,33 @@ button:active {
   .rampEnabled {
     justify-content: center;
   }
+
+  .topbar {
+    justify-content: center;
+  }
+
+  .tbGroup {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-input);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sage-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sage);
 }

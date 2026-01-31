@@ -6,16 +6,22 @@
   --sage: #5f7d6a;
   --sage-dark: #4a6354;
   --sage-darker: #3a4f43;
-  --cream: #e8e4dc;
+  --cream: #e8e4dcf0;
   --cream-muted: rgba(232, 228, 220, 0.7);
   --yellow: #c5d94e;
-  --yellow-muted: rgba(197, 217, 78, 0.6);
+  --yellow-muted: #9DAA52;
+  /* Opaque muted yellow */
+  --green-muted: #7DA37B;
+  /* Opaque muted green */
+  /* Light green tint for left column */
 
   /* Dark mode backgrounds */
   --bg: #1a1f1c;
   --bg-elevated: #242a27;
   --bg-card: #2a322e;
   --bg-input: #1e2522;
+  --bg-red: #241a1a;
+  /* Muted red for MIDI disabled state */
 
   /* Semantic colors */
   --text: var(--cream);
@@ -38,28 +44,39 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  transition: background 0.8s ease;
+  /* Smooth transition for status change */
+}
+
+body.midi-disabled {
+  background: var(--bg-red);
 }
 
 /* ===== TOPBAR ===== */
 .topbar {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px 12px;
+  /* Tighter gaps */
   align-items: center;
-  padding: 10px 12px;
+  padding: 6px 12px;
+  /* Slimmer top/bottom padding */
   background: rgba(36, 42, 39, 0.95);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(12px);
   justify-content: space-between;
+  /* Better distribution */
 }
 
 .tbGroup {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  /* Tightened from 6px */
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .sep {
@@ -114,8 +131,11 @@ body {
 /* ===== BUTTONS & INPUTS ===== */
 select,
 button {
-  padding: 8px 10px;
-  border-radius: 10px;
+  padding: 6px 10px;
+  /* Slimmer button */
+  font-size: 11px;
+  /* Smaller font for topbar items */
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: linear-gradient(180deg, var(--sage-dark), var(--sage-darker));
   color: var(--cream);
@@ -127,6 +147,24 @@ button {
 
 select {
   background: var(--bg-input);
+  max-width: 120px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#midiSelect {
+  max-width: 140px;
+}
+
+#slotSelect {
+  max-width: 80px;
+}
+
+#btnEnableMIDI {
+  width: 100px;
+  /* Fixed width to prevent shift */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 select:disabled,
@@ -400,6 +438,7 @@ button:active:not(:disabled) {
 }
 
 /* ===== KNOB ELEMENT ===== */
+/* ===== KNOB ELEMENT (Hardware Style) ===== */
 .knob {
   width: 80px;
   height: 80px;
@@ -407,50 +446,135 @@ button:active:not(:disabled) {
   cursor: ns-resize;
   user-select: none;
   position: relative;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  /* Knurled edge effect */
+  background: conic-gradient(from 0deg,
+      #1a1a1a 0%, #333 2%, #1a1a1a 4%,
+      #1a1a1a 100%);
+  background-size: 8% 8%;
+  /* Repeat for knurling */
+  border: 1px solid #000;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    inset 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
 .dial {
-  width: 100%;
-  height: 100%;
-  border-radius: 999px;
-  background: radial-gradient(circle at 35% 30%, #3a3a3a 0%, #1a1a1a 60%, #0a0a0a 100%);
-  border: 2px solid rgba(80, 80, 80, 0.5);
-  box-shadow:
-    inset 0 2px 8px rgba(255, 255, 255, 0.1),
-    inset 0 -8px 16px rgba(0, 0, 0, 0.4);
-  position: relative;
-}
-
-.dialCenter {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  transform: translate(-50%, -50%);
+  inset: 4px;
+  /* Recessed ring look */
   border-radius: 999px;
-  background: rgba(60, 60, 60, 0.8);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  background: #111;
+  border: 2px solid #222;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .rot {
   position: absolute;
   inset: 0;
   transform-origin: 50% 50%;
-  z-index: 2;
+  z-index: 5;
 }
 
 .indicator {
   position: absolute;
   left: 50%;
-  top: 8px;
-  width: 3px;
-  height: 18px;
+  /* Start from center by offsetting half-width */
+  bottom: calc(50% - 0px);
+  width: 4px;
+  height: 50%;
+  /* Length */
   transform: translateX(-50%);
-  border-radius: 2px;
+  border-radius: 999px;
+  /* Fully rounded */
   background: var(--cream);
-  box-shadow: 0 0 6px rgba(232, 228, 220, 0.4);
+  box-shadow: 0 0 3px rgba(232, 228, 220, 0.346);
+}
+
+/* Removed separate center hub ::after */
+
+.ind-left {
+  background: var(--green-muted);
+  box-shadow: 0 0 3px var(--green-muted);
+}
+
+.ind-right {
+  background: var(--yellow-muted);
+  box-shadow: 0 0 3px var(--yellow-muted);
+}
+
+/* Knob Container for Arcs */
+.knobContainer {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modifyArc {
+  position: absolute;
+  inset: -10px;
+  z-index: 0;
+  pointer-events: none;
+  transform: translateY(2px);
+  /* Visual center correction */
+}
+
+.modifyArc svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Label Area Styling */
+.labelArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  margin-top: 4px;
+  text-align: center;
+  width: 100%;
+}
+
+.miniControls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+}
+
+.miniRampLabel {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--yellow);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.miniCheck {
+  transform: scale(0.7);
+  margin: 0;
+  accent-color: var(--yellow);
+}
+
+.lockIconBtnMini {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.3;
+  filter: grayscale(1);
+  transition: all 0.2s;
+  box-shadow: none;
+}
+
+.lockIconBtnMini.locked {
+  opacity: 1;
+  filter: grayscale(0);
 }
 
 /* Force visibility */
@@ -519,10 +643,20 @@ button:active:not(:disabled) {
 /* ===== RAMP SECTION ===== */
 .rampSection {
   margin-top: 14px;
-  padding: 14px;
+  padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 18px;
   background: rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+  /* Added significant margin below ramp section */
+}
+
+.rampSection:has(.collapsed) {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-top: 8px;
+  margin-bottom: 10px;
 }
 
 .rampHeader {
@@ -537,6 +671,10 @@ button:active:not(:disabled) {
   user-select: none;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.rampHeader:has(+ .collapsed) {
+  margin-bottom: 0;
 }
 
 .rampCollapseBtn {
@@ -1080,9 +1218,12 @@ button:active:not(:disabled) {
   }
 
   .indicator {
-    top: 4px;
-    height: 12px;
+    /* Start from center by offsetting half-width */
+    bottom: calc(50% - 0px);
     width: 2px;
+    height: 50%;
+    transform: translateX(-50%);
+    border-radius: 999px;
   }
 
   .dialCenter {
@@ -1156,12 +1297,50 @@ button:active:not(:disabled) {
     font-size: 10px;
   }
 
-  .lockIconBtn {
-    font-size: 12px;
+  .knob {
+    width: 60px !important;
+    height: 60px !important;
   }
 
-  .rampToggleInline {
+  .knobContainer {
+    width: 80px;
+    height: 80px;
+  }
+
+  .dial {
+    inset: 3px;
+  }
+
+  .dialCenter {
+    inset: 10px;
+  }
+
+  .indicator {
+    /* Start from center by offsetting half-width */
+    bottom: calc(50% - 0px);
+    width: 4px;
+    height: 50%;
+    transform: translateX(-50%);
+    border-radius: 999px;
+  }
+
+  .kLabel {
+    font-size: 10px;
+  }
+
+  .subLabel {
+    font-size: 8px;
+  }
+
+  .valueRow {
     font-size: 9px;
+  }
+
+  /* Compact layout fixes */
+  .rampToggleInline,
+  .lockIconBtn {
+    display: none;
+    /* Merged into label area */
   }
 
   #otherGrid {
@@ -1179,4 +1358,33 @@ button:active:not(:disabled) {
     display: none;
     /* Hide on desktop */
   }
+}
+
+/* Reorganized Knob Layout - Global */
+.rampTopRight {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+/* Ensure knobBlock is relative for absolute positioning */
+.knobBlock {
+  position: relative !important;
+}
+
+.inlineLock {
+  margin-left: 4px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  display: inline-block;
+}
+
+/* Consistent spacing for labels */
+.labelArea {
+  margin-top: 8px !important;
 }

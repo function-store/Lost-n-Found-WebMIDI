@@ -82,6 +82,20 @@ class StateService {
     this.scheduleSave();
   }
 
+  unlockAllKnobs(): void {
+    this.lockedKnobs.clear();
+    // Update all UI controls that have a lockIcon
+    this.uiControls.forEach((control) => {
+      if (control.lockIcon) {
+        control.lockIcon.innerHTML = '🔓';
+        control.lockIcon.classList.remove('locked');
+      }
+    });
+    // Special handling for Mix knob dependency in Lost+Found
+    this.set(55, 0);
+    this.scheduleSave();
+  }
+
   getLockedKnobs(): CCNumber[] {
     return Array.from(this.lockedKnobs);
   }

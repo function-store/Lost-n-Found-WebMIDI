@@ -50,8 +50,12 @@ export type UIControlType = 'knob' | 'modify' | 'tri' | 'dip' | 'other' | 'slide
 export interface UIControl {
   type: UIControlType;
   set: (value: MIDIValue) => void;
-  labels?: { L: HTMLElement; R: HTMLElement };
+  arcLabels?: {
+    A1: SVGTextElement; A2: SVGTextElement;
+    B1: SVGTextElement; B2: SVGTextElement
+  };
   subLabel?: HTMLElement;
+  lockIcon?: HTMLElement;
 }
 
 // Tri-state block (effect selectors, routing)

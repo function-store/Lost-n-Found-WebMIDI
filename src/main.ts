@@ -27,8 +27,18 @@ function init(): void {
   stateService.load();
   updateReadout();
   initSlots();
+  updateMidiStatusUI();
+
+  midiService.setOnStateChange(() => {
+    updateMidiStatusUI();
+  });
 
   console.log('[Lost+Found Editor] Ready');
+}
+
+function updateMidiStatusUI(): void {
+  const isEnabled = midiService.isEnabled;
+  document.body.classList.toggle('midi-disabled', !isEnabled);
 }
 
 // Build the main UI
@@ -63,6 +73,7 @@ function buildUI(): void {
       label: knob.label,
       cc: knob.cc,
       kind: knob.kind as KnobKind,
+      column: knob.column, // Pass column for styling
       onUpdateReadout: updateReadout,
     }, knobGrid);
   });
@@ -253,7 +264,7 @@ function updateReadout(): void {
   const R_NAMES = rSwap ? EFFECTS.rightSwappedFamilies : EFFECTS.rightFamilies;
 
   const leftPos = triPosFromValue(21, stateService.get(21));
-  const routePos = triPosFromValue(22, stateService.get(22));
+  triPosFromValue(22, stateService.get(22));
   const rightPos = triPosFromValue(23, stateService.get(23));
 
   const leftAB = getVariantFromModify(stateService.get(17));
@@ -262,44 +273,41 @@ function updateReadout(): void {
   const leftFamily = L_NAMES[leftPos];
   const rightFamily = R_NAMES[rightPos];
 
-  const leftSet = lSwap ? EFFECTS.rightEffects : EFFECTS.leftEffects;
-  const rightSet = rSwap ? EFFECTS.leftEffects : EFFECTS.rightEffects;
+  // Families/sets not needed anymore for readout
 
-  const left = leftSet[leftPos];
-  const right = rightSet[rightPos];
 
-  const leftLabel = leftAB === 'NONE'
-    ? `${leftFamily} — NONE`
-    : `${leftFamily} ${leftAB} — ${left[leftAB as 'A' | 'B']}`;
 
-  const rightLabel = rightAB === 'NONE'
-    ? `${rightFamily} — NONE`
-    : `${rightFamily} ${rightAB} — ${right[rightAB as 'A' | 'B']}`;
-
-  const el = document.getElementById('modeReadout');
-  if (el) {
-    el.textContent = `Selected: ${leftLabel} • Routing: ${EFFECTS.routing[routePos]} • ${rightLabel}`;
-  }
 
   // Update Modify Knob Labels
   const modifyLabels = EFFECTS.modifyLabels as Record<string, string[]>;
+  const effectDetails = EFFECTS.effectDetails as Record<string, { A: { time: string; modify: string; alt: string }; B: { time: string; modify: string; alt: string } }>;
+
   const lLabels = modifyLabels[leftFamily] || ['', ''];
   const rLabels = modifyLabels[rightFamily] || ['', ''];
+  const lDetails = effectDetails[leftFamily] || { A: { modify: '' }, B: { modify: '' } };
+  const rDetails = effectDetails[rightFamily] || { A: { modify: '' }, B: { modify: '' } };
 
   const lModifyControl = stateService.getControl(17);
   const rModifyControl = stateService.getControl(19);
 
-  if (lModifyControl?.labels) {
-    lModifyControl.labels.L.textContent = lLabels[0];
-    lModifyControl.labels.R.textContent = lLabels[1];
-  }
-  if (rModifyControl?.labels) {
-    rModifyControl.labels.L.textContent = rLabels[0];
-    rModifyControl.labels.R.textContent = rLabels[1];
+  // Left Modify Knob Arcs
+  if (lModifyControl?.arcLabels) {
+    lModifyControl.arcLabels.A1.textContent = lLabels[0];
+    lModifyControl.arcLabels.A2.textContent = lDetails.A.modify;
+    lModifyControl.arcLabels.B1.textContent = lLabels[1];
+    lModifyControl.arcLabels.B2.textContent = lDetails.B.modify;
   }
 
+  // Right Modify Knob Arcs
+  if (rModifyControl?.arcLabels) {
+    rModifyControl.arcLabels.A1.textContent = rLabels[0];
+    rModifyControl.arcLabels.A2.textContent = rDetails.A.modify;
+    rModifyControl.arcLabels.B1.textContent = rLabels[1];
+    rModifyControl.arcLabels.B2.textContent = rDetails.B.modify;
+  }
+
+
   // Update effect-specific sub-labels
-  const effectDetails = EFFECTS.effectDetails as Record<string, { A: { time: string; modify: string; alt: string }; B: { time: string; modify: string; alt: string } }>;
   const lDetail = effectDetails[leftFamily]?.[leftAB === 'B' ? 'B' : 'A'];
   const rDetail = effectDetails[rightFamily]?.[rightAB === 'B' ? 'B' : 'A'];
 
@@ -348,6 +356,10 @@ function setupEventListeners(): void {
     const inclRamp = (document.getElementById('chkInclRamp') as HTMLInputElement)?.checked ?? false;
     randomizerService.randomizeKnobs(inclRamp);
     updateReadout();
+  });
+
+  document.getElementById('btnUnlockAll')?.addEventListener('click', () => {
+    stateService.unlockAllKnobs();
   });
 
   // Include Ramp checkbox

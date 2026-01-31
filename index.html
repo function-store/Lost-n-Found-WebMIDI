@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lost + Found — MIDI Editor</title>
   <meta name="description" content="MIDI Editor for Chase Bliss Lost + Found pedal">
 </head>
+
 <body>
   <div id="buildBadge">BUILD: v2.0.0 • TypeScript</div>
 
@@ -42,6 +44,8 @@
             <input id="chkInclRamp" type="checkbox">
             <span>+Ramp</span>
           </label>
+          <span id="btnUnlockAll" title="Unlock All Knobs"
+            style="cursor: pointer; margin-left: 6px; font-size: 16px; user-select: none;">🔓</span>
         </div>
 
         <!-- Group: Presets -->
@@ -55,17 +59,21 @@
             <button id="btnRecall">Recall</button>
             <button id="btnStore">Store</button>
           </div>
-          <button id="btnShowManager" title="Open Preset Manager" style="padding: 5px 10px; font-size: 11px;">Manage</button>
+          <button id="btnShowManager" title="Open Preset Manager"
+            style="padding: 5px 10px; font-size: 11px;">Manage</button>
         </div>
 
         <!-- Group: File & Warning -->
         <div class="tbGroup">
           <button id="btnExportPreset" title="Export Pattern to File">Export</button>
           <button id="btnImportPreset" title="Import Pattern from File">Import</button>
-          <button id="btnPushOnly" title="Send Settings to Pedal" style="margin-left: 4px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 8px;">Push</button>
+          <button id="btnPushOnly" title="Send Settings to Pedal"
+            style="margin-left: 4px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 8px;">Push</button>
           <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
 
-          <div style="font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 4px; border-left: 1px solid rgba(95,125,106,0.3); padding-left: 8px; margin-left: 4px; opacity: 0.8;" title="This editor is one-way (Unidirectional). Changes made on physical hardware knobs are NOT reflected here and will NOT be exported.">
+          <div
+            style="font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 4px; border-left: 1px solid rgba(95,125,106,0.3); padding-left: 8px; margin-left: 4px; opacity: 0.8;"
+            title="This editor is one-way (Unidirectional). Changes made on physical hardware knobs are NOT reflected here and will NOT be exported.">
             <span>⚠️</span>
             <span style="font-weight: 600;">Editor State Only</span>
           </div>
@@ -73,12 +81,15 @@
       </div>
 
       <!-- Name Modal -->
-      <div id="nameModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999999; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
+      <div id="nameModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999999; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
         <div class="card" style="width:300px; padding:20px; display:flex; flex-direction:column; gap:12px;">
           <h3 style="margin:0; font-size:16px;">Preset Name</h3>
-          <input type="text" id="customNameInput" style="padding:8px; border-radius:8px; border:1px solid var(--border);" placeholder="Enter name...">
+          <input type="text" id="customNameInput"
+            style="padding:8px; border-radius:8px; border:1px solid var(--border);" placeholder="Enter name...">
           <div style="display:flex; justify-content:flex-end; gap:8px;">
-            <button class="pmBtn secondary" onclick="document.getElementById('nameModal').style.display='none'">Cancel</button>
+            <button class="pmBtn secondary"
+              onclick="document.getElementById('nameModal').style.display='none'">Cancel</button>
             <button class="pmBtn primary" id="btnConfirmName">Save</button>
           </div>
         </div>
@@ -88,7 +99,6 @@
       <div class="pedal">
         <!-- Effect Toggles -->
         <div class="toggleRow" id="toggleRow"></div>
-        <div class="readout" id="modeReadout">Selected: —</div>
 
         <!-- Ramping Control Section -->
         <div class="rampSection">
@@ -99,7 +109,7 @@
           <div class="rampControls collapsed" id="rampControls">
             <div class="rampToggles" id="rampToggles"></div>
             <div class="rampSliderWrap" id="rampSliderWrap"></div>
-            <label class="rampEnabled" id="rampEnabledWrap"></label>
+            <label class="rampToggle" id="rampEnabledWrap"></label>
           </div>
         </div>
 
@@ -130,12 +140,15 @@
   <!-- Preset Manager Modal -->
   <div id="pmModal">
     <div id="pmContent">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-shrink: 0; margin-bottom: 8px;">
+      <div
+        style="display:flex; justify-content:space-between; align-items:flex-start; flex-shrink: 0; margin-bottom: 8px;">
         <div>
           <h3 style="margin:0; font-size:18px; font-weight:800; color: var(--text);">Manage Presets</h3>
-          <p style="font-size: 11px; color: #777; margin: 4px 0 0;">Library backup includes names and [x] status. It does not include knob values.</p>
+          <p style="font-size: 11px; color: #777; margin: 4px 0 0;">Library backup includes names and [x] status. It
+            does not include knob values.</p>
         </div>
-        <button class="pmBtn secondary" style="padding: 4px 10px; border-radius: 8px; font-size: 14px;" onclick="document.getElementById('pmModal').style.display='none'">✕</button>
+        <button class="pmBtn secondary" style="padding: 4px 10px; border-radius: 8px; font-size: 14px;"
+          onclick="document.getElementById('pmModal').style.display='none'">✕</button>
       </div>
 
       <div class="pmTableContainer">
@@ -152,13 +165,15 @@
         </table>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; padding-top:16px; margin-top:auto; flex-shrink: 0;">
+      <div
+        style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; padding-top:16px; margin-top:auto; flex-shrink: 0;">
         <div style="display:flex; gap:8px;">
           <button id="btnExportMeta" class="pmBtn secondary">Export Library</button>
           <button id="btnImportMeta" class="pmBtn secondary">Import Library</button>
         </div>
         <div style="display:flex; gap:8px;">
-          <button class="pmBtn secondary" onclick="document.getElementById('pmModal').style.display='none'">Cancel</button>
+          <button class="pmBtn secondary"
+            onclick="document.getElementById('pmModal').style.display='none'">Cancel</button>
           <button id="btnSaveManager" class="pmBtn primary">Save All Changes</button>
         </div>
       </div>
@@ -168,4 +183,5 @@
 
   <script type="module" src="/src/main.ts"></script>
 </body>
+
 </html>

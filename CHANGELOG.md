@@ -2,6 +2,28 @@
 
 All notable changes to the **Lost+Found** MIDI Editor since the initial repository commit.
 
+## [1.2.0] - 2026-01-31 (UI Refine & Deep Randomization)
+### Added
+- **Smart Randomization**:
+  - NEW: `+Ramp` option allows conditional randomization of Ramping engine (Speed, Enables, Bounce/Sweep/Polarity).
+  - NEW: `randomizeAll` now includes FX Types, Routing mode, and Swap toggles.
+  - NEW: Explicit exclusions for settings protection (Latch, Trails, Bank, Clock, Stereo).
+- **Advanced Locking**: Use "Lock" checkboxes on middle-column knobs (Mix, Blend, Spill, Glue, Master Wet) to protect them from randomization.
+- **Improved Workflow**:
+  - `Sync` Button: One-click "Push to Pedal" ensuring hardware matches editor state without saving.
+  - One-way Warning badge in topbar to clarify editor-vs-hardware state.
+
+### Changed
+- **UI Layout Overhaul**:
+  - **Top Bar**: Cleaned up into logical Segmented Control groups (MIDI, Random, Preset, File).
+  - **Section Layout**: Moved "Stereo" and "Clock / Tempo" side-by-side for a concise view.
+  - **Rebranding**: Renamed "MIDI / Other" -> "Clock / Tempo", "DIP switches" -> "Settings".
+  - Moved "Manage" button to Preset group for better access.
+- **Control Organization**:
+  - Moved "Unsync" control to "Clock / Tempo" section.
+  - Removed redundant "Randomize Hidden" button (functionality merged into Randomize All).
+- **Fixes**: Correctly mapped individual Ramp Destination CCs (61-65) for precise randomization.
+
 ## [1.1.0] - 2026-01-31
 ### Added
 - **Advanced Preset Manager**:

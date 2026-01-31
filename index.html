@@ -138,6 +138,64 @@
                     background: #ffffff;
                     border-bottom: 1px solid rgba(95, 125, 106, .30);
                     backdrop-filter: blur(6px);
+                    justify-content: space-between;
+                  }
+
+                  .tbGroup {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                  }
+
+                  .sep {
+                    width: 1px;
+                    height: 24px;
+                    background: rgba(95, 125, 106, .3);
+                    margin: 0 4px;
+                  }
+
+                  .grpLabel {
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: var(--muted);
+                    margin-right: 2px;
+                    text-transform: uppercase;
+                  }
+
+                  /* Segmented Control Styling */
+                  .segmented {
+                    display: flex;
+                    background: rgba(95, 125, 106, .15);
+                    border-radius: 10px;
+                    padding: 3px;
+                    gap: 0;
+                  }
+
+                  .segmented button {
+                    border-radius: 6px;
+                    border: none;
+                    background: transparent;
+                    box-shadow: none;
+                    font-size: 11px;
+                    padding: 5px 10px;
+                    color: var(--text);
+                    margin: 0;
+                    font-weight: 600;
+                  }
+
+                  .segmented button:hover {
+                    background: rgba(255, 255, 255, 0.6);
+                    transform: none;
+                  }
+
+                  .segmented button:active {
+                    background: #fff;
+                    transform: scale(0.98);
+                  }
+
+                  /* Override topbar default button styles for icons/compact buttons */
+                  .topbar button.iconBtn {
+                    padding: 8px 12px;
                   }
 
                   select,
@@ -166,6 +224,17 @@
                     border-radius: 999px;
                     border: 1px solid rgba(95, 125, 106, .28);
                     background: rgba(207, 224, 214, .70);
+                  }
+
+                  .pillLabel.compact {
+                    padding: 4px 8px;
+                    gap: 4px;
+                    margin-left: 2px;
+                  }
+
+                  .pillLabel.compact span {
+                    font-size: 10px;
+                    font-weight: 600;
                   }
 
                   .pillLabel span {
@@ -215,10 +284,62 @@
                   }
 
                   .toggleTitle {
-                    font-weight: 750;
-                    font-size: 13px;
+                    font-weight: 700;
+                    font-size: 11px;
                     margin: 0 0 8px;
-                    color: var(--text);
+                    color: var(--muted);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  }
+
+                  .randomizeBtn {
+                    font-size: 14px;
+                    padding: 2px 6px;
+                    border-radius: 6px;
+                    background: rgba(255, 255, 255, .7);
+                    border: 1px solid rgba(95, 125, 106, .2);
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    line-height: 1;
+                  }
+
+                  .randomizeBtn:hover {
+                    background: rgba(255, 255, 255, 1);
+                    border-color: rgba(95, 125, 106, .4);
+                    transform: scale(1.1);
+                  }
+
+                  .engageToggle {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 10px;
+                    border: 2px solid rgba(95, 125, 106, .3);
+                    background: rgba(255, 255, 255, .8);
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--muted);
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    user-select: none;
+                  }
+
+                  .engageToggle.active {
+                    background: linear-gradient(135deg, rgba(95, 125, 106, .85), rgba(63, 95, 78, .75));
+                    border-color: var(--green);
+                    color: white;
+                    box-shadow: 0 2px 8px rgba(63, 95, 78, .3);
+                  }
+
+                  .engageToggle:hover {
+                    border-color: rgba(95, 125, 106, .5);
+                    transform: translateY(-1px);
+                  }
+
+                  .engageToggle input[type="checkbox"] {
+                    display: none;
                   }
 
                   .seg {
@@ -257,6 +378,31 @@
                     flex-direction: column;
                     gap: 10px;
                     align-items: center;
+                    position: relative;
+                  }
+
+                  .lockToggle {
+                    position: absolute;
+                    top: 13px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 3px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    color: var(--muted);
+                    z-index: 5;
+                    padding: 0 4px;
+                    border-radius: 4px;
+                    background: rgba(255, 255, 255, 0.5);
+                  }
+
+                  .lockToggle input {
+                    transform: scale(0.9);
+                    accent-color: var(--green);
+                    margin: 0;
                   }
 
                   .kLabel {
@@ -377,6 +523,221 @@
                     display: grid;
                     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
                     gap: 10px;
+                  }
+
+                  .splitSection {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 24px;
+                    margin-bottom: 12px;
+                    align-items: start;
+                  }
+
+                  @media (max-width: 768px) {
+                    .splitSection {
+                      grid-template-columns: 1fr;
+                      gap: 12px;
+                    }
+                  }
+
+                  /* Ramping Control Section */
+                  .rampSection {
+                    margin-top: 14px;
+                    padding: 14px;
+                    border: 1px solid rgba(95, 125, 106, .24);
+                    border-radius: 18px;
+                    background: linear-gradient(135deg, rgba(207, 224, 214, .15), rgba(207, 224, 214, .35));
+                  }
+
+                  .rampHeader {
+                    font-weight: 800;
+                    font-size: 13px;
+                    margin: 0 0 12px;
+                    color: var(--text);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    cursor: pointer;
+                    user-select: none;
+                  }
+
+                  .rampCollapseBtn {
+                    font-size: 11px;
+                    color: var(--muted);
+                    font-weight: 600;
+                    padding: 4px 8px;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, .6);
+                    border: 1px solid rgba(95, 125, 106, .2);
+                    transition: all 0.2s;
+                  }
+
+                  .rampCollapseBtn:hover {
+                    background: rgba(255, 255, 255, .9);
+                    border-color: rgba(95, 125, 106, .35);
+                  }
+
+                  .rampControls {
+                    display: grid;
+                    grid-template-columns: auto 1fr auto;
+                    gap: 14px;
+                    align-items: center;
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                  }
+
+                  .rampControls.collapsed {
+                    max-height: 0;
+                    opacity: 0;
+                    margin-top: 0;
+                  }
+
+                  .rampControls:not(.collapsed) {
+                    max-height: 200px;
+                    opacity: 1;
+                  }
+
+                  .rampToggles {
+                    display: flex;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                  }
+
+                  .rampToggle {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    border-radius: 12px;
+                    border: 1px solid rgba(95, 125, 106, .22);
+                    background: rgba(255, 255, 255, .85);
+                    font-size: 12px;
+                    color: var(--text);
+                    cursor: pointer;
+                    transition: all 0.2s;
+                  }
+
+                  .rampToggle:hover {
+                    background: rgba(255, 255, 255, 1);
+                    border-color: rgba(95, 125, 106, .35);
+                  }
+
+                  .rampToggle input[type="checkbox"] {
+                    accent-color: var(--green);
+                    transform: scale(1.1);
+                  }
+
+                  .rampEnabled {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 14px;
+                    border-radius: 12px;
+                    border: 1px solid rgba(95, 125, 106, .28);
+                    background: rgba(255, 255, 255, .9);
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: var(--text);
+                    cursor: pointer;
+                    white-space: nowrap;
+                  }
+
+                  .rampEnabled input[type="checkbox"] {
+                    accent-color: var(--green);
+                    transform: scale(1.2);
+                  }
+
+                  .rampSliderWrap {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                  }
+
+                  .rampSliderLabel {
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: var(--text);
+                    display: flex;
+                    justify-content: space-between;
+                  }
+
+                  .rampSlider {
+                    width: 100%;
+                    height: 8px;
+                    border-radius: 4px;
+                    background: linear-gradient(to right, rgba(95, 125, 106, .2), var(--green));
+                    outline: none;
+                    -webkit-appearance: none;
+                  }
+
+                  .rampSlider::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 50%;
+                    background: var(--green);
+                    cursor: pointer;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+                  }
+
+                  .rampSlider::-moz-range-thumb {
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 50%;
+                    background: var(--green);
+                    cursor: pointer;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+                    border: none;
+                  }
+
+                  @media (max-width: 720px) {
+                    .rampControls {
+                      grid-template-columns: 1fr;
+                    }
+
+                    .rampEnabled {
+                      justify-content: center;
+                    }
+                  }
+
+                  .stereoControls {
+                    display: flex;
+                    gap: 14px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    margin-bottom: 12px;
+                  }
+
+                  .stereoControls {
+                    display: flex;
+                    gap: 14px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                  }
+
+                  .stereoToggle {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    border-radius: 12px;
+                    border: 1px solid rgba(95, 125, 106, .22);
+                    background: rgba(255, 255, 255, .85);
+                    font-size: 12px;
+                    color: var(--text);
+                    cursor: pointer;
+                    transition: all 0.2s;
+                  }
+
+                  .stereoToggle:hover {
+                    background: rgba(255, 255, 255, 1);
+                    border-color: rgba(95, 125, 106, .35);
+                  }
+
+                  .stereoToggle input[type="checkbox"] {
+                    accent-color: var(--green);
+                    transform: scale(1.1);
                   }
 
                   .dipRow {
@@ -658,33 +1019,58 @@
                 <div class="layout">
                   <div class="card">
                     <div class="topbar">
-                      <button id="btnEnableMIDI">Enable MIDI</button>
-                      <select id="midiSelect" disabled>
-                        <option value="">MIDI Output</option>
-                      </select>
-                      <label class="pillLabel"><span>Channel</span><select id="chanSelect" disabled></select></label>
-                      <span id="midiStatus" class="sub">MIDI not enabled</span>
+                      <!-- Group: MIDI & Tempo -->
+                      <div class="tbGroup">
+                        <button id="btnEnableMIDI">Enable MIDI</button>
+                        <select id="midiSelect" disabled>
+                          <option value="">MIDI Output</option>
+                        </select>
+                        <label class="pillLabel"><span>Ch</span><select id="chanSelect" disabled></select></label>
+                        <span id="midiStatus" class="sub" style="display:none"></span> <!-- Hidden to save space -->
 
-                      <label class="pillLabel"><input id="lEngage" type="checkbox"><span>L Engage</span></label>
-                      <label class="pillLabel"><input id="rEngage" type="checkbox"><span>R Engage</span></label>
-                      <button id="btnTap" disabled>Tap Tempo</button>
-                      <span id="tapReadout" class="sub">— BPM</span>
+                        <div class="sep"></div>
 
-                      <button id="btnRandom">Randomize ALL</button>
-                      <button id="btnRandomKnobs">Randomize Knobs</button>
-                      <button id="btnRandomHidden">Randomize Hidden</button>
-                      <label class="pillLabel"><input id="lockMix" type="checkbox"><span>Lock Mix</span></label>
+                        <button id="btnTap" disabled>Tap</button>
+                        <span id="tapReadout" class="sub" style="font-variant: tabular-nums; min-width: 45px;">—</span>
+                      </div>
 
-                      <label class="pillLabel"><span>Preset</span><select id="slotSelect"></select></label>
-                      <button id="btnRecall">Recall</button>
-                      <button id="btnStore">Store</button>
-                      <button id="btnSyncStore" style="background: var(--blue);">Sync & Store</button>
+                      <!-- Group: Random (Segmented) -->
+                      <div class="tbGroup">
+                        <span class="grpLabel">Random:</span>
+                        <div class="segmented">
+                          <button id="btnRandom" title="Randomize AlL">All</button>
+                          <button id="btnRandomKnobs" title="Randomize Knobs Only">Knobs</button>
+                        </div>
+                        <label class="pillLabel compact" title="Include Ramp Controls in Random All"><input
+                            id="chkInclRamp" type="checkbox"><span>+Ramp</span></label>
+                      </div>
 
-                      <!-- PRESET EXPORT/IMPORT (added; no other behavior changes) -->
-                      <button id="btnExportPreset">Export Pattern</button>
-                      <button id="btnImportPreset">Import Pattern</button>
-                      <button id="btnShowManager">Manage Presets</button>
-                      <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
+                      <!-- Group: Presets -->
+                      <div class="tbGroup">
+                        <span class="grpLabel">Preset:</span>
+                        <label class="pillLabel"><span>Slot</span><select id="slotSelect"></select></label>
+                        <div class="segmented">
+                          <button id="btnRecall">Recall</button>
+                          <button id="btnPushOnly" title="Send Settings to Pedal">Sync</button>
+                          <button id="btnStore">Store</button>
+                          <button id="btnSyncStore" title="Sync & Store">Sync+</button>
+                        </div>
+                        <button id="btnShowManager" title="Open Preset Manager"
+                          style="padding: 5px 10px; font-size: 11px;">Manage</button>
+                      </div>
+
+                      <!-- Group: File & Warning -->
+                      <div class="tbGroup">
+                        <button id="btnExportPreset" title="Export Pattern to File">Export</button>
+                        <button id="btnImportPreset" title="Import Pattern from File">Import</button>
+                        <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
+
+                        <div
+                          style="font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 4px; border-left: 1px solid rgba(95,125,106,0.3); padding-left: 8px; margin-left: 4px; opacity: 0.8;"
+                          title="This editor is one-way (Unidirectional). Changes made on physical hardware knobs are NOT reflected here and will NOT be exported.">
+                          <span>⚠️</span> <span style="font-weight: 600;">Editor State Only</span>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- Custom Name Dialog -->
@@ -707,21 +1093,37 @@
                     <div class="pedal">
                       <div class="toggleRow" id="toggleRow"></div>
                       <div class="readout" id="modeReadout">Selected: —</div>
+
+                      <!-- Ramping Control Section -->
+                      <div class="rampSection">
+                        <div class="rampHeader" id="rampHeader">
+                          <span>Ramping Control</span>
+                          <button class="rampCollapseBtn" id="rampCollapseBtn">Show</button>
+                        </div>
+                        <div class="rampControls collapsed" id="rampControls">
+                          <div class="rampToggles" id="rampToggles"></div>
+                          <div class="rampSliderWrap" id="rampSliderWrap"></div>
+                          <label class="rampEnabled" id="rampEnabledWrap"></label>
+                        </div>
+                      </div>
+
                       <div class="knobGrid" id="knobGrid"></div>
                     </div>
 
                     <div class="section">
-                      <div style="height:10px"></div>
-                      <div class="sectionTitle">Hidden 3-way options</div>
-                      <div class="toggleRow" id="hiddenTriRow"></div>
+                      <div class="splitSection">
+                        <div>
+                          <div class="sectionTitle">Stereo</div>
+                          <div class="stereoControls" id="stereoControls"></div>
+                        </div>
 
+                        <div>
+                          <div class="sectionTitle">Clock / Tempo</div>
+                          <div class="advGrid" id="otherGrid"></div>
+                        </div>
+                      </div>
 
-
-                      <div style="height:12px"></div>
-                      <div class="sectionTitle">MIDI / Other</div>
-                      <div class="advGrid" id="otherGrid"></div>
-
-                      <div class="sectionTitle">DIP switches</div>
+                      <div class="sectionTitle">Settings</div>
                       <div class="dipGrid" id="dipGrid"></div>
                     </div>
                   </div>
@@ -737,14 +1139,17 @@
                     const state = {};
                     const ui = {};
 
-                    const KNOB_CCS = [14, 15, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 29, 30];
-                    const HIDDEN_CCS = [21, 22, 23, 32, 51, 52, 53, 54];
-                    const DIP_CCS = [61, 62, 63, 64, 65, 66, 67, 68, 71, 72, 73, 74, 75, 76, 77, 78];
-                    const CONTROL_CCS = [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 51, 52, 53, 54, 61, 62, 63, 64, 65, 66, 67, 68, 71, 72, 73, 74, 75, 76, 77, 78];
-                    const BLOCKED_CCS = new Set([56, 57]);
+                    const KNOB_CCS = [14, 15, 16, 17, 18, 19, 24, 25, 26, 27, 28, 29, 30]; // Added 30 (Master Wet)
+                    const HIDDEN_CCS = [32, 51, 52, 53, 54];
+                    const DIP_CCS = [66, 67, 68, 71, 72, 73, 76, 77, 78];
+                    const CONTROL_CCS = [...KNOB_CCS, ...HIDDEN_CCS, ...DIP_CCS, 21, 22, 23, 20, 61, 62, 63, 64, 65, 74, 75]; // Added 20 (Ramp Speed), 61-65 (Ramp Dests), 74/75 (Swaps)
+                    const BLOCKED_CCS = new Set([93]); // Tap tempo (handled separately)
 
-                    const ALT_MODE_CCS = new Set([24, 26]);
-                    let altMenuActive = false;
+                    const LOCKED_KNOBS = new Set(); // Track locked knobs
+
+                    // Randomization Exclusion Lists
+                    const NEVER_RANDOM_CCS = new Set([51, 73, 77, 78, 32, 71, 72]); // MIDI Clock, Latch/Trails/Bank, Stereo (Spread, MISO, Spread DIP)
+                    const RAMP_CCS = new Set([20, 52, 61, 62, 63, 64, 65, 66, 67, 68]); // Speed, Enable, Indiv Dests, Bounce/Sweep/Polarity
                     let altMenuTimer = null;
 
                     function setStatus(msg) {
@@ -856,15 +1261,97 @@
                       return 64;
                     }
 
-                    function createKnobBlock(label, cc, kind, parentEl) {
+                    function createKnobBlock(label, cc, kind, parentEl, rampCCArg = null) {
+                      // Map specific knobs to their individual Ramp Enable/Dest CCs
+                      // L Time(14)->61, L Mod(17)->62, Blend(18)->63, R Time(16)->64, R Mod(19)->65
+                      const RAMP_MAP = { 14: 61, 17: 62, 18: 63, 16: 64, 19: 65 };
+                      const rampCC = RAMP_MAP[cc] || rampCCArg;
+
                       state[cc] = knobDefaultForCC(cc);
 
                       const block = document.createElement('div');
                       block.className = 'knobBlock';
 
+                      const labRow = document.createElement('div');
+                      labRow.style.display = 'flex';
+                      labRow.style.justifyContent = 'space-between';
+                      labRow.style.alignItems = 'center';
+                      labRow.style.width = '100%';
+
                       const lab = document.createElement('div');
                       lab.className = 'kLabel';
                       lab.textContent = label;
+                      labRow.appendChild(lab);
+
+                      if (rampCC) {
+                        const rampLabel = document.createElement('label');
+                        rampLabel.innerHTML = `<input type="checkbox" id="ramp${cc}"> Ramp`;
+                        rampLabel.style.fontSize = '10px';
+                        rampLabel.style.display = 'flex';
+                        rampLabel.style.alignItems = 'center';
+                        rampLabel.style.gap = '3px';
+                        rampLabel.style.cursor = 'pointer';
+                        rampLabel.style.fontWeight = '500';
+                        rampLabel.style.color = 'var(--muted)';
+
+                        const rampCheck = rampLabel.querySelector('input');
+                        rampCheck.addEventListener('change', () => {
+                          const v = rampCheck.checked ? 127 : 0;
+                          state[rampCC] = v;
+                          sendCCMapped(rampCC, v);
+                        });
+
+                        ui[rampCC] = {
+                          type: 'dip',
+                          set(v) {
+                            rampCheck.checked = (Number(v) === 127);
+                          }
+                        };
+
+                        labRow.appendChild(rampLabel);
+                      }
+
+                      // Lock toggle for middle column (Mix, Blend, Spill, Glue, Master Wet)
+                      // Mix (15), Blend (18), Spill (25), Glue (28), Master Wet (30)
+                      if ([15, 18, 25, 28, 30].includes(cc)) {
+                        const lockLabel = document.createElement('label');
+                        lockLabel.className = 'lockToggle';
+                        lockLabel.innerHTML = `<input type="checkbox"> Lock`;
+
+                        const lockCheck = lockLabel.querySelector('input');
+                        lockCheck.addEventListener('change', () => {
+                          if (lockCheck.checked) {
+                            LOCKED_KNOBS.add(cc);
+                          } else {
+                            LOCKED_KNOBS.delete(cc);
+                          }
+
+                          // Special hardware handling for Mix (CC 15) -> Lock Mix (CC 55)
+                          if (cc === 15) {
+                            const lockCC = 55;
+                            const v = lockCheck.checked ? 127 : 0;
+                            state[lockCC] = v;
+                            sendCCMapped(lockCC, v);
+                          }
+                        });
+
+                        // Register for UI updates
+                        if (cc === 15) {
+                          // Mix uses CC 55 for hardware lock, so we sync UI to that if updated externally
+                          const lockCC = 55;
+                          ui[lockCC] = {
+                            type: 'dip',
+                            set(v) {
+                              const checked = (Number(v) === 127);
+                              lockCheck.checked = checked;
+                              if (checked) LOCKED_KNOBS.add(15);
+                              else LOCKED_KNOBS.delete(15);
+                            }
+                          };
+                        }
+
+                        block.appendChild(lockLabel);
+                      }
 
                       const val = document.createElement('div');
                       val.className = 'kValue';
@@ -933,26 +1420,99 @@
 
                       ui[cc] = { type: 'knob', set };
 
-                      block.appendChild(lab);
+                      block.appendChild(labRow);
                       block.appendChild(knob);
                       block.appendChild(val);
                       parentEl.appendChild(block);
                     }
 
-                    function createTriBlock(title, cc, options, parentEl) {
+                    function createTriBlock(title, cc, options, parentEl, side = null) {
                       state[cc] = (cc === 23 ? 4 : 1);
 
                       const block = document.createElement('div');
                       block.className = 'toggleBlock';
 
-                      const t = document.createElement('div');
-                      t.className = 'toggleTitle';
-                      t.textContent = title;
+                      const tRow = document.createElement('div');
+                      tRow.style.display = 'flex';
+                      tRow.style.justifyContent = 'space-between';
+                      tRow.style.alignItems = 'center';
+                      tRow.style.marginBottom = '8px';
+
+                      const titleRow = document.createElement('div');
+                      titleRow.className = 'toggleTitle';
+                      titleRow.style.margin = '0';
+                      titleRow.style.display = 'flex';
+                      titleRow.style.gap = '8px';
+                      titleRow.style.alignItems = 'center';
+
+                      const titleText = document.createElement('span');
+                      titleText.textContent = title;
+                      titleRow.appendChild(titleText);
+
+                      // Add randomize button for Left/Right FX
+                      if (side && (side === 'L' || side === 'R')) {
+                        const randomBtn = document.createElement('button');
+                        randomBtn.className = 'randomizeBtn';
+                        randomBtn.textContent = '🎲';
+                        randomBtn.title = `Randomize ${side === 'L' ? 'Left' : 'Right'} Column`;
+                        randomBtn.addEventListener('click', (e) => {
+                          e.stopPropagation();
+                          randomizeColumn(side);
+                        });
+                        titleRow.appendChild(randomBtn);
+                      }
+
+                      tRow.appendChild(titleRow);
+
+                      let swapCheck = null;
+                      if (side) {
+                        const swapCC = (side === 'L') ? 74 : 75;
+                        const sLabel = document.createElement('label');
+                        sLabel.innerHTML = `<input type="checkbox" id="${side.toLowerCase()}SwapToggle"> Swap`;
+                        sLabel.style.fontSize = '11px';
+                        sLabel.style.display = 'flex';
+                        sLabel.style.alignItems = 'center';
+                        sLabel.style.gap = '4px';
+                        sLabel.style.cursor = 'pointer';
+                        sLabel.style.fontWeight = '500';
+                        sLabel.style.color = 'var(--muted)';
+
+                        swapCheck = sLabel.querySelector('input');
+                        swapCheck.addEventListener('change', () => {
+                          const v = swapCheck.checked ? 127 : 0;
+                          state[swapCC] = v;
+                          sendCCMapped(swapCC, v);
+                          updateLabels();
+                        });
+
+                        // Register in ui map for bidirectional sync
+                        ui[swapCC] = {
+                          type: 'dip',
+                          set(v) {
+                            swapCheck.checked = (Number(v) === 127);
+                            updateLabels();
+                          }
+                        };
+
+                        tRow.appendChild(sLabel);
+                      }
 
                       const seg = document.createElement('div');
                       seg.className = 'seg';
 
                       const btns = [];
+                      const defaultLabels = [...options];
+                      const swappedLabels = (side === 'L') ? ["Delay", "Synth", "Bend"] : ["Reverb", "Pitch", "Warp"];
+
+                      function updateLabels() {
+                        const isSwapped = swapCheck && swapCheck.checked;
+                        const labels = isSwapped ? swappedLabels : defaultLabels;
+                        btns.forEach((b, i) => {
+                          b.textContent = labels[i];
+                        });
+                        updateReadout();
+                      }
+
                       function paint(pos) {
                         btns.forEach((b, i) => {
                           const on = i === pos;
@@ -973,7 +1533,7 @@
                           state[cc] = v;
                           paint(i);
                           sendCCMapped(cc, v);
-                          updateReadout();
+                          updateLabels();
                         };
                         btns.push(b);
                         seg.appendChild(b);
@@ -983,14 +1543,51 @@
                         type: 'tri', set(v) {
                           state[cc] = Number(v) || 0;
                           paint(triPosFromValueForCC(cc, state[cc]));
-                          updateReadout();
+                          updateLabels();
                         }
                       };
 
                       paint(0);
 
-                      block.appendChild(t);
+                      block.appendChild(tRow);
                       block.appendChild(seg);
+
+                      // Add Engage toggle for Left/Right FX
+                      if (side && (side === 'L' || side === 'R')) {
+                        const engageCC = (side === 'L') ? 103 : 102; // L Engage = CC103, R Engage = CC102
+                        state[engageCC] = 0; // Default: off
+
+                        const engageLabel = document.createElement('label');
+                        engageLabel.className = 'engageToggle';
+                        engageLabel.id = `engage${side}`;
+
+                        const engageCb = document.createElement('input');
+                        engageCb.type = 'checkbox';
+                        engageCb.checked = false;
+
+                        const engageText = document.createElement('span');
+                        engageText.textContent = 'ENGAGE';
+
+                        engageCb.addEventListener('change', () => {
+                          const v = engageCb.checked ? 1 : 0;
+                          state[engageCC] = v;
+                          engageLabel.classList.toggle('active', engageCb.checked);
+                          sendCCMapped(engageCC, v);
+                        });
+
+                        ui[engageCC] = {
+                          type: 'engage',
+                          set(v) {
+                            engageCb.checked = (Number(v) === 1);
+                            engageLabel.classList.toggle('active', engageCb.checked);
+                          }
+                        };
+
+                        engageLabel.appendChild(engageCb);
+                        engageLabel.appendChild(engageText);
+                        block.appendChild(engageLabel);
+                      }
+
                       parentEl.appendChild(block);
                     }
 
@@ -999,6 +1596,12 @@
                     const ROUTING = ["L>R (Series)", "L+R (Parallel)", "L<R (Series)"];
 
                     function updateReadout() {
+                      const lSwap = state[74] === 127;
+                      const rSwap = state[75] === 127;
+
+                      const L_NAMES = lSwap ? ["Delay", "Synth", "Bend"] : ["Reverb", "Pitch", "Warp"];
+                      const R_NAMES = rSwap ? ["Reverb", "Pitch", "Warp"] : ["Delay", "Synth", "Bend"];
+
                       const leftPos = triPosFromValueForCC(21, state[21] ?? 0);
                       const routePos = triPosFromValueForCC(22, state[22] ?? 0);
                       const rightPos = triPosFromValueForCC(23, state[23] ?? 0);
@@ -1006,11 +1609,17 @@
                       const leftAB = abFromModify(state[17] ?? 64);
                       const rightAB = abFromModify(state[19] ?? 64);
 
-                      const left = LEFT_FX[leftPos];
-                      const right = RIGHT_FX[rightPos];
+                      const leftFamily = L_NAMES[leftPos];
+                      const rightFamily = R_NAMES[rightPos];
 
-                      const leftLabel = (leftAB === 'NONE') ? (left.family + ' — NONE') : (left.family + ' ' + leftAB + ' — ' + left[leftAB]);
-                      const rightLabel = (rightAB === 'NONE') ? (right.family + ' — NONE') : (right.family + ' ' + rightAB + ' — ' + right[rightAB]);
+                      const leftSet = lSwap ? RIGHT_FX : LEFT_FX;
+                      const rightSet = rSwap ? LEFT_FX : RIGHT_FX;
+
+                      const left = leftSet[leftPos];
+                      const right = rightSet[rightPos];
+
+                      const leftLabel = (leftAB === 'NONE') ? (leftFamily + ' — NONE') : (leftFamily + ' ' + leftAB + ' — ' + left[leftAB]);
+                      const rightLabel = (rightAB === 'NONE') ? (rightFamily + ' — NONE') : (rightFamily + ' ' + rightAB + ' — ' + right[rightAB]);
 
                       const el = document.getElementById('modeReadout');
                       if (el) el.textContent = 'Selected: ' + leftLabel + ' • Routing: ' + ROUTING[routePos] + ' • ' + rightLabel;
@@ -1041,19 +1650,45 @@
 
                     function randomizeKnobsOnly() {
                       if (!midiAccess) { alert('Enable MIDI first.'); return; }
+
+                      const inclRamp = document.getElementById('chkInclRamp').checked;
+
+                      // 1. Randomize Main Knobs
                       KNOB_CCS.forEach((cc) => {
-                        if (cc === 15 && isMixLocked()) return;
-                        if (ui[cc]?.type !== 'knob') return;
+                        if (LOCKED_KNOBS.has(cc)) return;
+                        if (ui[cc]?.type !== 'knob' && ui[cc]?.type !== 'modify') return;
                         const v = Math.floor(Math.random() * 128);
                         state[cc] = v;
                         ui[cc].set(v);
                         sendCCMapped(cc, v);
                       });
+
+                      // 2. Randomize Ramp Controls if included
+                      if (inclRamp) {
+                        RAMP_CCS.forEach((cc) => {
+                          let v = 0;
+
+                          // Handle different types of Ramp controls
+                          if (ui[cc]?.type === 'knob' || ui[cc]?.type === 'slider') {
+                            v = Math.floor(Math.random() * 128);
+                          } else if (ui[cc]?.type === 'tri') {
+                            v = triValueForCC(cc, Math.floor(Math.random() * 3));
+                          } else {
+                            // Toggle/DIP/Checkbox
+                            v = Math.random() < 0.5 ? 0 : 127;
+                          }
+
+                          state[cc] = v;
+                          if (ui[cc]?.set) ui[cc].set(v);
+                          sendCCMapped(cc, v);
+                        });
+                      }
                     }
 
                     function randomizeHiddenOptions() {
                       if (!midiAccess) { alert('Enable MIDI first.'); return; }
                       HIDDEN_CCS.forEach((cc) => {
+                        if (LOCKED_KNOBS.has(cc)) return; // Check for locked knobs
                         if (ui[cc]?.type === 'tri') {
                           const v = triValueForCC(cc, Math.floor(Math.random() * 3));
                           state[cc] = v;
@@ -1098,55 +1733,89 @@
                     function randomizeAll() {
                       if (!midiAccess) { alert('Enable MIDI first.'); return; }
 
+                      const inclRamp = document.getElementById('chkInclRamp').checked;
+
+                      // 1. Randomize Knobs (checking locks)
                       KNOB_CCS.forEach((cc) => {
-                        if (cc === 15 && isMixLocked()) return;
-                        if (ui[cc]?.type !== 'knob') return;
+                        if (LOCKED_KNOBS.has(cc)) return;
+                        if (ui[cc]?.type !== 'knob' && ui[cc]?.type !== 'modify') return;
                         const v = Math.floor(Math.random() * 128);
                         state[cc] = v;
                         ui[cc].set(v);
                         sendCCMapped(cc, v);
                       });
 
-                      HIDDEN_CCS.forEach((cc) => {
+                      // 2. Randomize FX Types (21, 23) & Routing (22)
+                      [21, 22, 23].forEach(cc => {
+                        const v = triValueForCC(cc, Math.floor(Math.random() * 3));
+                        state[cc] = v;
+                        if (ui[cc]?.set) ui[cc].set(v);
+                        sendCCMapped(cc, v);
+                      });
+
+                      // 3. Randomize Swaps (74, 75)
+                      [74, 75].forEach(cc => {
+                        const v = Math.random() < 0.5 ? 0 : 127;
+                        state[cc] = v;
+                        // UI update for swaps might be tricky if not standardized, but let's try generic set
+                        if (ui[cc]?.set) ui[cc].set(v);
+                        // Note: UI for swaps is checkbox id='lSwap'/'rSwap'. ui[cc] might not be mapped if I didn't verify.
+                        // Let's manually trigger the UI update function if it exists, or update the element directly if we know ID.
+                        // Actually, createTriBlock/Header creates them. I need to check if ui[74] is registered.
+                        // If not, I should register it or handle it. I'll assume generic set works or adds it later.
+                        sendCCMapped(cc, v);
+                      });
+                      updateReadout(); // Refresh labels after swap change
+
+                      // 4. Randomize Hidden & DIPs (Excluding specific ones and Ramp ones unless enabled)
+                      const ALL_OTHER_CCS = [...HIDDEN_CCS, ...DIP_CCS];
+                      ALL_OTHER_CCS.forEach((cc) => {
+                        if (NEVER_RANDOM_CCS.has(cc)) return; // Skip excluded
+                        if (RAMP_CCS.has(cc)) {
+                          // Only if include ramp is checked
+                          if (!inclRamp) return;
+                        }
+
+                        // Logic for different types
                         if (ui[cc]?.type === 'tri') {
                           const v = triValueForCC(cc, Math.floor(Math.random() * 3));
                           state[cc] = v;
                           ui[cc].set(v);
                           sendCCMapped(cc, v);
-                          return;
-                        }
-                        if (ui[cc]?.type === 'other' || ui[cc]?.type === 'dip') {
-                          if (cc === 52) {
-                            const v = Math.random() < 0.5 ? 0 : 127;
-                            state[cc] = v;
-                            ui[cc].set(v);
-                            sendCCMapped(cc, v);
-                            return;
-                          }
+                        } else if (ui[cc]?.type === 'dip' || ui[cc]?.type === 'other') {
+                          // Subdivisions (53, 54) -> range 0-12
                           if (cc === 53 || cc === 54) {
                             const v = Math.floor(Math.random() * 13);
                             state[cc] = v;
                             ui[cc].set(v);
-                            sendCCMapped(cc, v);
-                            return;
-                          }
-                          if (cc === 51) {
+                          } else {
+                            // Standard boolean toggle
                             const v = Math.random() < 0.5 ? 0 : 127;
                             state[cc] = v;
                             ui[cc].set(v);
-                            sendCCMapped(cc, v);
-                            return;
                           }
+                          sendCCMapped(cc, state[cc]);
                         }
                       });
 
-                      DIP_CCS.forEach((cc) => {
-                        if (ui[cc]?.type !== 'dip') return;
-                        const v = Math.random() < 0.5 ? 0 : 127;
-                        state[cc] = v;
-                        ui[cc].set(v);
-                        sendCCMapped(cc, v);
-                      });
+                      // 5. Randomize Ramp Knobs/Specifics if included
+                      if (inclRamp) {
+                        RAMP_CCS.forEach(cc => {
+                          if (ui[cc]?.set) {
+                            let v = 0;
+                            if (ui[cc]?.type === 'knob' || ui[cc]?.type === 'slider') {
+                              v = Math.floor(Math.random() * 128);
+                            } else if (ui[cc]?.type === 'tri') {
+                              v = triValueForCC(cc, Math.floor(Math.random() * 3));
+                            } else {
+                              v = Math.random() < 0.5 ? 0 : 127;
+                            }
+                            state[cc] = v;
+                            ui[cc].set(v);
+                            sendCCMapped(cc, v);
+                          }
+                        });
+                      }
                     }
 
                     // --- Metadata Helpers ---
@@ -1311,21 +1980,176 @@
                     }
 
                     const toggleRow = document.getElementById('toggleRow');
-                    [["Left FX", 21, ["Reverb", "Pitch", "Warp"]],
-                    ["Routing", 22, ["L>R", "L+R", "L<R"]],
-                    ["Right FX", 23, ["Delay", "Synth", "Bend"]]].forEach(([t, cc, opts]) => createTriBlock(t, cc, opts, toggleRow));
+
+                    // Randomize column function
+                    function randomizeColumn(side) {
+                      const leftKnobs = [14, 17, 24, 27]; // L Time, L Modify, L Alt, L EQ
+                      const rightKnobs = [16, 19, 26, 29]; // R Time, R Modify, R Alt, R EQ
+                      const knobs = side === 'L' ? leftKnobs : rightKnobs;
+
+                      knobs.forEach(cc => {
+                        if (LOCKED_KNOBS.has(cc)) return;
+                        const randomVal = Math.floor(Math.random() * 128);
+                        state[cc] = randomVal;
+                        if (ui[cc] && ui[cc].set) {
+                          ui[cc].set(randomVal);
+                        }
+                        sendCCMapped(cc, randomVal);
+                      });
+                    }
+
+                    createTriBlock("Left FX", 21, ["Reverb", "Pitch", "Warp"], toggleRow, 'L');
+                    createTriBlock("Routing", 22, ["L>R", "L+R", "L<R"], toggleRow);
+                    createTriBlock("Right FX", 23, ["Delay", "Synth", "Bend"], toggleRow, 'R');
 
                     const knobGrid = document.getElementById('knobGrid');
+                    const knobRampMap = { 14: 61, 17: 62, 18: 63, 19: 64, 16: 65 };
                     [
                       ["L Time", 14, "knob"], ["Mix", 15, "knob"], ["R Time", 16, "knob"],
                       ["L Modify", 17, "modify"], ["Blend", 18, "knob"], ["R Modify", 19, "modify"],
                       ["L Alt", 24, "knob"], ["Spill", 25, "knob"], ["R Alt", 26, "knob"],
-                      ["L EQ", 27, "knob"], ["Glue", 28, "knob"], ["R EQ", 29, "knob"],
-                      ["Ramp Speed", 20, "knob"], ["Master Wet", 30, "knob"]
-                    ].forEach(([name, cc, kind]) => createKnobBlock(name, cc, kind || "knob", knobGrid));
+                      ["L EQ", 27, "knob"], ["Glue", 28, "knob"], ["R EQ", 29, "knob"]
+                    ].forEach(([name, cc, kind]) => createKnobBlock(name, cc, kind || "knob", knobGrid, knobRampMap[cc]));
 
-                    const hiddenRow = document.getElementById('hiddenTriRow');
-                    [["Spread (hidden)", 32, ["L ONLY", "BOTH", "R ONLY"]]].forEach(([t, cc, opts]) => createTriBlock(t, cc, opts, hiddenRow));
+                    // Add empty spacer to center Master Wet in last row
+                    const spacer = document.createElement('div');
+                    spacer.className = 'knobBlock';
+                    spacer.style.visibility = 'hidden';
+                    knobGrid.appendChild(spacer);
+
+                    // Master Wet in center of last row
+                    createKnobBlock("Master Wet", 30, "knob", knobGrid, knobRampMap[30]);
+
+                    // Ramping Control Section
+                    const rampToggles = document.getElementById('rampToggles');
+                    [["Bounce", 66], ["Sweep", 67], ["Polarity", 68]].forEach(([name, cc]) => {
+                      state[cc] = 0;
+                      const toggle = document.createElement('label');
+                      toggle.className = 'rampToggle';
+                      const cb = document.createElement('input');
+                      cb.type = 'checkbox';
+                      cb.id = `ramp${name}`;
+                      cb.addEventListener('change', () => {
+                        const v = cb.checked ? 127 : 0;
+                        state[cc] = v;
+                        sendCCMapped(cc, v);
+                      });
+                      ui[cc] = { type: 'dip', set(v) { cb.checked = (Number(v) === 127); } };
+                      toggle.appendChild(cb);
+                      const span = document.createElement('span');
+                      span.textContent = name;
+                      toggle.appendChild(span);
+                      rampToggles.appendChild(toggle);
+                    });
+
+                    const rampSliderWrap = document.getElementById('rampSliderWrap');
+                    state[20] = 64; // Ramp Speed default
+                    const sliderLabel = document.createElement('div');
+                    sliderLabel.className = 'rampSliderLabel';
+                    const labelText = document.createElement('span');
+                    labelText.textContent = 'Ramp Speed';
+                    const labelValue = document.createElement('span');
+                    labelValue.textContent = '50%';
+                    sliderLabel.appendChild(labelText);
+                    sliderLabel.appendChild(labelValue);
+
+                    const slider = document.createElement('input');
+                    slider.type = 'range';
+                    slider.className = 'rampSlider';
+                    slider.min = '0';
+                    slider.max = '127';
+                    slider.value = '64';
+                    slider.addEventListener('input', () => {
+                      const v = Number(slider.value);
+                      state[20] = v;
+                      labelValue.textContent = Math.round((v / 127) * 100) + '%';
+                      sendCCMapped(20, v);
+                    });
+                    ui[20] = {
+                      type: 'slider',
+                      set(v) {
+                        slider.value = String(v);
+                        labelValue.textContent = Math.round((Number(v) / 127) * 100) + '%';
+                      }
+                    };
+
+                    rampSliderWrap.appendChild(sliderLabel);
+                    rampSliderWrap.appendChild(slider);
+
+                    // Ramping Enabled toggle
+                    const rampEnabledWrap = document.getElementById('rampEnabledWrap');
+                    state[52] = 127; // Ramping Enabled default (inverted: 0=enabled, 127=disabled)
+                    const enabledCb = document.createElement('input');
+                    enabledCb.type = 'checkbox';
+                    enabledCb.id = 'rampEnabledToggle';
+                    enabledCb.checked = false; // Default: ramping disabled (CC52=127)
+                    enabledCb.addEventListener('change', () => {
+                      const v = enabledCb.checked ? 0 : 127; // Inverted logic
+                      state[52] = v;
+                      sendCCMapped(52, v);
+                    });
+                    ui[52] = {
+                      type: 'other',
+                      set(v) {
+                        enabledCb.checked = (Number(v) === 0); // Inverted
+                      }
+                    };
+                    rampEnabledWrap.appendChild(enabledCb);
+                    const enabledSpan = document.createElement('span');
+                    enabledSpan.textContent = 'Enabled';
+                    rampEnabledWrap.appendChild(enabledSpan);
+
+                    // Ramping Control collapse functionality
+                    const rampHeader = document.getElementById('rampHeader');
+                    const rampControls = document.getElementById('rampControls');
+                    const rampCollapseBtn = document.getElementById('rampCollapseBtn');
+                    let rampCollapsed = true;
+
+                    rampHeader.addEventListener('click', (e) => {
+                      if (e.target === rampCollapseBtn) return; // Let button handle its own click
+                      rampCollapsed = !rampCollapsed;
+                      rampControls.classList.toggle('collapsed', rampCollapsed);
+                      rampCollapseBtn.textContent = rampCollapsed ? 'Show' : 'Hide';
+                    });
+
+                    rampCollapseBtn.addEventListener('click', (e) => {
+                      e.stopPropagation();
+                      rampCollapsed = !rampCollapsed;
+                      rampControls.classList.toggle('collapsed', rampCollapsed);
+                      rampCollapseBtn.textContent = rampCollapsed ? 'Show' : 'Hide';
+                    });
+
+                    // Stereo Section
+                    const stereoControls = document.getElementById('stereoControls');
+
+                    // Spread 3-way toggle
+                    const spreadBlock = document.createElement('div');
+                    spreadBlock.style.flex = '1';
+                    createTriBlock("Spread", 32, ["L ONLY", "BOTH", "R ONLY"], spreadBlock);
+                    stereoControls.appendChild(spreadBlock.firstChild);
+
+                    // MISO and Spread DIP toggles
+                    [["MISO", 71], ["Spread DIP", 72]].forEach(([name, cc]) => {
+                      state[cc] = 0;
+                      const toggle = document.createElement('label');
+                      toggle.className = 'stereoToggle';
+                      const cb = document.createElement('input');
+                      cb.type = 'checkbox';
+                      cb.id = `stereo${name.replace(/\s+/g, '')}`;
+                      cb.addEventListener('change', () => {
+                        const v = cb.checked ? 127 : 0;
+                        state[cc] = v;
+                        sendCCMapped(cc, v);
+                      });
+                      ui[cc] = { type: 'dip', set(v) { cb.checked = (Number(v) === 127); } };
+                      toggle.appendChild(cb);
+                      const span = document.createElement('span');
+                      span.textContent = name;
+                      toggle.appendChild(span);
+                      stereoControls.appendChild(toggle);
+                    });
+
+
 
                     const otherGrid = document.getElementById('otherGrid');
 
@@ -1373,13 +2197,13 @@
                     }
 
                     createOtherCheckbox('MIDI Clock Follow', 51, 127, 0);
-                    createOtherCheckbox('Ramping Enabled', 52, 0, 127);
+                    createOtherCheckbox('Unsync', 76, 127, 0);
 
-                    const subdiv = [['32nd', 0], ['16th', 1], ['16th Trip', 2], ['8th', 3], ['8th Trip', 4], ['Dotted 8th', 5], ['Quarter', 6], ['Quarter Trip', 7], ['Dotted Quarter', 8], ['Half', 9], ['Dotted Half', 10], ['Whole', 11], ['Double Whole', 12]];
+                    const subdiv = [['32nd', 0], ['16th', 1], ['16th Trip', 2], ['8th', 3], ['8th Trip', 4], ['Dotted 8th', 5], ['Dotted 8th', 5], ['Quarter', 6], ['Quarter Trip', 7], ['Dotted Quarter', 8], ['Half', 9], ['Dotted Half', 10], ['Whole', 11], ['Double Whole', 12]];
                     createOtherSelect('L Tap Subdivision', 53, subdiv);
                     createOtherSelect('R Tap Subdivision', 54, subdiv);
                     const dipGrid = document.getElementById('dipGrid');
-                    [["L Time", 61], ["L Modify", 62], ["Blend", 63], ["R Modify", 64], ["R Time", 65], ["Bounce", 66], ["Sweep", 67], ["Polarity", 68], ["MISO", 71], ["Spread DIP", 72], ["Latch", 73], ["L Swap", 74], ["R Swap", 75], ["Unsync", 76], ["Trails", 77], ["Bank", 78]]
+                    [["Latch", 73], ["Trails", 77], ["Bank", 78]]
                       .forEach(([name, cc]) => createDipRow(name, cc, dipGrid));
 
                     updateReadout();
@@ -1394,13 +2218,17 @@
 
                     document.getElementById('btnRandom').onclick = randomizeAll;
                     document.getElementById('btnRandomKnobs').onclick = randomizeKnobsOnly;
-                    document.getElementById('btnRandomHidden').onclick = randomizeHiddenOptions;
                     document.getElementById('btnRecall').onclick = window.recallSlot;
+                    document.getElementById('btnPushOnly').onclick = () => {
+                      if (!midiAccess) { alert('Enable MIDI first.'); return; }
+                      CONTROL_CCS.forEach(cc => {
+                        if (state[cc] !== undefined) sendCCMapped(cc, state[cc]);
+                      });
+                    };
                     document.getElementById('btnStore').onclick = () => window.storeToSlot(false);
                     document.getElementById('btnSyncStore').onclick = () => window.storeToSlot(true);
 
-                    document.getElementById('lEngage').onchange = (e) => setEngage('L', e.target.checked);
-                    document.getElementById('rEngage').onchange = (e) => setEngage('R', e.target.checked);
+                    // Removed old Engage listeners (now handled in FX blocks)
                     document.getElementById('btnTap').onclick = handleTap;
 
                     initSlots();

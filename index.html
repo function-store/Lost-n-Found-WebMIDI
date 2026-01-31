@@ -456,6 +456,200 @@
                     font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
                     opacity: .85;
                   }
+
+                  /* Preset Manager Modal */
+                  #pmModal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, .85);
+                    z-index: 999999;
+                    display: none;
+                    align-items: center;
+                    /* Back to centered */
+                    justify-content: center;
+                    backdrop-filter: blur(10px);
+                    padding: 20px;
+                    /* Safety margin for mobile */
+                  }
+
+                  #pmContent {
+                    background: #fff;
+                    width: 100%;
+                    max-width: 760px;
+                    height: 90vh;
+                    /* Capped height for stickiness */
+                    max-height: 800px;
+                    border-radius: 28px;
+                    padding: 28px;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+                    border: 1px solid var(--border);
+                    color: #333;
+                    position: relative;
+                    overflow: hidden;
+                    /* Prevent content bleeding */
+                  }
+
+                  .pmTableContainer {
+                    flex: 1;
+                    overflow-y: auto;
+                    border: 1px solid rgba(0, 0, 0, 0.1);
+                    border-radius: 16px;
+                    margin: 16px 0;
+                    background: #fafafa;
+                  }
+
+                  .pmTable {
+                    width: 100%;
+                    border-collapse: collapse;
+                    table-layout: fixed;
+                  }
+
+                  .pmTable th {
+                    position: sticky;
+                    top: 0;
+                    background: #f4f6f5;
+                    padding: 14px 10px;
+                    text-align: center;
+                    font-size: 11px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    color: var(--muted);
+                    border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+                    z-index: 10;
+                  }
+
+                  /* Align Name header to left to match input */
+                  .pmTable th:nth-child(2) {
+                    text-align: left;
+                  }
+
+                  .pmTable td {
+                    padding: 0 10px;
+                    height: 52px;
+                    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                  }
+
+                  .pmTable tr:hover {
+                    background: #fff;
+                  }
+
+                  .pmRowActive {
+                    background: rgba(26, 115, 232, 0.08) !important;
+                    box-shadow: inset 4px 0 0 var(--green);
+                  }
+
+                  .pmRowActive .pmIndex {
+                    color: var(--green);
+                    font-weight: 800;
+                  }
+
+                  /* Column content center wrappers */
+                  .pmCellWrap {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                  }
+
+                  .pmCellWrap.center {
+                    justify-content: center;
+                  }
+
+                  /* Column widths for manager */
+                  .pmTable th:nth-child(1),
+                  .pmTable td:nth-child(1) {
+                    width: 50px;
+                  }
+
+                  .pmTable th:nth-child(2),
+                  .pmTable td:nth-child(2) {
+                    width: auto;
+                  }
+
+                  .pmTable th:nth-child(3),
+                  .pmTable td:nth-child(3) {
+                    width: 70px;
+                  }
+
+                  .pmTable th:nth-child(4),
+                  .pmTable td:nth-child(4) {
+                    width: 160px;
+                  }
+
+                  .pmIndex {
+                    font-weight: 600;
+                    color: #aaa;
+                    font-size: 12px;
+                  }
+
+                  .pmName {
+                    width: 100%;
+                    height: 36px;
+                    padding: 0 12px;
+                    border-radius: 9px;
+                    border: 1px solid rgba(0, 0, 0, 0.12);
+                    font-size: 13px;
+                    background: #fff;
+                  }
+
+                  .pmOccupied {
+                    width: 19px;
+                    height: 19px;
+                    cursor: pointer;
+                    margin: 0;
+                  }
+
+                  .pmActionCell {
+                    display: flex;
+                    gap: 6px;
+                    justify-content: center;
+                    align-items: center;
+                  }
+
+                  .pmBtn {
+                    padding: 0 14px;
+                    height: 36px;
+                    line-height: 36px;
+                    border-radius: 9px;
+                    border: none;
+                    cursor: pointer;
+                    font-weight: 700;
+                    font-size: 11px;
+                    transition: all 0.2s;
+                    display: inline-block;
+                  }
+
+                  .pmBtn.primary {
+                    background: var(--green);
+                    color: #fff;
+                  }
+
+                  .pmBtn.secondary {
+                    background: #f0f2f1;
+                    color: #555;
+                  }
+
+                  .pmBtn:hover {
+                    filter: contrast(1.1);
+                    transform: translateY(-1px);
+                  }
+
+                  .pmBtn:active {
+                    transform: scale(0.96);
+                  }
+
+                  .pmBtn:hover {
+                    filter: brightness(0.95);
+                  }
+
+                  .pmBtn:active {
+                    transform: scale(0.96);
+                  }
                 </style>
               </div>
               <div data-replaced-tag="body">
@@ -481,14 +675,33 @@
                       <button id="btnRandomHidden">Randomize Hidden</button>
                       <label class="pillLabel"><input id="lockMix" type="checkbox"><span>Lock Mix</span></label>
 
-                      <label class="pillLabel"><span>Preset</span><select id="slotSelect" disabled></select></label>
-                      <button id="btnRecall" disabled>Recall</button>
-                      <button id="btnStore" disabled>Store</button>
+                      <label class="pillLabel"><span>Preset</span><select id="slotSelect"></select></label>
+                      <button id="btnRecall">Recall</button>
+                      <button id="btnStore">Store</button>
+                      <button id="btnSyncStore" style="background: var(--blue);">Sync & Store</button>
 
                       <!-- PRESET EXPORT/IMPORT (added; no other behavior changes) -->
-                      <button id="btnExportPreset">Export JSON</button>
-                      <button id="btnImportPreset">Import JSON</button>
+                      <button id="btnExportPreset">Export Pattern</button>
+                      <button id="btnImportPreset">Import Pattern</button>
+                      <button id="btnShowManager">Manage Presets</button>
                       <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
+                    </div>
+
+                    <!-- Custom Name Dialog -->
+                    <div id="nameModal"
+                      style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999999; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
+                      <div class="card"
+                        style="width:300px; padding:20px; display:flex; flex-direction:column; gap:12px;">
+                        <h3 style="margin:0; font-size:16px;">Preset Name</h3>
+                        <input type="text" id="customNameInput"
+                          style="padding:8px; border-radius:8px; border:1px solid var(--border);"
+                          placeholder="Enter name...">
+                        <div style="display:flex; justify-content:flex-end; gap:8px;">
+                          <button class="pmBtn secondary"
+                            onclick="document.getElementById('nameModal').style.display='none'">Cancel</button>
+                          <button class="pmBtn primary" id="btnConfirmName">Save</button>
+                        </div>
+                      </div>
                     </div>
 
                     <div class="pedal">
@@ -938,19 +1151,49 @@
                       });
                     }
 
+                    // --- Metadata Helpers ---
+                    const META_KEY = 'lostFound_presetMeta';
+                    // --- Global State ---
+                    window.currentActiveSlot = 0;
+
+                    function getMeta() {
+                      try { return JSON.parse(localStorage.getItem(META_KEY)) || {}; } catch (e) { return {}; }
+                    }
+                    function setMeta(data) { localStorage.setItem(META_KEY, JSON.stringify(data)); }
+
                     function initSlots() {
                       const sel = document.getElementById('slotSelect');
+                      if (!sel) return;
                       sel.innerHTML = '';
+                      const meta = getMeta();
+
                       const o0 = document.createElement('option');
                       o0.value = '0'; o0.textContent = '0 (Live)';
                       sel.appendChild(o0);
+
                       for (let i = 1; i <= 122; i++) {
                         const o = document.createElement('option');
-                        o.value = String(i); o.textContent = String(i);
+                        o.value = String(i);
+                        const name = meta[i]?.name ? (i + ': ' + meta[i].name) : String(i);
+                        o.textContent = name + (meta[i]?.occupied ? ' [x]' : '');
                         sel.appendChild(o);
                       }
                       sel.value = '1';
+                      // Sync global active slot
+                      if (window.currentActiveSlot === 0) {
+                        window.currentActiveSlot = Number(sel.value);
+                      }
                     }
+
+                    // Main dropdown change listener
+                    document.addEventListener('DOMContentLoaded', () => {
+                      const ss = document.getElementById('slotSelect');
+                      if (ss) {
+                        ss.addEventListener('change', () => {
+                          window.currentActiveSlot = Number(ss.value);
+                        });
+                      }
+                    });
 
                     function pushStateToPedal(done) {
                       const keys = CONTROL_CCS.slice().sort((a, b) => a - b);
@@ -966,18 +1209,60 @@
                       step();
                     }
 
-                    function recallSlot() {
-                      const slot = Number(document.getElementById('slotSelect').value);
+                    window.recallSlot = function () {
+                      const ss = document.getElementById('slotSelect');
+                      const slot = Number(ss.value);
+                      window.currentActiveSlot = slot;
                       sendPC(slot);
-                    }
-                    function storeToSlot() {
+                    };
+
+                    window.performStore = function (slot, name, callback, doSync = false) {
+                      const meta = getMeta();
+                      meta[slot] = { name: name, occupied: true };
+                      setMeta(meta);
+                      initSlots();
+
+                      window.currentActiveSlot = slot;
+                      const ss = document.getElementById('slotSelect');
+                      if (ss) ss.value = String(slot);
+
+                      if (midiAccess) {
+                        const doActualStore = () => {
+                          sendCCMapped(111, Math.max(0, Math.min(127, slot)));
+                          if (callback) callback();
+                        };
+                        if (doSync) {
+                          pushStateToPedal(doActualStore);
+                        } else {
+                          doActualStore();
+                        }
+                      } else {
+                        console.log('[DEBUG-KNOBS] Metadata saved locally, but MIDI not active for hardware store.');
+                        if (callback) callback();
+                      }
+                    };
+
+                    window.storeToSlot = function (doSync = false) {
                       const slot = Number(document.getElementById('slotSelect').value);
-                      if (!midiAccess) { alert('Enable MIDI first.'); return; }
                       if (slot === 0) { alert('Choose slot 1–122 to store.'); return; }
-                      pushStateToPedal(() => {
-                        sendCCMapped(111, Math.max(0, Math.min(127, slot)));
-                      });
-                    }
+
+                      const meta = getMeta();
+                      const existingName = meta[slot]?.name || '';
+
+                      const modal = document.getElementById('nameModal');
+                      const input = document.getElementById('customNameInput');
+                      const confirmBtn = document.getElementById('btnConfirmName');
+
+                      input.value = existingName;
+                      modal.style.display = 'flex';
+                      input.focus();
+
+                      confirmBtn.onclick = () => {
+                        const newName = input.value;
+                        modal.style.display = 'none';
+                        window.performStore(slot, newName, null, doSync);
+                      };
+                    };
 
                     function fillChannels() {
                       const sel = document.getElementById('chanSelect');
@@ -1020,9 +1305,6 @@
 
                         document.getElementById('midiSelect').disabled = false;
                         document.getElementById('chanSelect').disabled = false;
-                        document.getElementById('slotSelect').disabled = false;
-                        document.getElementById('btnRecall').disabled = false;
-                        document.getElementById('btnStore').disabled = false;
                         document.getElementById('btnTap').disabled = false;
                         initSlots();
                       } catch (e) {
@@ -1114,12 +1396,15 @@
                     document.getElementById('btnRandom').onclick = randomizeAll;
                     document.getElementById('btnRandomKnobs').onclick = randomizeKnobsOnly;
                     document.getElementById('btnRandomHidden').onclick = randomizeHiddenOptions;
-                    document.getElementById('btnRecall').onclick = recallSlot;
-                    document.getElementById('btnStore').onclick = storeToSlot;
+                    document.getElementById('btnRecall').onclick = window.recallSlot;
+                    document.getElementById('btnStore').onclick = () => window.storeToSlot(false);
+                    document.getElementById('btnSyncStore').onclick = () => window.storeToSlot(true);
 
                     document.getElementById('lEngage').onchange = (e) => setEngage('L', e.target.checked);
                     document.getElementById('rEngage').onchange = (e) => setEngage('R', e.target.checked);
                     document.getElementById('btnTap').onclick = handleTap;
+
+                    initSlots();
 
                     // ===== PRESET EXPORT/IMPORT (added; leaves everything else unchanged) =====
                     function snapshotPreset() {
@@ -1142,15 +1427,14 @@
                     }
 
                     function downloadJSON(obj, filename) {
-                      const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
-                      const url = URL.createObjectURL(blob);
+                      const json = JSON.stringify(obj, null, 2);
+                      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
                       const a = document.createElement('a');
-                      a.href = url;
+                      a.href = dataUri;
                       a.download = filename;
                       document.body.appendChild(a);
                       a.click();
-                      a.remove();
-                      setTimeout(() => URL.revokeObjectURL(url), 1000);
+                      document.body.removeChild(a);
                     }
 
                     function applyPreset(preset) {
@@ -1212,6 +1496,88 @@
                         alert('Preset load failed: ' + (err?.message || err));
                       }
                     });
+                    // --- Preset Manager UI Logic ---
+                    window.pmRecall = function (slot) {
+                      document.getElementById('slotSelect').value = String(slot);
+                      window.recallSlot();
+                      openManager(); // Highlight immediate
+                    };
+
+                    window.pmStore = function (slot) {
+                      // Find the name input for this specific slot in the manager table
+                      const row = document.querySelector(`.pmName[data-slot="${slot}"]`);
+                      const name = row ? row.value : "";
+                      window.performStore(slot, name, () => {
+                        openManager(); // Refresh table after store completes
+                      }, false); // Manager only performs Quick Store
+                    };
+
+                    function openManager() {
+                      const meta = getMeta();
+                      const tbody = document.getElementById('pmTableBody');
+                      tbody.innerHTML = '';
+                      for (let i = 1; i <= 122; i++) {
+                        const row = document.createElement('tr');
+                        const m = meta[i] || { name: '', occupied: false };
+                        if (i === window.currentActiveSlot) {
+                          row.classList.add('pmRowActive');
+                        }
+                        row.innerHTML = `
+                          <td><div class="pmCellWrap center"><span class="pmIndex">${i}</span></div></td>
+                          <td><div class="pmCellWrap"><input type="text" class="pmName" data-slot="${i}" value="${m.name}" placeholder="Unnamed"></div></td>
+                          <td><div class="pmCellWrap center"><input type="checkbox" class="pmOccupied" data-slot="${i}" ${m.occupied ? 'checked' : ''}></div></td>
+                          <td>
+                            <div class="pmCellWrap center" style="gap:6px;">
+                              <button class="pmBtn secondary" onclick="window.pmRecall(${i})">Recall</button>
+                              <button class="pmBtn primary" onclick="window.pmStore(${i})">Store</button>
+                            </div>
+                          </td>
+                        `;
+                        tbody.appendChild(row);
+                      }
+                      document.getElementById('pmModal').style.display = 'flex';
+                    }
+
+                    function saveManagerChanges() {
+                      const meta = getMeta();
+                      document.querySelectorAll('#pmTableBody tr').forEach(row => {
+                        const nameInput = row.querySelector('.pmName');
+                        if (!nameInput) return;
+                        const name = nameInput.value;
+                        const occupied = row.querySelector('.pmOccupied').checked;
+                        const slot = nameInput.dataset.slot;
+                        if (name || occupied) {
+                          meta[slot] = { name, occupied };
+                        } else {
+                          delete meta[slot];
+                        }
+                      });
+                      setMeta(meta);
+                      initSlots();
+                      document.getElementById('pmModal').style.display = 'none';
+                    }
+
+                    document.getElementById('btnShowManager').onclick = openManager;
+                    document.getElementById('btnSaveManager').onclick = saveManagerChanges;
+
+                    document.getElementById('btnExportMeta').onclick = () => {
+                      downloadJSON(getMeta(), 'lost-found-metadata-backup.json');
+                    };
+                    document.getElementById('btnImportMeta').onclick = () => document.getElementById('fileMeta').click();
+                    document.getElementById('fileMeta').addEventListener('change', async (e) => {
+                      const file = e.target.files && e.target.files[0];
+                      if (!file) return;
+                      try {
+                        const data = JSON.parse(await file.text());
+                        if (confirm('Restore all preset names and occupied status? This replaces your current list.')) {
+                          setMeta(data);
+                          initSlots();
+                          openManager(); // refresh view
+                        }
+                      } catch (err) { alert('Failed to import: ' + err.message); }
+                      e.target.value = '';
+                    });
+
                     // =======================================================================
 
                     // Print computed style of first knob for proof in Console
@@ -1279,7 +1645,50 @@
       type="text/javascript">$(function () { wb_require(["store/js/StoreCartElement"], function (app) { }); })</script>
     <div class="wb_pswp" tabindex="-1" role="dialog" aria-hidden="true">
     </div>
-  </div>
+    <!-- Preset Manager Modal -->
+    <div id="pmModal">
+      <div id="pmContent">
+        <div
+          style="display:flex; justify-content:space-between; align-items:flex-start; flex-shrink: 0; margin-bottom: 8px;">
+          <div>
+            <h3 style="margin:0; font-size:18px; font-weight:800; color: var(--text);">Manage Presets</h3>
+            <p style="font-size: 11px; color: #777; margin: 4px 0 0;">Library backup includes names and [x] status. It
+              does not include knob values.</p>
+          </div>
+          <button class="pmBtn secondary" style="padding: 4px 10px; border-radius: 8px; font-size: 14px;"
+            onclick="document.getElementById('pmModal').style.display='none'">✕</button>
+        </div>
+
+        <div class="pmTableContainer">
+          <table class="pmTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th title="Mark as occupied in the dropdown">Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="pmTableBody"></tbody>
+          </table>
+        </div>
+
+        <div
+          style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; padding-top:16px; margin-top:auto; flex-shrink: 0;">
+          <div style="display:flex; gap:8px;">
+            <button id="btnExportMeta" class="pmBtn secondary">Export Library</button>
+            <button id="btnImportMeta" class="pmBtn secondary">Import Library</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="pmBtn secondary"
+              onclick="document.getElementById('pmModal').style.display='none'">Cancel</button>
+            <button id="btnSaveManager" class="pmBtn primary">Save All Changes</button>
+          </div>
+        </div>
+        <input id="fileMeta" type="file" accept="application/json,.json" style="display:none">
+      </div>
+    </div>
 </body>
 
 </html>
+```

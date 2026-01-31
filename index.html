@@ -1152,6 +1152,81 @@
                     const RAMP_CCS = new Set([20, 52, 61, 62, 63, 64, 65, 66, 67, 68]); // Speed, Enable, Indiv Dests, Bounce/Sweep/Polarity
                     let altMenuTimer = null;
 
+                    // --- State Persistence ---
+                    const STATE_KEY = 'lostFound_editorState';
+                    let saveTimer = null;
+
+                    function saveEditorState() {
+                      const data = {
+                        state: state,
+                        channel: channel,
+                        lockedKnobs: Array.from(LOCKED_KNOBS),
+                        inclRamp: document.getElementById('chkInclRamp')?.checked || false,
+                        activeSlot: window.currentActiveSlot || 0,
+                        lastMidiOutId: midiOut?.id || null,
+                        rampCollapsed: document.getElementById('rampControls').classList.contains('collapsed')
+                      };
+                      localStorage.setItem(STATE_KEY, JSON.stringify(data));
+                    }
+
+                    function loadEditorState() {
+                      try {
+                        const raw = localStorage.getItem(STATE_KEY);
+                        if (!raw) return;
+                        const data = JSON.parse(raw);
+
+                        // Restore generic state
+                        if (data.state) {
+                          Object.assign(state, data.state);
+                          // Update UI
+                          for (const cc in state) {
+                            if (ui[cc] && ui[cc].set) {
+                              ui[cc].set(state[cc]);
+                            }
+                          }
+                        }
+
+                        // Restore locks
+                        if (data.lockedKnobs && Array.isArray(data.lockedKnobs)) {
+                          LOCKED_KNOBS.clear();
+                          data.lockedKnobs.forEach(cc => {
+                            LOCKED_KNOBS.add(cc);
+                            // Update Lock UI if it exists (special handling for checkboxes created in createKnobBlock)
+                            // Note: The lock checkboxes function by updating LOCKED_KNOBS on change.
+                            // To update VISUALLY, we need to find the specific checkbox.
+                            // Since we didn't store UI ref for lock checks (except Mix CC55), we might miss visual update for others.
+                            // Fix: In createKnobBlock, we can check LOCKED_KNOBS during creation to set initial state!
+                          });
+                        }
+
+                        // Restore Channel
+                        if (data.channel !== undefined) {
+                          channel = data.channel;
+                          const chSel = document.getElementById('chanSelect');
+                          if (chSel) chSel.value = String(channel);
+                        }
+
+                        // Restore +Ramp
+                        const chkRamp = document.getElementById('chkInclRamp');
+                        if (chkRamp && data.inclRamp !== undefined) {
+                          chkRamp.checked = data.inclRamp;
+                        }
+
+                        // Restore Active Slot visual
+                        if (data.activeSlot) {
+                          window.currentActiveSlot = data.activeSlot;
+                          const slotSel = document.getElementById('slotSelect');
+                          if (slotSel) slotSel.value = String(data.activeSlot);
+                        }
+
+                        // Note: MIDI Out restoration happens in populateOutputs using lastMidiOutId if available
+                        if (data.lastMidiOutId) window.lastMidiOutId = data.lastMidiOutId;
+
+                      } catch (e) {
+                        console.error('Failed to load state', e);
+                      }
+                    }
+
                     function setStatus(msg) {
                       const el = document.getElementById('midiStatus');
                       if (el) el.textContent = msg;
@@ -1190,6 +1265,10 @@
                       // Per Lost + Found MIDI manual:
                       // L ALT (CC24) and R ALT (CC26) are normal 0–127 controls (no holds required).
                       sendCCRaw(cc, mapOutValue(cc, val));
+
+                      // Auto-save state (debounced)
+                      if (saveTimer) clearTimeout(saveTimer);
+                      saveTimer = setTimeout(saveEditorState, 500);
                     }
                     function sendPC(program) {
                       eachTargetOutput((out) => out.send([0xC0 + channel, program]));
@@ -1264,7 +1343,7 @@
                     function createKnobBlock(label, cc, kind, parentEl, rampCCArg = null) {
                       // Map specific knobs to their individual Ramp Enable/Dest CCs
                       // L Time(14)->61, L Mod(17)->62, Blend(18)->63, R Time(16)->64, R Mod(19)->65
-                      const RAMP_MAP = { 14: 61, 17: 62, 18: 63, 16: 64, 19: 65 };
+                      const RAMP_MAP = { 14: 61, 17: 62, 18: 63, 19: 64, 16: 65 };
                       const rampCC = RAMP_MAP[cc] || rampCCArg;
 
                       state[cc] = knobDefaultForCC(cc);
@@ -1316,7 +1395,9 @@
                       if ([15, 18, 25, 28, 30].includes(cc)) {
                         const lockLabel = document.createElement('label');
                         lockLabel.className = 'lockToggle';
-                        lockLabel.innerHTML = `<input type="checkbox"> Lock`;
+                        // Check if already locked (from restored state)
+                        const isLocked = LOCKED_KNOBS.has(cc);
+                        lockLabel.innerHTML = `<input type="checkbox" ${isLocked ? 'checked' : ''}> Lock`;
 
                         const lockCheck = lockLabel.querySelector('input');
                         lockCheck.addEventListener('change', () => {
@@ -1831,6 +1912,9 @@
                     function initSlots() {
                       const sel = document.getElementById('slotSelect');
                       if (!sel) return;
+                      // Capture current intent (global var or current UI value)
+                      const targetSlot = window.currentActiveSlot || Number(sel.value) || 1;
+
                       sel.innerHTML = '';
                       const meta = getMeta();
 
@@ -1845,10 +1929,14 @@
                         o.textContent = name + (meta[i]?.occupied ? ' [x]' : '');
                         sel.appendChild(o);
                       }
-                      sel.value = '1';
-                      // Sync global active slot
-                      if (window.currentActiveSlot === 0) {
-                        window.currentActiveSlot = Number(sel.value);
+
+                      // Restore selection
+                      if (targetSlot >= 0 && targetSlot <= 122) {
+                        sel.value = String(targetSlot);
+                        window.currentActiveSlot = targetSlot;
+                      } else {
+                        sel.value = '1';
+                        window.currentActiveSlot = 1;
                       }
                     }
 
@@ -1952,6 +2040,13 @@
                         opt.value = o.id; opt.textContent = o.name || 'MIDI Output';
                         sel.appendChild(opt);
                       });
+
+                      // Restore selection if available
+                      if (window.lastMidiOutId) {
+                        const match = outs.find(o => o.id === window.lastMidiOutId);
+                        if (match) sel.value = match.id;
+                      }
+
                       if (outs.length === 0) {
                         setStatus('No MIDI outputs detected.');
                         midiOut = null;
@@ -2110,6 +2205,7 @@
                       rampCollapsed = !rampCollapsed;
                       rampControls.classList.toggle('collapsed', rampCollapsed);
                       rampCollapseBtn.textContent = rampCollapsed ? 'Show' : 'Hide';
+                      saveEditorState();
                     });
 
                     rampCollapseBtn.addEventListener('click', (e) => {
@@ -2117,7 +2213,21 @@
                       rampCollapsed = !rampCollapsed;
                       rampControls.classList.toggle('collapsed', rampCollapsed);
                       rampCollapseBtn.textContent = rampCollapsed ? 'Show' : 'Hide';
+                      saveEditorState();
                     });
+
+                    // Hook into load state for this variable (since it is scoped)
+                    const _saved = localStorage.getItem(STATE_KEY);
+                    if (_saved) {
+                      try {
+                        const _d = JSON.parse(_saved);
+                        if (_d.rampCollapsed !== undefined) {
+                          rampCollapsed = _d.rampCollapsed;
+                          rampControls.classList.toggle('collapsed', rampCollapsed);
+                          rampCollapseBtn.textContent = rampCollapsed ? 'Show' : 'Hide';
+                        }
+                      } catch (e) { }
+                    }
 
                     // Stereo Section
                     const stereoControls = document.getElementById('stereoControls');
@@ -2206,9 +2316,19 @@
                     [["Latch", 73], ["Trails", 77], ["Bank", 78]]
                       .forEach(([name, cc]) => createDipRow(name, cc, dipGrid));
 
+                    // Load state AFTER UI is built
+                    initSlots(); // Ensure Slot dropdown is populated (allows restoring active slot)
+                    loadEditorState();
                     updateReadout();
 
-                    document.getElementById('btnEnableMIDI').onclick = () => initMIDI();
+                    // Additional Listeners for Saving
+                    document.getElementById('chkInclRamp').addEventListener('change', saveEditorState);
+                    document.getElementById('slotSelect').addEventListener('change', () => {
+                      window.currentActiveSlot = Number(document.getElementById('slotSelect').value);
+                      saveEditorState();
+                    });
+
+                    // Setup Topbar Events
                     document.getElementById('midiSelect').onchange = () => {
                       if (!midiAccess) return;
                       midiOut = midiAccess.outputs.get(document.getElementById('midiSelect').value) || null;

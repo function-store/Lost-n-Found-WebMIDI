@@ -2,6 +2,14 @@
 
 All notable changes to the **Lost+Found** MIDI Editor since the initial repository commit.
 
+## [1.2.1] - 2026-01-31 (State Persistence)
+### Added
+- **Session Memory**: The editor now remembers your complete setup across reloads.
+  - Retains all parameter values, locked knobs, and toggle states.
+  - Persists interface preferences: MIDI Channel, Active Preset Slot, Ramping Panel visibility, and `+Ramp` option.
+### Fixed
+- **Slot Selection Logic**: Fixed an issue where connecting a MIDI device would reset the selected preset slot to #1.
+
 ## [1.2.0] - 2026-01-31 (UI Refine & Deep Randomization)
 ### Added
 - **Smart Randomization**:

@@ -90,6 +90,7 @@ function setupCloudUI(): void {
     wrapper.style.alignItems = 'center';
 
     const syncBtn = createElement('button');
+    syncBtn.id = 'btnCloudSync';
     syncBtn.style.cssText = 'background:transparent;border:none;color:var(--cream-muted);cursor:pointer;font-size:14px;margin-left:3px;opacity:0.4;transition:opacity 0.2s;';
     syncBtn.textContent = '☁️';
     syncBtn.title = 'Cloud Sync & Account';
@@ -893,6 +894,10 @@ document.addEventListener('keydown', (e) => {
     }
     if (cloudMenu && getComputedStyle(cloudMenu).display !== 'none') {
       cloudMenu.style.display = 'none';
+    }
+    const infoModal = document.getElementById('infoModal');
+    if (infoModal && getComputedStyle(infoModal).display !== 'none') {
+      infoModal.style.display = 'none';
     }
   }
 });

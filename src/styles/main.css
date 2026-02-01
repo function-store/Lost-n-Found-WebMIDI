@@ -478,14 +478,35 @@ button:active:not(:disabled) {
 }
 
 .miniRampLabel {
-  font-size: 8px !important;
-  color: var(--yellow-muted) !important;
-  font-weight: 700 !important;
-  display: flex;
-  align-items: center;
-  gap: 3px;
+  display: none;
+  /* Replaced by .rampPillToggle */
+}
+
+.rampPillToggle {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(232, 228, 220, 0.1);
+  border-radius: 4px;
+  color: var(--cream-muted);
+  font-size: 7px;
+  font-weight: 700;
+  padding: 2px 5px;
+  cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.rampPillToggle:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(232, 228, 220, 0.3);
+}
+
+.rampPillToggle.active {
+  background: var(--yellow-muted);
+  color: #000;
+  border-color: var(--yellow-muted);
+  box-shadow: 0 0 8px rgba(235, 196, 76, 0.4);
 }
 
 .toggleSwitch--sm:checked::before {
@@ -794,10 +815,10 @@ button:active:not(:disabled) {
 
 .modifyArc {
   position: absolute;
-  inset: -10px;
+  inset: -6px;
   z-index: 0;
   pointer-events: none;
-  transform: translateY(2px);
+  transform: translateY(2.5px);
   /* Visual center correction */
 }
 
@@ -1424,6 +1445,30 @@ button:active:not(:disabled) {
   position: absolute;
   opacity: 0.12;
   --rotation: 0deg;
+  --base-rotation: 0deg;
+  --delay: 0s;
+  --duration: 5s;
+  --drift: 5%;
+  transition: left 1s ease-in-out, top 1s ease-in-out, transform 1s ease-in-out;
+  transform: translate(0, 0) rotate(calc(var(--base-rotation) + var(--rotation)));
+  animation: organic-float var(--duration) ease-in-out var(--delay) infinite alternate;
+}
+
+@keyframes organic-float {
+  0% {
+    transform: translate(0, 0) rotate(calc(var(--base-rotation) + var(--rotation))) scale(1);
+    opacity: 0.12;
+  }
+
+  50% {
+    transform: translate(var(--drift), calc(var(--drift) * -1)) rotate(calc(var(--base-rotation) + var(--rotation) + 5deg)) scale(1.05);
+    opacity: 0.18;
+  }
+
+  100% {
+    transform: translate(calc(var(--drift) * -0.5), var(--drift)) rotate(calc(var(--base-rotation) + var(--rotation) - 5deg)) scale(0.95);
+    opacity: 0.12;
+  }
 }
 
 /* Shape types */
@@ -1431,14 +1476,13 @@ button:active:not(:disabled) {
   width: 20px;
   height: 20px;
   background: currentColor;
-  transform: rotate(var(--rotation));
 }
 
 .scatter-shape--diamond {
   width: 18px;
   height: 18px;
   background: currentColor;
-  transform: rotate(calc(45deg + var(--rotation)));
+  --base-rotation: 45deg;
 }
 
 .scatter-shape--circle {
@@ -1452,7 +1496,6 @@ button:active:not(:disabled) {
   width: 28px;
   height: 10px;
   background: currentColor;
-  transform: rotate(var(--rotation));
 }
 
 .scatter-shape--pentagon {
@@ -1460,7 +1503,6 @@ button:active:not(:disabled) {
   height: 20px;
   background: currentColor;
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-  transform: rotate(var(--rotation));
 }
 
 .scatter-shape--squircle {
@@ -1468,7 +1510,6 @@ button:active:not(:disabled) {
   height: 18px;
   background: currentColor;
   border-radius: 35%;
-  transform: rotate(var(--rotation));
 }
 
 .scatter-shape--pill {
@@ -1476,7 +1517,6 @@ button:active:not(:disabled) {
   height: 12px;
   background: currentColor;
   border-radius: 10px;
-  transform: rotate(var(--rotation));
 }
 
 .scatter-shape--blossom {
@@ -1484,7 +1524,6 @@ button:active:not(:disabled) {
   height: 22px;
   background: currentColor;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  transform: rotate(var(--rotation));
 }
 
 .scatter-shape--semicircle {
@@ -1492,7 +1531,6 @@ button:active:not(:disabled) {
   height: 10px;
   background: currentColor;
   border-radius: 20px 20px 0 0;
-  transform: rotate(var(--rotation));
 }
 
 .scatter-shape--starburst {
@@ -1500,7 +1538,6 @@ button:active:not(:disabled) {
   height: 20px;
   background: currentColor;
   clip-path: polygon(50% 0%, 64% 18%, 82% 7%, 82% 28%, 100% 30%, 87% 46%, 97% 64%, 78% 64%, 76% 85%, 59% 76%, 50% 100%, 41% 76%, 24% 85%, 22% 64%, 3% 64%, 13% 46%, 0% 30%, 18% 28%, 18% 7%, 36% 18%);
-  transform: rotate(var(--rotation));
 }
 
 /* Size modifiers */
@@ -1761,10 +1798,11 @@ button:active:not(:disabled) {
 /* Reorganized Knob Layout - Global */
 .rampTopCenter {
   position: absolute;
-  top: -5px;
+  top: -3px;
+  /* Clears the arcs */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 5;
+  z-index: 10;
   display: flex;
   align-items: center;
   pointer-events: auto;
@@ -1775,5 +1813,5 @@ button:active:not(:disabled) {
 
 /* Consistent spacing for labels */
 .labelArea {
-  margin-top: 8px !important;
+  margin-top: 3px !important;
 }

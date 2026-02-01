@@ -228,32 +228,28 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
   control.subLabel = subLab;
 
 
-  // Ramp Control - Top Right Absolute
+  // Ramp Control - Top Center Pill
   if (rampCC) {
     const rampContainer = createElement('div', 'rampTopCenter');
+    const rampPill = createElement('button', 'rampPillToggle');
+    rampPill.textContent = 'RAMP';
 
-    const rampCheck = createElement('input') as HTMLInputElement;
-    rampCheck.type = 'checkbox';
-    rampCheck.id = `ramp${cc}`;
-    rampCheck.className = 'toggleSwitch toggleSwitch--xs';
-
-    const rampLabel = createElement('label', 'miniRampLabel');
-    rampLabel.textContent = '(RAMP)';
-    rampLabel.appendChild(rampCheck);
-
-    rampCheck.addEventListener('change', () => {
-      stateService.set(rampCC, rampCheck.checked ? 127 : 0);
+    rampPill.addEventListener('click', () => {
+      const current = stateService.get(rampCC);
+      const newVal = current === 127 ? 0 : 127;
+      stateService.set(rampCC, newVal);
+      rampPill.classList.toggle('active', newVal === 127);
     });
 
     stateService.registerControl(rampCC, {
       type: 'dip',
       set(v: MIDIValue) {
-        rampCheck.checked = Number(v) === 127;
+        rampPill.classList.toggle('active', Number(v) === 127);
       }
     });
 
-    rampContainer.appendChild(rampLabel);
-    block.appendChild(rampContainer); // Append to main block for absolute positioning
+    rampContainer.appendChild(rampPill);
+    block.appendChild(rampContainer);
   }
 
   parentEl.appendChild(block);

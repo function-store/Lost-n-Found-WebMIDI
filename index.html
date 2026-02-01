@@ -37,8 +37,10 @@
         <div class="tbGroup">
           <span class="grpLabel">Random:</span>
           <div class="segmented">
-            <button id="btnRandom" title="Randomize All">All</button>
-            <button id="btnRandomKnobs" title="Randomize Knobs Only">Knobs</button>
+            <button id="btnRandom"
+              title="Randomize All (Excludes: Master Wet,MIDI Clock, Latch, Trails, Bank, MISO, Spread, Tap Tempo)">All</button>
+            <button id="btnRandomKnobs"
+              title="Randomize Knobs Only (Excludes Master Wet and locked knobs)">Knobs</button>
           </div>
           <label class="pillLabel compact" title="Include Ramp Controls in Random All">
             <input id="chkInclRamp" type="checkbox" class="toggleSwitch toggleSwitch--sm">

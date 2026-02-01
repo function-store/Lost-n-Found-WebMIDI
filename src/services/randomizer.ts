@@ -14,7 +14,7 @@ class RandomizerService {
 
     // Randomize main knobs
     KNOB_CCS.forEach(cc => {
-      if (stateService.isLocked(cc)) return;
+      if (stateService.isLocked(cc) || NEVER_RANDOM_CCS.has(cc)) return;
 
       const control = stateService.getControl(cc);
       if (control?.type !== 'knob' && control?.type !== 'modify') return;

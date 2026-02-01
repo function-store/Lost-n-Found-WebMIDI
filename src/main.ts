@@ -11,7 +11,7 @@ import {
   createRampSlider,
   createRampEnabled,
 } from './components';
-import { createScatterLayer } from './components/ScatterDecorations';
+import { createScatterLayer, randomizeScatter } from './components/ScatterDecorations';
 import { EFFECTS, KNOBS, CONTROLS } from './config';
 import { triPosFromValue, getVariantFromModify, createElement } from './utils/helpers';
 import type { Side, MIDIChannel, KnobKind } from './types';
@@ -360,12 +360,14 @@ function setupEventListeners(): void {
   document.getElementById('btnRandom')?.addEventListener('click', () => {
     const inclRamp = (document.getElementById('chkInclRamp') as HTMLInputElement)?.checked ?? false;
     randomizerService.randomizeAll(inclRamp);
+    randomizeScatter(); // Re-roll background
     updateReadout();
   });
 
   document.getElementById('btnRandomKnobs')?.addEventListener('click', () => {
     const inclRamp = (document.getElementById('chkInclRamp') as HTMLInputElement)?.checked ?? false;
     randomizerService.randomizeKnobs(inclRamp);
+    randomizeScatter(); // Re-roll background
     updateReadout();
   });
 

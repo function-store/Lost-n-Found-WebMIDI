@@ -57,25 +57,47 @@ body.midi-disabled {
   position: relative;
   z-index: 50;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 6px 10px;
-  background: transparent;
-}
-
-.topbarRow {
-  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  gap: 6px;
+  padding: 4px 8px;
+  background: transparent;
 }
 
 .tbGroup {
   display: flex;
   align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
+  gap: 4px;
   white-space: nowrap;
+}
+
+.tbGroup:last-child {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+#cloudStatus {
+  font-size: 9px;
+  color: var(--cream-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.8;
+  user-select: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 6px;
+  margin-left: 2px;
+}
+
+#cloudStatusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #666;
+  transition: background 0.3s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sep {
@@ -84,16 +106,6 @@ body.midi-disabled {
   background: var(--border-light);
   margin: 0 6px;
   opacity: 0.5;
-}
-
-.grpLabel {
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-right: 2px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.7;
 }
 
 /* ===== SEGMENTED CONTROLS ===== */
@@ -157,6 +169,46 @@ select {
   overflow: hidden;
   color: var(--cream-muted);
   padding-right: 6px;
+}
+
+/* Icon-only buttons in topbar */
+.iconBtn {
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  position: relative;
+}
+
+.iconBtn svg {
+  display: block;
+}
+
+/* Fast tooltips for topbar icon buttons */
+.iconBtn[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: var(--cream);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+  z-index: 1000;
+}
+
+.iconBtn[data-tip]:hover::after {
+  opacity: 1;
 }
 
 select option {
@@ -1496,18 +1548,69 @@ button:active:not(:disabled) {
   padding: 4px 8px;
 }
 
-/* ===== BUILD BADGE ===== */
-#buildBadge {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  z-index: 999999;
-  background: rgba(0, 0, 0, 0.8);
+/* ===== SITE HEADER ===== */
+.siteHeader {
+  text-align: center;
+  padding: 12px 16px;
+  font-size: 12px;
   color: var(--cream-muted);
-  padding: 6px 10px;
-  border-radius: 8px;
-  font: 11px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  border: 1px solid var(--border-light);
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.siteHeader a {
+  color: var(--yellow);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.siteHeader a:hover {
+  text-decoration: underline;
+}
+
+/* ===== SITE FOOTER ===== */
+.siteFooter {
+  text-align: center;
+  padding: 12px 16px;
+  font-size: 11px;
+  color: var(--cream-muted);
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.siteFooter__sep {
+  opacity: 0.4;
+}
+
+.siteFooter__version {
+  font-weight: 600;
+  color: var(--cream);
+}
+
+.siteFooter__github {
+  color: var(--cream);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.siteFooter__github:hover {
+  color: var(--yellow);
+}
+
+.siteFooter__github svg {
+  opacity: 0.8;
+}
+
+.siteFooter__credit {
+  opacity: 0.6;
 }
 
 /* ===== MODALS ===== */
@@ -1910,9 +2013,11 @@ button:active:not(:disabled) {
     grid-template-columns: 1fr;
   }
 
-  /* Keep topbar structured, don't center/wrap wildly */
+  /* Keep topbar compact on mobile */
   .topbar {
     padding: 4px;
+    justify-content: space-between;
+    gap: 4px;
   }
 
   .tbGroup {
@@ -1925,6 +2030,16 @@ button:active:not(:disabled) {
   .pillLabel {
     font-size: 9px !important;
     padding: 2px 4px !important;
+  }
+
+  /* Hide cloud status text on mobile, keep dot */
+  #cloudStatusText {
+    display: none;
+  }
+
+  #cloudStatus {
+    padding-left: 4px;
+    margin-left: 2px;
   }
 
   /* Create space for the absolute routing controls between Blend (5th) and Spill (8th) */

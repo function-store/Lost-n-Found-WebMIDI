@@ -75,7 +75,7 @@ function setupCloudUI(): void {
           stateService.autoSync = chk.checked;
           stateService.save();
           if (stateService.autoSync) triggerAutoUpload();
-          else updateCloudStatusUI('modified', 'Auto-Sync Off');
+          else updateCloudStatusUI('modified', 'Sync Off');
         };
         syncGroup.appendChild(syncLbl);
         menu.appendChild(syncGroup);
@@ -119,7 +119,7 @@ function setupCloudUI(): void {
               updateCloudStatusUI('online');
               alert('Downloaded!');
             } else {
-              updateCloudStatusUI('online', 'No backup found');
+              updateCloudStatusUI('online', 'No backup');
               alert('No backup found.');
             }
           } catch (err) {
@@ -168,22 +168,22 @@ function setupCloudUI(): void {
       rebuildMenu(user);
       if (user && stateService.autoSync) {
         try {
-          updateCloudStatusUI('syncing', 'Auto-downloading...');
+          updateCloudStatusUI('syncing', 'Downloading...');
           const cloudPresets = await cloudService.loadPresets();
           if (cloudPresets) {
             presetService.setMeta(cloudPresets);
             initSlots();
             const modal = document.getElementById('pmModal');
             if (modal && modal.style.display !== 'none') openManager();
-            updateCloudStatusUI('online', 'Cloud Level: Synced');
+            updateCloudStatusUI('online', 'Synced');
           } else {
-            updateCloudStatusUI('online', 'Cloud Ready');
+            updateCloudStatusUI('online', 'Ready');
           }
         } catch (e) {
-          updateCloudStatusUI('error', 'Auto-sync failed');
+          updateCloudStatusUI('error', 'Sync failed');
         }
       } else if (user) {
-        updateCloudStatusUI('online', 'Cloud Connected');
+        updateCloudStatusUI('online', 'Connected');
       } else {
         updateCloudStatusUI('offline');
       }
@@ -219,29 +219,29 @@ function updateCloudStatusUI(status: 'offline' | 'online' | 'syncing' | 'error' 
 
   dot.style.background = colors[status];
   txt.textContent = text || (
-    status === 'offline' ? 'Cloud Offline' :
-      status === 'online' ? 'Cloud Synced' :
-        status === 'syncing' ? 'Cloud Syncing...' :
-          status === 'modified' ? 'Local Changes' :
-            'Cloud Error'
+    status === 'offline' ? 'Offline' :
+      status === 'online' ? 'Synced' :
+        status === 'syncing' ? 'Syncing...' :
+          status === 'modified' ? 'Modified' :
+            'Error'
   );
 }
 
 async function triggerAutoUpload(): Promise<boolean> {
   if (stateService.autoSync && cloudService.currentUser) {
     try {
-      updateCloudStatusUI('syncing', 'Auto-uploading...');
+      updateCloudStatusUI('syncing', 'Uploading...');
       const meta = presetService.getMeta();
       await cloudService.savePresets(meta);
-      updateCloudStatusUI('online', 'Cloud Level: Synced');
+      updateCloudStatusUI('online', 'Synced');
       return true;
     } catch (e) {
       console.error('Auto-upload failed:', e);
-      updateCloudStatusUI('error', 'Auto-upload failed');
+      updateCloudStatusUI('error', 'Upload failed');
       return false;
     }
   } else if (cloudService.currentUser && !stateService.autoSync) {
-    updateCloudStatusUI('modified', 'Local Changes');
+    updateCloudStatusUI('modified');
   }
   return false;
 }
@@ -820,9 +820,10 @@ function setupEventListeners(): void {
       initSlots();
       triggerAutoUpload();
 
-      // If manager is open, refresh it to show "Used" status
+      // If manager is ALREADY open (visible), refresh it.
+      // Check computed style to correctly detect visibility.
       const modal = document.getElementById('pmModal');
-      if (modal && modal.style.display !== 'none') {
+      if (modal && getComputedStyle(modal).display !== 'none') {
         openManager();
       }
     });
@@ -835,6 +836,25 @@ function setupEventListeners(): void {
   customNameInput?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       handleConfirmStore();
+    }
+  });
+
+  // Escape to close modals
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const pmModal = document.getElementById('pmModal');
+      const nameModal = document.getElementById('nameModal');
+      const cloudMenu = document.querySelector('.cloud-menu') as HTMLElement;
+
+      if (pmModal && getComputedStyle(pmModal).display !== 'none') {
+        pmModal.style.display = 'none';
+      }
+      if (nameModal && getComputedStyle(nameModal).display !== 'none') {
+        nameModal.style.display = 'none';
+      }
+      if (cloudMenu && getComputedStyle(cloudMenu).display !== 'none') {
+        cloudMenu.style.display = 'none';
+      }
     }
   });
 }
@@ -1095,6 +1115,29 @@ function openManager(): void {
       });
     });
 
+    // Auto-save on change
+    const nameInput = row.querySelector('.pmName') as HTMLInputElement;
+    const occInput = row.querySelector('.pmOccupied') as HTMLInputElement;
+
+    const handleAutoSave = () => {
+      const meta = presetService.getMeta();
+      const existing = meta[i];
+      const newName = nameInput.value;
+      const newOcc = occInput.checked;
+
+      if (newName || newOcc) {
+        meta[i] = { ...existing, name: newName, occupied: newOcc };
+      } else {
+        delete meta[i];
+      }
+      presetService.setMeta(meta);
+      initSlots();
+      triggerAutoUpload();
+    };
+
+    nameInput?.addEventListener('change', handleAutoSave);
+    occInput?.addEventListener('change', handleAutoSave);
+
     tbody.appendChild(row);
   }
 
@@ -1102,37 +1145,10 @@ function openManager(): void {
   if (modal) modal.style.display = 'flex';
 }
 
-// Save manager changes
+// Save function is now handled automatically per-row, ensuring instant updates.
+// We keep this function stub in case it's referenced elsewhere, but it's largely superseded.
 function saveManagerChanges(): void {
-  const meta = presetService.getMeta();
-
-  document.querySelectorAll('#pmTableBody tr').forEach(row => {
-    const nameInput = row.querySelector('.pmName') as HTMLInputElement;
-    const occupiedInput = row.querySelector('.pmOccupied') as HTMLInputElement;
-    if (!nameInput) return;
-
-    const slotNum = Number(nameInput.dataset.slot);
-    const existingEntry = meta[slotNum];
-    const name = nameInput.value;
-    const occupied = occupiedInput?.checked ?? false;
-
-    if (name || occupied) {
-      meta[slotNum] = {
-        ...existingEntry,
-        name,
-        occupied
-      };
-    } else {
-      delete meta[slotNum];
-    }
-  });
-
-  presetService.setMeta(meta);
-  initSlots();
-  triggerAutoUpload();
-
-  const modal = document.getElementById('pmModal');
-  if (modal) modal.style.display = 'none';
+  // no-op or full scan if needed
 }
 
 // Make functions available globally for modal close buttons

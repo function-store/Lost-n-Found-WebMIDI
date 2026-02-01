@@ -41,7 +41,7 @@
             <button id="btnRandomKnobs" title="Randomize Knobs Only">Knobs</button>
           </div>
           <label class="pillLabel compact" title="Include Ramp Controls in Random All">
-            <input id="chkInclRamp" type="checkbox">
+            <input id="chkInclRamp" type="checkbox" class="toggleSwitch toggleSwitch--sm">
             <span>+Ramp</span>
           </label>
           <span id="btnUnlockAll" title="Unlock All Knobs"
@@ -117,22 +117,22 @@
         <div class="knobGrid" id="knobGrid"></div>
       </div>
 
-      <!-- Settings Section -->
-      <div class="section">
-        <div class="splitSection">
-          <div>
-            <div class="sectionTitle">Stereo</div>
-            <div class="stereoControls" id="stereoControls"></div>
-          </div>
-
-          <div>
-            <div class="sectionTitle">Clock / Tempo</div>
-            <div class="advGrid" id="otherGrid"></div>
-          </div>
+      <!-- Advanced Settings Area -->
+      <div class="advancedArea">
+        <div class="settingsModule">
+          <div class="moduleHeader">Stereo</div>
+          <div class="stereoControls" id="stereoControls"></div>
         </div>
 
-        <div class="sectionTitle">Settings</div>
-        <div class="dipGrid" id="dipGrid"></div>
+        <div class="settingsModule">
+          <div class="moduleHeader">Clock / Tempo</div>
+          <div class="advGrid" id="otherGrid"></div>
+        </div>
+
+        <div class="settingsModule">
+          <div class="moduleHeader">General Settings</div>
+          <div class="dipGrid" id="dipGrid"></div>
+        </div>
       </div>
     </div>
   </div>

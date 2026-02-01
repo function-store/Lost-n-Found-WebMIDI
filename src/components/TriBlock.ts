@@ -27,13 +27,15 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   stateService.set(cc, defaultValue, false);
 
   const block = createElement('div', 'toggleBlock');
+  if (side) {
+    block.classList.add(`toggle-${side.toLowerCase()}`);
+  }
 
   // Title row
-  const tRow = createElement('div');
-  tRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px';
+  const tRow = createElement('div', 'toggleHeader');
+  // Style moved to CSS
 
   const titleRow = createElement('div', 'toggleTitle');
-  titleRow.style.cssText = 'margin:0;display:flex;gap:8px;align-items:center';
 
   const titleText = createElement('span');
   titleText.textContent = title;
@@ -58,7 +60,7 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   if (side && swapCC) {
     const sLabel = createElement('label');
     sLabel.style.cssText = 'font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:500;color:var(--cream-muted)';
-    sLabel.innerHTML = `<input type="checkbox" id="${side.toLowerCase()}SwapToggle"> Swap`;
+    sLabel.innerHTML = `<input type="checkbox" class="toggleSwitch" id="${side.toLowerCase()}SwapToggle"> Swap`;
 
     swapCheck = sLabel.querySelector('input') as HTMLInputElement;
     swapCheck.addEventListener('change', () => {
@@ -98,13 +100,10 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
 
   function paint(pos: number) {
     btns.forEach((b, i) => {
-      const on = i === pos;
-      b.style.border = on ? '1px solid var(--sage)' : '1px solid var(--border)';
-      b.style.background = on
-        ? 'linear-gradient(180deg, var(--sage-dark), var(--sage-darker))'
-        : 'rgba(0, 0, 0, 0.25)';
-      b.style.color = on ? 'var(--cream)' : 'var(--cream-muted)';
+      b.classList.toggle('active', i === pos);
     });
+    // Update slider position via CSS custom property
+    seg.style.setProperty('--active-index', String(pos));
   }
 
   optionLabels.forEach((name, i) => {
@@ -167,6 +166,10 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
     engageLabel.appendChild(engageCb);
     engageLabel.appendChild(engageText);
     block.appendChild(engageLabel);
+  } else {
+    // Spacer to keep middle column aligned with side columns that have ENGAGE buttons
+    const spacer = createElement('div', 'engageSpacer');
+    block.appendChild(spacer);
   }
 
   parentEl.appendChild(block);

@@ -15,7 +15,7 @@ export function createDipRow(
   const lab = createElement('label');
   lab.textContent = name;
 
-  const cb = createElement('input') as HTMLInputElement;
+  const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   cb.type = 'checkbox';
   cb.addEventListener('change', () => {
     const v = cb.checked ? 127 : 0;
@@ -44,7 +44,7 @@ export function createRampToggle(
 
   const toggle = createElement('label', 'rampToggle');
 
-  const cb = createElement('input') as HTMLInputElement;
+  const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   cb.type = 'checkbox';
   cb.id = `ramp${name}`;
   cb.addEventListener('change', () => {
@@ -76,7 +76,7 @@ export function createStereoToggle(
 
   const toggle = createElement('label', 'stereoToggle');
 
-  const cb = createElement('input') as HTMLInputElement;
+  const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   cb.type = 'checkbox';
   cb.id = `stereo${name.replace(/\s+/g, '')}`;
   cb.addEventListener('change', () => {
@@ -113,7 +113,7 @@ export function createOtherCheckbox(
   const lab = createElement('label');
   lab.textContent = name;
 
-  const cb = createElement('input') as HTMLInputElement;
+  const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   cb.type = 'checkbox';
   cb.addEventListener('change', () => {
     const v = cb.checked ? checkedValue : uncheckedValue;
@@ -220,7 +220,7 @@ export function createRampEnabled(parentEl: HTMLElement): void {
   const cc = 52; // Ramp Enabled CC
   stateService.set(cc, 127, false); // Default: ramping disabled (127=disabled, 0=enabled)
 
-  const enabledCb = createElement('input') as HTMLInputElement;
+  const enabledCb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   enabledCb.type = 'checkbox';
   enabledCb.id = 'rampEnabledToggle';
   enabledCb.checked = false;

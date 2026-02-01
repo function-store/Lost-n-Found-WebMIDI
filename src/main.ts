@@ -11,6 +11,7 @@ import {
   createRampSlider,
   createRampEnabled,
 } from './components';
+import { createScatterLayer } from './components/ScatterDecorations';
 import { EFFECTS, KNOBS, CONTROLS } from './config';
 import { triPosFromValue, getVariantFromModify, createElement } from './utils/helpers';
 import type { Side, MIDIChannel, KnobKind } from './types';
@@ -45,10 +46,16 @@ function updateMidiStatusUI(): void {
 function buildUI(): void {
   const toggleRow = document.getElementById('toggleRow');
   const knobGrid = document.getElementById('knobGrid');
+  const pedal = document.querySelector('.pedal') as HTMLElement | null;
 
   if (!toggleRow || !knobGrid) {
     console.error('Required DOM elements not found');
     return;
+  }
+
+  // Add organic scatter decorations
+  if (pedal) {
+    createScatterLayer(pedal);
   }
 
   // Create effect selector blocks

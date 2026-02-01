@@ -21,7 +21,9 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
   stateService.set(cc, defaultValue, false);
 
   const block = createElement('div', 'knobBlock');
-
+  if (column) {
+    block.classList.add(`knob-${column}`);
+  }
 
   // Value display
   const val = createElement('div', 'kValue');
@@ -71,11 +73,10 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     set(newVal);
   });
 
-  // Double-click to reset
+  // Double-click to reset to default
   knob.addEventListener('dblclick', () => {
-    const neutral = 64;
-    stateService.set(cc, neutral);
-    set(neutral);
+    stateService.set(cc, defaultValue);
+    set(defaultValue);
   });
 
   // Register UI control
@@ -231,7 +232,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     const rampCheck = createElement('input') as HTMLInputElement;
     rampCheck.type = 'checkbox';
     rampCheck.id = `ramp${cc}`;
-    rampCheck.className = 'miniCheck';
+    rampCheck.className = 'toggleSwitch toggleSwitch--sm';
 
     const rampLabel = createElement('label', 'miniRampLabel');
     rampLabel.textContent = '(RAMP)'; // Or empty if icon only? User image shows text.

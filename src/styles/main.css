@@ -58,67 +58,66 @@ body.midi-disabled {
   z-index: 50;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
-  /* Tighter gaps */
+  gap: 6px 10px;
   align-items: center;
-  padding: 6px 12px;
-  /* Slimmer top/bottom padding */
-  background: rgba(36, 42, 39, 0.95);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
+  padding: 4px 10px;
+  background: transparent;
   justify-content: space-between;
-  /* Better distribution */
 }
 
 .tbGroup {
   display: flex;
   align-items: center;
-  gap: 4px;
-  /* Tightened from 6px */
+  gap: 3px;
   flex-shrink: 0;
   white-space: nowrap;
 }
 
 .sep {
   width: 1px;
-  height: 24px;
-  background: var(--border);
-  margin: 0 4px;
+  height: 16px;
+  background: var(--border-light);
+  margin: 0 6px;
+  opacity: 0.5;
 }
 
 .grpLabel {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 9px;
+  font-weight: 600;
   color: var(--text-muted);
   margin-right: 2px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
 }
 
 /* ===== SEGMENTED CONTROLS ===== */
 .segmented {
   display: flex;
-  background: var(--bg-input);
-  border-radius: 10px;
-  padding: 3px;
-  gap: 0;
-  border: 1px solid var(--border-light);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 2px;
+  gap: 1px;
+  border: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .segmented button {
-  border-radius: 6px;
+  border-radius: 3px;
   border: none;
   background: transparent;
   box-shadow: none;
-  font-size: 11px;
-  padding: 5px 10px;
+  font-size: 10px;
+  padding: 4px 8px;
   color: var(--text-muted);
   margin: 0;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .segmented button:hover {
-  background: var(--sage-darker);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text);
 }
 
@@ -126,50 +125,52 @@ body.midi-disabled {
 .segmented button.active {
   background: var(--sage-dark);
   color: var(--cream);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* ===== BUTTONS & INPUTS ===== */
 select,
 button {
-  padding: 6px 10px;
-  /* Slimmer button */
-  font-size: 11px;
-  /* Smaller font for topbar items */
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: linear-gradient(180deg, var(--sage-dark), var(--sage-darker));
-  color: var(--cream);
-  box-shadow: var(--shadow-sm);
-  font-weight: 500;
+  padding: 4px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--cream-muted);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.05);
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.1s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 select {
-  background: var(--bg-input);
-  max-width: 120px;
+  background: rgba(0, 0, 0, 0.4);
+  max-width: 110px;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: var(--cream);
+  color: var(--cream-muted);
+  padding-right: 6px;
 }
 
 select option {
   background: var(--bg-input);
   color: var(--cream);
+  text-transform: none;
 }
 
 #midiSelect {
-  width: 100px;
-  max-width: 100px;
+  width: 90px;
+  max-width: 90px;
 }
 
 #slotSelect {
-  max-width: 80px;
+  max-width: 70px;
 }
 
 #btnEnableMIDI {
-  width: 100px;
-  /* Fixed width to prevent shift */
+  width: 90px;
   white-space: nowrap;
   overflow: hidden;
   text-align: center;
@@ -177,85 +178,134 @@ select option {
 
 select:disabled,
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 button:hover:not(:disabled) {
-  background: linear-gradient(180deg, var(--sage), var(--sage-dark));
-  border-color: var(--sage);
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--cream);
 }
 
 button:active:not(:disabled) {
-  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .topbar button.iconBtn {
-  padding: 8px 12px;
+  padding: 5px 8px;
 }
 
-/* ===== PILL LABELS ===== */
+/* Standardized row for all settings (Label on Left, Control on Right) */
+.dipRow,
+.stereoToggle,
+.pillLabel.dipRow {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding: 4px 0 !important;
+  gap: 12px !important;
+}
+
+.dipRow label,
+.stereoToggle span,
+.pillLabel.dipRow label {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  order: -1 !important;
+  /* Ensure label/text stays left */
+}
+
+/* Specific control styling to ensure right-alignment */
+.dipRow input[type="checkbox"],
+.stereoToggle input[type="checkbox"],
+.dipRow select {
+  margin-left: auto !important;
+}
+
+.dipRow select {
+  width: auto !important;
+  min-width: 80px;
+  max-width: 120px;
+  padding: 2px 4px;
+  font-size: 11px;
+}
+
 .pillLabel {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg-input);
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: none;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .pillLabel.compact {
-  padding: 4px 8px;
+  padding: 3px 6px;
   gap: 4px;
   margin-left: 2px;
 }
 
 .pillLabel.compact span {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
 }
 
 .pillLabel span {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.pillLabel input {
-  transform: scale(1.1);
-  accent-color: var(--yellow);
-}
+/* pillLabel checkboxes use .toggleSwitch class */
 
 .pillLabel select {
   background: transparent;
   border: none;
   box-shadow: none;
   padding: 2px 4px;
-  font-size: 12px;
+  font-size: 10px;
+  text-transform: none;
 }
 
 /* ===== LAYOUT ===== */
 .layout {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 12px;
 }
 
 .card {
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
   box-shadow: var(--shadow);
-  padding: 14px;
+  padding: 10px;
 }
 
 .pedal {
   margin-top: 12px;
   border: 1px solid var(--border);
   border-radius: 22px;
-  background: linear-gradient(180deg, var(--sage-darker) 0%, var(--sage-dark) 50%, var(--sage-darker) 100%);
+  background:
+    linear-gradient(90deg,
+      rgba(125, 163, 123, 0.12) 0%,
+      rgba(125, 163, 123, 0.04) 28%,
+      transparent 38%,
+      transparent 62%,
+      rgba(157, 170, 82, 0.04) 72%,
+      rgba(157, 170, 82, 0.12) 100%),
+    linear-gradient(180deg, var(--sage-darker) 0%, var(--sage-dark) 50%, var(--sage-darker) 100%);
   padding: 14px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
 }
 
 /* ===== TOGGLE ROW ===== */
@@ -267,102 +317,263 @@ button:active:not(:disabled) {
 }
 
 .toggleBlock {
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
   padding: 10px;
+}
+
+.toggleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  min-height: 24px;
+  /* Align even if missing icons/switches */
 }
 
 .toggleTitle {
   font-weight: 700;
   font-size: 11px;
-  margin: 0 0 8px;
-  color: var(--cream-muted);
+  margin: 0;
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
   align-items: center;
+  color: var(--cream-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .randomizeBtn {
-  font-size: 14px;
-  padding: 2px 6px;
-  border-radius: 6px;
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 3px;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-light);
+  border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   line-height: 1;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .randomizeBtn:hover {
-  background: var(--sage-darker);
-  border-color: var(--sage);
-  transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.5);
+  transform: scale(1.05);
 }
 
 /* ===== ENGAGE TOGGLE ===== */
 .engageToggle {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 10px;
-  border: 2px solid var(--border);
-  background: rgba(0, 0, 0, 0.3);
-  font-size: 12px;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 3px;
+  border: none;
+  background: rgba(0, 0, 0, 0.4);
+  font-size: 10px;
   font-weight: 700;
   color: var(--cream-muted);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   user-select: none;
-  margin-top: 8px;
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .engageToggle.active {
-  background: linear-gradient(135deg, var(--yellow), var(--yellow-muted));
-  border-color: var(--yellow);
+  background: var(--yellow);
   color: #1a1f1c;
-  box-shadow: var(--glow);
+  box-shadow: 0 0 8px rgba(197, 217, 78, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .engageToggle:hover {
-  border-color: var(--sage);
-  transform: translateY(-1px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.engageToggle.active:hover {
+  background: var(--yellow);
+  filter: brightness(1.1);
 }
 
 .engageToggle input[type="checkbox"] {
   display: none;
 }
 
-/* ===== SEGMENT BUTTONS ===== */
+/* ===== CUSTOM TOGGLE SWITCHES ===== */
+/* Hide native checkbox, show custom toggle */
+.toggleSwitch {
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 28px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.toggleSwitch::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  background: var(--cream-muted);
+  border-radius: 50%;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.toggleSwitch:checked {
+  background: var(--sage-dark);
+}
+
+.toggleSwitch:checked::before {
+  left: 16px;
+  background: var(--cream);
+}
+
+.toggleSwitch:hover::before {
+  background: var(--cream);
+}
+
+/* Small variant for inline use */
+.toggleSwitch--sm {
+  width: 22px;
+  height: 11px;
+  border-radius: 6px;
+}
+
+.toggleSwitch--sm::before {
+  top: 1.5px;
+  left: 1.5px;
+  width: 8px;
+  height: 8px;
+}
+
+.toggleSwitch--sm:checked::before {
+  left: 12px;
+}
+
+/* ===== SEGMENT BUTTONS (Slider Style) ===== */
 .seg {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 0;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  padding: 3px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  --active-index: 0;
+}
+
+/* Sliding highlight */
+.seg::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: calc(3px + var(--active-index) * (100% - 6px) / 3);
+  width: calc((100% - 6px) / 3);
+  background: var(--sage-dark);
+  border-radius: 3px;
+  transition: left 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .seg button {
-  padding: 8px 8px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.25);
+  padding: 6px 4px;
+  border-radius: 3px;
+  border: none;
+  background: transparent;
   color: var(--cream-muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+  position: relative;
+  z-index: 1;
 }
 
 .seg button:hover {
-  background: rgba(0, 0, 0, 0.4);
   color: var(--cream);
 }
 
+.seg button.active {
+  color: var(--cream);
+}
+
+/* Left column tint (green) */
+.toggle-l .seg button {
+  color: var(--green-muted);
+}
+
+.toggle-l .seg button:hover,
+.toggle-l .seg button.active {
+  color: var(--cream);
+}
+
+.toggle-l .seg::before {
+  background: var(--green-muted);
+}
+
+.toggle-l .toggleTitle {
+  color: var(--green-muted);
+}
+
+/* Right column tint (yellow) */
+.toggle-r .seg button {
+  color: var(--yellow-muted);
+}
+
+.toggle-r .seg button:hover,
+.toggle-r .seg button.active {
+  color: var(--cream);
+}
+
+.toggle-r .seg::before {
+  background: var(--yellow-muted);
+}
+
+.toggle-r .toggleTitle {
+  color: var(--yellow-muted);
+}
+
+/* Engage toggle tints */
+.toggle-l .engageToggle {
+  color: var(--green-muted);
+}
+
+.toggle-l .engageToggle.active {
+  background: var(--green-muted);
+  color: #1a1f1c;
+  box-shadow: 0 0 8px rgba(125, 163, 123, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.toggle-r .engageToggle {
+  color: var(--yellow-muted);
+}
+
+.toggle-r .engageToggle.active {
+  background: var(--yellow-muted);
+  color: #1a1f1c;
+  box-shadow: 0 0 8px rgba(157, 170, 82, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
 .readout {
-  margin: 10px 0 0;
-  font-size: 12px;
+  margin: 6px 0 0;
+  font-size: 9px;
   color: var(--cream-muted);
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
 }
 
 /* ===== KNOB GRID ===== */
@@ -374,15 +585,21 @@ button:active:not(:disabled) {
 }
 
 .knobBlock {
-  border: 1px solid var(--border-light);
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 18px;
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   align-items: center;
   position: relative;
+}
+
+/* Knob column tinting */
+.knob-left .kLabel {
+  color: var(--green-muted);
+}
+
+.knob-right .kLabel {
+  color: var(--yellow-muted);
 }
 
 .rampToggleInline {
@@ -554,19 +771,17 @@ button:active:not(:disabled) {
 
 .miniRampLabel {
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--yellow);
   display: flex;
   align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   gap: 2px;
   cursor: pointer;
 }
 
-.miniCheck {
-  transform: scale(0.7);
-  margin: 0;
-  accent-color: var(--yellow);
-}
+/* miniCheck is replaced by toggleSwitch--sm */
 
 .lockIconBtnMini {
   background: transparent;
@@ -612,73 +827,78 @@ button:active:not(:disabled) {
   display: block !important;
 }
 
-/* ===== SECTIONS ===== */
-.section {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-
-.sectionTitle {
-  font-weight: 700;
-  font-size: 11px;
-  margin: 0 0 10px;
-  color: var(--cream);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.advGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 10px;
-}
-
-.dipGrid {
+/* ===== ADVANCED SETTINGS AREA ===== */
+.advancedArea {
+  margin-top: 16px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
-.splitSection {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 12px;
-  align-items: start;
+.settingsModule {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.settingsModule:hover {
+  border-color: var(--border);
+}
+
+.moduleHeader {
+  font-weight: 800;
+  font-size: 10px;
+  color: var(--sage);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.stereoControls,
+.advGrid,
+.dipGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 /* ===== RAMP SECTION ===== */
 .rampSection {
-  margin-top: 14px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
-  margin-bottom: 10px;
-  /* Added significant margin below ramp section */
+  margin-bottom: 8px;
 }
 
 .rampSection:has(.collapsed) {
   padding-top: 4px;
   padding-bottom: 4px;
-  margin-top: 8px;
-  margin-bottom: 10px;
+  margin-top: 6px;
+  margin-bottom: 8px;
 }
 
 .rampHeader {
   font-weight: 700;
-  font-size: 11px;
-  margin: 0 0 12px;
-  color: var(--cream);
+  font-size: 10px;
+  margin: 0 0 8px;
+  color: var(--cream-muted);
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   user-select: none;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .rampHeader:has(+ .collapsed) {
@@ -686,19 +906,20 @@ button:active:not(:disabled) {
 }
 
 .rampCollapseBtn {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--cream-muted);
   font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 3px 6px;
+  border-radius: 3px;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-light);
-  transition: all 0.2s;
+  border: none;
+  transition: all 0.15s;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .rampCollapseBtn:hover {
-  background: var(--sage-darker);
-  border-color: var(--sage);
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--cream);
 }
 
 .rampControls {
@@ -723,53 +944,49 @@ button:active:not(:disabled) {
 
 .rampToggles {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .rampToggle {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.25);
-  font-size: 12px;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 9px;
   color: var(--cream-muted);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .rampToggle:hover {
-  background: rgba(0, 0, 0, 0.4);
-  border-color: var(--sage);
+  color: var(--cream);
 }
 
-.rampToggle input[type="checkbox"] {
-  accent-color: var(--yellow);
-  transform: scale(1.1);
-}
+/* Custom toggle styles are applied via .toggleSwitch class */
 
 .rampEnabled {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.25);
-  font-size: 12px;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 10px;
   font-weight: 600;
   color: var(--cream-muted);
   cursor: pointer;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.rampEnabled input[type="checkbox"] {
-  accent-color: var(--yellow);
-  transform: scale(1.2);
-}
+/* rampEnabled uses .toggleSwitch class */
 
 .rampSliderWrap {
   display: flex;
@@ -819,96 +1036,88 @@ button:active:not(:disabled) {
 
 /* ===== STEREO CONTROLS ===== */
 .stereoControls {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
+  display: contents;
 }
 
 .stereoToggle {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--bg-input);
-  font-size: 12px;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 9px;
   color: var(--cream-muted);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .stereoToggle:hover {
-  background: var(--bg-elevated);
-  border-color: var(--sage);
+  color: var(--cream);
 }
 
-.stereoToggle input[type="checkbox"] {
-  accent-color: var(--yellow);
-  transform: scale(1.1);
+/* stereoToggle uses .toggleSwitch class */
+
+/* Compact SPREAD toggle in settings strip */
+.stereoControls .toggleBlock {
+  padding: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.stereoControls .toggleTitle {
+  font-size: 8px;
+  margin: 0;
+  opacity: 0.6;
+  display: block;
+}
+
+.stereoControls .seg {
+  padding: 1px;
+}
+
+.stereoControls .seg button {
+  padding: 2px 5px;
+  font-size: 8px;
 }
 
 /* ===== DIP ROWS ===== */
 .dipRow {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-input);
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .dipRow label {
-  font-size: 12px;
+  font-size: 9px;
   color: var(--cream-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
-.dipRow input[type="checkbox"] {
-  accent-color: var(--yellow);
-  transform: scale(1.15);
-}
+/* dipRow uses .toggleSwitch class */
 
 .dipRow select {
-  flex: 1;
-  min-width: 120px;
+  min-width: 60px;
+  max-width: 80px;
+  font-size: 9px;
+  padding: 2px 4px;
 }
 
-#otherGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 10px;
-}
-
-#otherGrid .dipRow {
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap: 10px;
-  min-height: auto;
-}
-
-#otherGrid .dipRow label {
-  white-space: normal;
-}
-
-#otherGrid .dipRow select,
-#otherGrid .dipRow button {
-  width: 100%;
-  min-width: 0 !important;
-}
-
-#otherGrid .dipRow input[type="checkbox"] {
-  align-self: flex-end;
-}
+/* otherGrid uses display:contents, inherits from .section */
 
 .card .topbar {
-  border-radius: 14px;
-  margin: 0 0 12px;
-  background: var(--bg-elevated);
+  border-radius: 4px;
+  margin: 0 0 8px;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 6px 10px;
 }
 
 /* ===== BUILD BADGE ===== */
@@ -1147,11 +1356,105 @@ button:active:not(:disabled) {
   letter-spacing: 0.05em;
 }
 
+/* ===== ORGANIC SCATTER DECORATIONS ===== */
+.scatter-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.scatter-shape {
+  position: absolute;
+  opacity: 0.12;
+  --rotation: 0deg;
+}
+
+/* Shape types */
+.scatter-shape--square {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  transform: rotate(var(--rotation));
+}
+
+.scatter-shape--diamond {
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  transform: rotate(calc(45deg + var(--rotation)));
+}
+
+.scatter-shape--circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.scatter-shape--rect {
+  width: 28px;
+  height: 10px;
+  background: currentColor;
+  transform: rotate(var(--rotation));
+}
+
+.scatter-shape--pentagon {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  transform: rotate(var(--rotation));
+}
+
+/* Size modifiers */
+.scatter-shape--sm {
+  transform: scale(0.7) rotate(var(--rotation));
+}
+
+.scatter-shape--lg {
+  transform: scale(1.5) rotate(var(--rotation));
+}
+
+/* Color zones */
+.scatter-shape--left {
+  color: var(--green-muted);
+}
+
+.scatter-shape--center {
+  color: var(--cream);
+  opacity: 0.06;
+}
+
+.scatter-shape--right {
+  color: var(--yellow-muted);
+}
+
+/* Ensure controls are above scatter layer */
+.toggleRow,
+.knobGrid,
+.rampSection,
+.advancedArea {
+  position: relative;
+  z-index: 1;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .splitSection {
-    grid-template-columns: 1fr;
-    gap: 12px;
+
+  /* Reduce scatter density on mobile */
+  .scatter-shape:nth-child(even) {
+    display: none;
+  }
+
+  .scatter-shape {
+    transform: scale(0.8);
+  }
+
+  .section {
+    gap: 3px 6px;
+    padding: 5px 8px;
   }
 
   .toggleRow {
@@ -1214,8 +1517,9 @@ button:active:not(:disabled) {
   }
 
   .section {
-    margin-top: 8px;
-    padding-top: 8px;
+    margin-top: 10px;
+    padding: 6px 10px;
+    gap: 4px 10px;
   }
 
   /* Smaller knobs */
@@ -1242,7 +1546,6 @@ button:active:not(:disabled) {
   /* Compact blocks */
   .knobBlock {
     padding: 6px;
-    border-radius: 12px;
     gap: 2px;
   }
 
@@ -1262,7 +1565,6 @@ button:active:not(:disabled) {
 
   .toggleBlock {
     padding: 6px;
-    border-radius: 12px;
   }
 
   .toggleTitle {
@@ -1282,27 +1584,20 @@ button:active:not(:disabled) {
   .rampToggle,
   .stereoToggle,
   .dipRow {
-    padding: 4px 8px;
-    font-size: 11px;
-    white-space: nowrap;
+    font-size: 9px;
   }
 
   .stereoControls {
-    flex-wrap: nowrap;
-    /* Prevent wrapping in compact mode */
-    gap: 8px;
-  }
-
-  /* Tighter toggle blocks for stereo section */
-  .stereoControls .toggleBlock {
-    padding: 4px 8px;
-    margin-bottom: 0;
+    gap: 16px;
   }
 
   .stereoControls .seg button {
-    padding: 4px 4px;
-    /* Even tighter for buttons */
-    font-size: 10px;
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .stereoControls .toggleBlock {
+    padding: 0;
   }
 
   .knob {

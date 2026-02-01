@@ -588,15 +588,26 @@ function updateReadout(): void {
 
 
   // Update effect-specific sub-labels
-  const lDetail = effectDetails[leftFamily]?.[leftAB === 'B' ? 'B' : 'A'];
-  const rDetail = effectDetails[rightFamily]?.[rightAB === 'B' ? 'B' : 'A'];
+  const lDetail = leftAB === 'NONE' ? null : effectDetails[leftFamily]?.[leftAB === 'B' ? 'B' : 'A'];
+  const rDetail = rightAB === 'NONE' ? null : effectDetails[rightFamily]?.[rightAB === 'B' ? 'B' : 'A'];
 
-  if (lDetail) {
+  if (leftAB === 'NONE') {
+    // Show NONE for all left column sub-labels
+    stateService.getControl(14)?.subLabel && (stateService.getControl(14)!.subLabel!.textContent = 'NONE');
+    stateService.getControl(17)?.subLabel && (stateService.getControl(17)!.subLabel!.textContent = 'NONE');
+    stateService.getControl(24)?.subLabel && (stateService.getControl(24)!.subLabel!.textContent = 'NONE');
+  } else if (lDetail) {
     stateService.getControl(14)?.subLabel && (stateService.getControl(14)!.subLabel!.textContent = lDetail.time);
     stateService.getControl(17)?.subLabel && (stateService.getControl(17)!.subLabel!.textContent = lDetail.modify);
     stateService.getControl(24)?.subLabel && (stateService.getControl(24)!.subLabel!.textContent = lDetail.alt);
   }
-  if (rDetail) {
+
+  if (rightAB === 'NONE') {
+    // Show NONE for all right column sub-labels
+    stateService.getControl(16)?.subLabel && (stateService.getControl(16)!.subLabel!.textContent = 'NONE');
+    stateService.getControl(19)?.subLabel && (stateService.getControl(19)!.subLabel!.textContent = 'NONE');
+    stateService.getControl(26)?.subLabel && (stateService.getControl(26)!.subLabel!.textContent = 'NONE');
+  } else if (rDetail) {
     stateService.getControl(16)?.subLabel && (stateService.getControl(16)!.subLabel!.textContent = rDetail.time);
     stateService.getControl(19)?.subLabel && (stateService.getControl(19)!.subLabel!.textContent = rDetail.modify);
     stateService.getControl(26)?.subLabel && (stateService.getControl(26)!.subLabel!.textContent = rDetail.alt);

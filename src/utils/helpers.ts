@@ -13,7 +13,8 @@ export function valueToPercent(value: MIDIValue): string {
 // Determine A/B variant from Modify knob value
 export function getVariantFromModify(value: MIDIValue): EffectVariant {
   const v = Number(value) || 0;
-  if (v >= 60 && v <= 68) return 'NONE';
+  // Grace zone: 58-69 (approximately 46-54%)
+  if (v >= 58 && v <= 69) return 'NONE';
   return v < 64 ? 'A' : 'B';
 }
 

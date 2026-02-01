@@ -113,7 +113,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     const arcColor = column === 'left' ? 'var(--green-muted)' : 'var(--yellow-muted)';
 
     // Arc configuration - procedurally adjustable
-    const ARC_GAP_DEGREES = 20; // Gap at the top (in degrees)
+    const ARC_GAP_DEGREES = 30; // Gap at the top (in degrees)
     const RADIUS = 38;
     const CENTER_X = 50;
     const CENTER_Y = 50;

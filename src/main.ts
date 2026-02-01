@@ -261,21 +261,10 @@ function buildUI(): void {
     createScatterLayer(pedal);
   }
 
-  // Create effect selector blocks
-  CONTROLS.triBlocks.forEach(block => {
-    createTriBlock({
-      title: block.title,
-      cc: block.cc,
-      options: block.options,
-      swappedOptions: block.swappedOptions,
-      side: block.side as Side | null,
-      engageCC: block.engageCC,
-      swapCC: block.swapCC,
-      hasRandomize: block.hasRandomize,
-      onRandomizeColumn: (side: Side) => randomizerService.randomizeColumn(side),
-      onUpdateReadout: updateReadout,
-    }, toggleRow);
-  });
+  // Separate tri-blocks into FX selectors and Routing
+  const leftFxBlock = CONTROLS.triBlocks.find(b => b.id === 'leftFx');
+  const rightFxBlock = CONTROLS.triBlocks.find(b => b.id === 'rightFx');
+  const routingBlock = CONTROLS.triBlocks.find(b => b.id === 'routing');
 
   // Create knob grid
   KNOBS.layout.forEach(knob => {
@@ -286,20 +275,100 @@ function buildUI(): void {
       column: knob.column,
       onUpdateReadout: updateReadout,
     }, knobGrid);
+
+    // After creating Blend knob (CC 18), add Routing positioned between rows
+    if (knob.cc === 18 && routingBlock) {
+      // Find the Blend knob block that was just created
+      const blendBlock = knobGrid.querySelector('.knobBlock:last-child') as HTMLElement;
+      if (blendBlock) {
+        // Make blend block position: relative so routing can be absolutely positioned
+        blendBlock.style.position = 'relative';
+
+        const routingContainer = createElement('div', 'routingBetweenRows');
+        createTriBlock({
+          title: routingBlock.title,
+          cc: routingBlock.cc,
+          options: routingBlock.options,
+          swappedOptions: routingBlock.swappedOptions,
+          side: routingBlock.side as Side | null,
+          engageCC: routingBlock.engageCC,
+          swapCC: routingBlock.swapCC,
+          hasRandomize: routingBlock.hasRandomize,
+          onRandomizeColumn: (side: Side) => randomizerService.randomizeColumn(side),
+          onUpdateReadout: updateReadout,
+        }, routingContainer);
+
+        // Add compact class to the tri-block inside the container
+        const triBlock = routingContainer.querySelector('.toggleBlock');
+        if (triBlock) triBlock.classList.add('triBlock--compact');
+
+        // Create lock button directly here, not in TriBlock - cleaner architecture
+        const lockBtn = createElement('button', 'lockIconBtnMini');
+        const isLocked = stateService.isLocked(22);
+        lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
+        lockBtn.classList.toggle('locked', isLocked);
+
+        lockBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const newState = !stateService.isLocked(22);
+          stateService.setLocked(22, newState);
+          lockBtn.innerHTML = newState ? '🔒' : '🔓';
+          lockBtn.classList.toggle('locked', newState);
+        });
+
+        // Append lock directly to routing container
+        routingContainer.appendChild(lockBtn);
+
+        blendBlock.appendChild(routingContainer);
+      }
+    }
   });
 
-  // Add spacer for centered Master Wet
-  const spacer = createElement('div', 'knobBlock');
-  spacer.style.visibility = 'hidden';
-  knobGrid.appendChild(spacer);
+  // Add Left FX to knob grid
+  if (leftFxBlock) {
+    const leftFxContainer = createElement('div', 'knobBlock');
+    leftFxContainer.classList.add('triBlock--inGrid');
+    createTriBlock({
+      title: leftFxBlock.title,
+      cc: leftFxBlock.cc,
+      options: leftFxBlock.options,
+      swappedOptions: leftFxBlock.swappedOptions,
+      side: leftFxBlock.side as Side | null,
+      engageCC: leftFxBlock.engageCC,
+      swapCC: leftFxBlock.swapCC,
+      hasRandomize: leftFxBlock.hasRandomize,
+      onRandomizeColumn: (side: Side) => randomizerService.randomizeColumn(side),
+      onUpdateReadout: updateReadout,
+    }, leftFxContainer);
+    knobGrid.appendChild(leftFxContainer);
+  }
 
-  // Master Wet knob
+  // Master Wet knob (Center column between FX)
   createKnobBlock({
     label: KNOBS.masterWet.label,
     cc: KNOBS.masterWet.cc as CCNumber,
     kind: KNOBS.masterWet.kind as KnobKind,
     onUpdateReadout: updateReadout,
   }, knobGrid);
+
+  // Add Right FX to knob grid
+  if (rightFxBlock) {
+    const rightFxContainer = createElement('div', 'knobBlock');
+    rightFxContainer.classList.add('triBlock--inGrid');
+    createTriBlock({
+      title: rightFxBlock.title,
+      cc: rightFxBlock.cc,
+      options: rightFxBlock.options,
+      swappedOptions: rightFxBlock.swappedOptions,
+      side: rightFxBlock.side as Side | null,
+      engageCC: rightFxBlock.engageCC,
+      swapCC: rightFxBlock.swapCC,
+      hasRandomize: rightFxBlock.hasRandomize,
+      onRandomizeColumn: (side: Side) => randomizerService.randomizeColumn(side),
+      onUpdateReadout: updateReadout,
+    }, rightFxContainer);
+    knobGrid.appendChild(rightFxContainer);
+  }
 
   // Build Ramp Section
   buildRampSection();

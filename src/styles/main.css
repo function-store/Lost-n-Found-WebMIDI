@@ -320,6 +320,81 @@ button:active:not(:disabled) {
   padding: 10px;
 }
 
+/* Routing positioned between Blend and Spill knobs (like rampTopCenter) */
+.routingBetweenRows {
+  position: absolute;
+  bottom: -12px;
+  /* Position in the gap between rows */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.routingBetweenRows .toggleBlock {
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0px;
+}
+
+/* Hide the entire header since we create lock separately */
+.routingBetweenRows .toggleHeader {
+  display: none !important;
+}
+
+.routingBetweenRows .seg {
+  gap: 1px;
+  padding: 2px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  position: relative;
+}
+
+.routingBetweenRows .seg button {
+  font-size: 10px;
+  padding: 2px 5px;
+  min-height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex: 1;
+  border-radius: 2px;
+}
+
+.routingBetweenRows .seg button.active {
+  background: var(--sage);
+  border-color: var(--sage-light);
+  color: #fff;
+}
+
+/* Lock icon as direct child of routingBetweenRows - ghosted from layout */
+.routingBetweenRows>.lockIconBtnMini {
+  position: absolute !important;
+  right: -14px;
+  /* Position to the right, outside the centered area */
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 !important;
+  opacity: 0.5;
+  font-size: 9px;
+}
+
+.routingBetweenRows>.lockIconBtnMini:hover {
+  opacity: 0.8;
+}
+
+.routingBetweenRows>.lockIconBtnMini.locked {
+  opacity: 0.9;
+}
+
 .toggleHeader {
   display: flex;
   justify-content: space-between;
@@ -688,6 +763,16 @@ button:active:not(:disabled) {
   position: relative;
 }
 
+/* FX selectors positioned in knob grid */
+.knobBlock.triBlock--inGrid {
+  padding: 8px;
+  justify-content: center;
+}
+
+.knobBlock.triBlock--inGrid .toggleBlock {
+  width: 100%;
+}
+
 /* Knob column tinting */
 .knob-left .kLabel {
   color: var(--green-muted);
@@ -994,14 +1079,14 @@ button:active:not(:disabled) {
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .rampSection:has(.collapsed) {
   padding-top: 4px;
   padding-bottom: 4px;
   margin-top: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .rampHeader {
@@ -1109,6 +1194,7 @@ button:active:not(:disabled) {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-bottom: 4px;
 }
 
 .rampSliderLabel {

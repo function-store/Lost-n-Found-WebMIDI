@@ -88,7 +88,9 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   titleText.textContent = title;
   titleRow.appendChild(titleText);
 
-  // Routing Lock
+  tRow.appendChild(titleRow);
+
+  // Routing Lock - append to header, not title
   if (cc === 22) {
     const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
     // Position it relatively since we are in a flex container
@@ -110,8 +112,8 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
       lockBtn.classList.toggle('locked', newState);
     });
 
-
-    titleRow.appendChild(lockBtn);
+    // Append lock to header, not title
+    tRow.appendChild(lockBtn);
   }
 
   // Randomize button for Left/Right FX

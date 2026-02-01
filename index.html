@@ -48,6 +48,12 @@
               <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
             </svg>
           </button>
+          <button id="btnShowInfo" class="iconBtn" data-tip="Info & Help">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+            </svg>
+          </button>
           <div id="cloudStatus" title="Tracks local changes vs Cloud backup">
             <span id="cloudStatusDot"></span>
             <span id="cloudStatusText">Offline</span>
@@ -163,10 +169,65 @@
             <button id="btnImportPreset" class="pmBtn secondary" title="Import Pattern from File">Import</button>
           </div>
         </div>
+
+
         <!-- Close button removed as requested -->
       </div>
       <input id="fileMeta" type="file" accept="application/json,.json" style="display:none">
       <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
+    </div>
+  </div>
+
+  <!-- Info Modal -->
+  <div id="infoModal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+    <div class="card"
+      style="width:400px; max-width:90%; padding:24px; display:flex; flex-direction:column; gap:16px; border: 1px solid var(--border);">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; font-size:20px; color:var(--text);">Important Info</h3>
+        <button onclick="document.getElementById('infoModal').style.display='none'" class="iconBtn"
+          style="background:transparent;">✕</button>
+      </div>
+
+      <div
+        style="display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-muted); line-height:1.5;">
+        <p><strong style="color:var(--yellow);">1. One-Way Communication</strong><br>
+          This editor sends MIDI commands <strong>TO</strong> the pedal. It does not read the current knob positions
+          <strong>FROM</strong> the pedal. What you see on screen is your "Preset State".
+        </p>
+
+        <p><strong style="color:var(--green-muted);">2. Cloud Syncing</strong><br>
+          Presets are strictly saved to your browser's local storage by default. Login with Google (top right cloud
+          icon) to backup your library to the cloud.</p>
+
+        <p><strong style="color:var(--sage);">3. Auto-Sync</strong><br>
+          Once logged in, enable <strong>Auto-Sync</strong> in the cloud menu to automatically backup your changes as
+          you make them.</p>
+
+        <p><em>Note: Web MIDI requires a secure context (HTTPS) and a supported browser (Chrome, Edge, Opera).</em></p>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; gap:12px; align-items:center; font-size:12px;">
+          <a href="https://github.com/function-store/Lost-n-Found-WebMIDI" target="_blank" rel="noopener"
+            style="color:var(--text-muted); text-decoration:none; display:flex; align-items:center; gap:4px; opacity:0.7; transition:opacity 0.2s;"
+            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+              </path>
+            </svg>
+            GitHub
+          </a>
+          <a href="https://functionstore.xyz/link-in-bio" target="_blank" rel="noopener"
+            style="color:var(--text-muted); text-decoration:none; opacity:0.7; transition:opacity 0.2s;"
+            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+            by Function Store
+          </a>
+        </div>
+        <button class="pmBtn primary" onclick="document.getElementById('infoModal').style.display='none'">Got
+          it</button>
+      </div>
     </div>
   </div>
 

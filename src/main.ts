@@ -800,64 +800,71 @@ function setupEventListeners(): void {
         triggerAutoUpload();
       }
     } catch (err) {
-      alert(`Failed to import: ${(err as Error).message}`);
-    }
-    input.value = '';
-  });
-
-  // Name modal confirm
-  const btnConfirmName = document.getElementById('btnConfirmName');
-  const customNameInput = document.getElementById('customNameInput') as HTMLInputElement;
-
-  const handleConfirmStore = () => {
-    const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
-    if (slot === 0) {
-      alert('Choose slot 1-122 to store.');
-      return;
-    }
-
-    presetService.store(slot, customNameInput.value, false, () => {
-      initSlots();
-      triggerAutoUpload();
-
-      // If manager is ALREADY open (visible), refresh it.
-      // Check computed style to correctly detect visibility.
-      const modal = document.getElementById('pmModal');
-      if (modal && getComputedStyle(modal).display !== 'none') {
-        openManager();
-      }
-    });
-
-    const modal = document.getElementById('nameModal');
-    if (modal) modal.style.display = 'none';
-  };
-
-  btnConfirmName?.addEventListener('click', handleConfirmStore);
-  customNameInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      handleConfirmStore();
+      alert(`Meta load failed: ${(err as Error).message}`);
     }
   });
 
-  // Escape to close modals
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      const pmModal = document.getElementById('pmModal');
-      const nameModal = document.getElementById('nameModal');
-      const cloudMenu = document.querySelector('.cloud-menu') as HTMLElement;
-
-      if (pmModal && getComputedStyle(pmModal).display !== 'none') {
-        pmModal.style.display = 'none';
-      }
-      if (nameModal && getComputedStyle(nameModal).display !== 'none') {
-        nameModal.style.display = 'none';
-      }
-      if (cloudMenu && getComputedStyle(cloudMenu).display !== 'none') {
-        cloudMenu.style.display = 'none';
-      }
-    }
+  // Info Modal
+  document.getElementById('btnShowInfo')?.addEventListener('click', () => {
+    const modal = document.getElementById('infoModal');
+    if (modal) modal.style.display = 'flex';
   });
 }
+
+
+// Name modal confirm
+const btnConfirmName = document.getElementById('btnConfirmName');
+const customNameInput = document.getElementById('customNameInput') as HTMLInputElement;
+
+const handleConfirmStore = () => {
+  const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
+  if (slot === 0) {
+    alert('Choose slot 1-122 to store.');
+    return;
+  }
+
+  presetService.store(slot, customNameInput.value, false, () => {
+    initSlots();
+    triggerAutoUpload();
+
+    // If manager is ALREADY open (visible), refresh it.
+    // Check computed style to correctly detect visibility.
+    const modal = document.getElementById('pmModal');
+    if (modal && getComputedStyle(modal).display !== 'none') {
+      openManager();
+    }
+  });
+
+  const modal = document.getElementById('nameModal');
+  if (modal) modal.style.display = 'none';
+};
+
+btnConfirmName?.addEventListener('click', handleConfirmStore);
+customNameInput?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    handleConfirmStore();
+  }
+});
+
+// Escape to close modals
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const pmModal = document.getElementById('pmModal');
+    const nameModal = document.getElementById('nameModal');
+    const cloudMenu = document.querySelector('.cloud-menu') as HTMLElement;
+
+    if (pmModal && getComputedStyle(pmModal).display !== 'none') {
+      pmModal.style.display = 'none';
+    }
+    if (nameModal && getComputedStyle(nameModal).display !== 'none') {
+      nameModal.style.display = 'none';
+    }
+    if (cloudMenu && getComputedStyle(cloudMenu).display !== 'none') {
+      cloudMenu.style.display = 'none';
+    }
+  }
+});
+
 
 // Toggle MIDI
 async function toggleMIDI(): Promise<void> {

@@ -8,6 +8,8 @@ A web-based MIDI editor for the [**Chase Bliss Lost + Found**](https://www.chase
 
 ---
 
+![Lost + Found Editor](docs/main_interface.png)
+
 ## Features
 
 - **Full MIDI Control** — Adjust all 12 knobs, effect selections, routing, and DIP switches via Web MIDI
@@ -22,16 +24,6 @@ A web-based MIDI editor for the [**Chase Bliss Lost + Found**](https://www.chase
 - **Export/Import** — Save individual presets or your entire library as JSON files
 - **Alt-Key Tooltips** — Hold `Alt/Option` to see detailed descriptions of every control
 - **Responsive Design** — Works on desktop and tablet; mobile-friendly layout
-
----
-
-## Screenshot
-
-> *Add a screenshot of the editor here*
->
-> `![Lost + Found Editor](docs/main_interface.png)`
-
----
 
 ## Getting Started
 

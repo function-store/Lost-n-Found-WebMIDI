@@ -112,18 +112,45 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     // Determine Arc Color based on column
     const arcColor = column === 'left' ? 'var(--green-muted)' : 'var(--yellow-muted)';
 
-    // Left segment - calibrated radius 38 (Gap ~5.6px with inset -10px)
+    // Arc configuration - procedurally adjustable
+    const ARC_GAP_DEGREES = 20; // Gap at the top (in degrees)
+    const RADIUS = 38;
+    const CENTER_X = 50;
+    const CENTER_Y = 50;
+    const START_ANGLE = 135; // Bottom-left starting point (in degrees)
+    const END_ANGLE = 405; // Bottom-right ending point (in degrees)
+
+    // Calculate arc endpoints based on gap
+    const halfGap = ARC_GAP_DEGREES / 2;
+    const topLeftAngle = 270 - halfGap; // Top-left arc endpoint
+    const topRightAngle = 270 + halfGap; // Top-right arc endpoint
+
+    // Convert angles to radians and calculate coordinates
+    const toRadians = (deg: number) => (deg * Math.PI) / 180;
+
+    // Left arc: from START_ANGLE to topLeftAngle
+    const leftStartX = CENTER_X + RADIUS * Math.cos(toRadians(START_ANGLE));
+    const leftStartY = CENTER_Y + RADIUS * Math.sin(toRadians(START_ANGLE));
+    const leftEndX = CENTER_X + RADIUS * Math.cos(toRadians(topLeftAngle));
+    const leftEndY = CENTER_Y + RADIUS * Math.sin(toRadians(topLeftAngle));
+
+    // Right arc: from topRightAngle to END_ANGLE
+    const rightStartX = CENTER_X + RADIUS * Math.cos(toRadians(topRightAngle));
+    const rightStartY = CENTER_Y + RADIUS * Math.sin(toRadians(topRightAngle));
+    const rightEndX = CENTER_X + RADIUS * Math.cos(toRadians(END_ANGLE));
+    const rightEndY = CENTER_Y + RADIUS * Math.sin(toRadians(END_ANGLE));
+
+    // Left segment
     const pathL = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    pathL.setAttribute('d', 'M 21.4 75 A 38 38 0 0 1 47 12.2');
+    pathL.setAttribute('d', `M ${leftStartX.toFixed(1)} ${leftStartY.toFixed(1)} A ${RADIUS} ${RADIUS} 0 0 1 ${leftEndX.toFixed(1)} ${leftEndY.toFixed(1)}`);
     pathL.setAttribute('fill', 'none');
     pathL.setAttribute('stroke', arcColor);
     pathL.setAttribute('stroke-width', '4');
     pathL.setAttribute('stroke-linecap', 'round');
 
-    // Right segment - calibrated radius 38
-    // Right segment - calibrated radius 38
+    // Right segment
     const pathR = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    pathR.setAttribute('d', 'M 53 12.2 A 38 38 0 0 1 78.6 75');
+    pathR.setAttribute('d', `M ${rightStartX.toFixed(1)} ${rightStartY.toFixed(1)} A ${RADIUS} ${RADIUS} 0 0 1 ${rightEndX.toFixed(1)} ${rightEndY.toFixed(1)}`);
     pathR.setAttribute('fill', 'none');
     pathR.setAttribute('stroke', arcColor);
     pathR.setAttribute('stroke-width', '4');

@@ -2,7 +2,7 @@
   "triBlocks": [
     {
       "id": "leftFx",
-      "title": "Left FX",
+      "title": "L FX",
       "cc": 21,
       "options": [
         "Reverb",
@@ -34,7 +34,7 @@
     },
     {
       "id": "rightFx",
-      "title": "Right FX",
+      "title": "R FX",
       "cc": 23,
       "options": [
         "Delay",

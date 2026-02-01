@@ -1896,24 +1896,91 @@ button:active:not(:disabled) {
   }
 
   .knobGrid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    /* Tighter gap for mobile */
+  }
+
+  .knobBlock {
+    padding: 8px 4px;
+    /* Reduce padding */
   }
 
   .rampControls {
     grid-template-columns: 1fr;
   }
 
-  .rampEnabled {
-    justify-content: center;
-  }
-
+  /* Keep topbar structured, don't center/wrap wildly */
   .topbar {
-    justify-content: center;
+    padding: 4px;
   }
 
   .tbGroup {
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 2px;
+  }
+
+  /* Scale down topbar elements for mobile */
+  .topbar button,
+  .topbar select,
+  .pillLabel {
+    font-size: 9px !important;
+    padding: 2px 4px !important;
+  }
+
+  /* Create space for the absolute routing controls between Blend (5th) and Spill (8th) */
+  .knobGrid>.knobBlock:nth-child(5) {
+    margin-bottom: 30px;
+  }
+
+  #btnEnableMIDI {
+    width: auto !important;
+    min-width: 60px;
+  }
+
+  /* Adjust knob size for mobile 3-column constraint (~110px available width per col) */
+  .knob {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 60px;
+    max-height: 60px;
+  }
+
+  .knobContainer {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  /* Fix absolute elements overlap in tight mobile grid */
+  /* Fix absolute elements overlap in tight mobile grid */
+  /* Fix absolute elements overlap in tight mobile grid */
+  .routingBetweenRows {
+    bottom: 0px !important;
+    /* Adjusted to sit just between the rows */
+    width: 120%;
+    /* wider to allow lock icon space */
+    transform: translateX(-50%) scale(0.85);
+    /* Smaller scale */
+  }
+
+  /* Move lock icon to the LEFT side on mobile to avoid overlap */
+  .routingBetweenRows>.lockIconBtnMini {
+    right: auto !important;
+    left: 4px !important;
+    top: 50% !important;
+  }
+
+  .randomFloater {
+    top: 110px !important;
+    /* Move it DOWN to clear Master Wet knob */
+    min-width: 130px;
+    padding: 3px 8px;
+  }
+
+  .randomFloater__btn {
+    padding: 3px 0;
+    font-size: 9px;
   }
 }
 

@@ -296,6 +296,7 @@ function buildUI(): void {
           hasRandomize: routingBlock.hasRandomize,
           onRandomizeColumn: (side: Side) => randomizerService.randomizeColumn(side),
           onUpdateReadout: updateReadout,
+          noSpacer: true,
         }, routingContainer);
 
         // Add compact class to the tri-block inside the container
@@ -349,7 +350,66 @@ function buildUI(): void {
     cc: KNOBS.masterWet.cc as CCNumber,
     kind: KNOBS.masterWet.kind as KnobKind,
     onUpdateReadout: updateReadout,
+    small: true, // Make it smaller!
   }, knobGrid);
+
+
+  // Random Controls - floating below Master Wet
+  const masterWetBlock = knobGrid.querySelector('.knobBlock:last-child') as HTMLElement;
+  if (masterWetBlock) {
+    masterWetBlock.style.position = 'relative';
+
+    const randomFloater = createElement('div', 'randomFloater');
+
+    const randomLabel = createElement('div', 'randomFloater__label');
+    randomLabel.textContent = 'RANDOM';
+
+    const buttonRow = createElement('div', 'randomFloater__btns');
+
+    const btnRandomAll = createElement('button', 'randomFloater__btn');
+    btnRandomAll.id = 'btnRandom';
+    btnRandomAll.textContent = 'ALL';
+    btnRandomAll.title = 'Randomize All';
+
+    const btnRandomKnobs = createElement('button', 'randomFloater__btn');
+    btnRandomKnobs.id = 'btnRandomKnobs';
+    btnRandomKnobs.textContent = 'KNOBS';
+    btnRandomKnobs.title = 'Randomize Knobs Only';
+
+    buttonRow.appendChild(btnRandomAll);
+    buttonRow.appendChild(btnRandomKnobs);
+
+    const bottomRow = createElement('div', 'randomFloater__row');
+
+    const rampLabel = createElement('label', 'randomFloater__ramp');
+    rampLabel.title = 'Include Ramp Controls in Random All';
+
+    const chkInclRamp = createElement('input');
+    chkInclRamp.id = 'chkInclRamp';
+    chkInclRamp.type = 'checkbox';
+    chkInclRamp.className = 'toggleSwitch toggleSwitch--xs';
+    if (stateService.inclRamp) chkInclRamp.checked = true;
+
+    const rampText = createElement('span');
+    rampText.textContent = '+Ramp';
+
+    rampLabel.appendChild(chkInclRamp);
+    rampLabel.appendChild(rampText);
+
+    const btnUnlockAll = createElement('span');
+    btnUnlockAll.id = 'btnUnlockAll';
+    btnUnlockAll.textContent = '🔓';
+    btnUnlockAll.title = 'Unlock All Knobs';
+
+    bottomRow.appendChild(rampLabel);
+    bottomRow.appendChild(btnUnlockAll);
+
+    randomFloater.appendChild(randomLabel);
+    randomFloater.appendChild(buttonRow);
+    randomFloater.appendChild(bottomRow);
+
+    masterWetBlock.appendChild(randomFloater);
+  }
 
   // Add Right FX to knob grid
   if (rightFxBlock) {
@@ -423,6 +483,7 @@ function buildStereoSection(): void {
     cc: CONTROLS.stereoControls.spread.cc,
     options: CONTROLS.stereoControls.spread.options,
     onUpdateReadout: updateReadout,
+    noSpacer: true,
   }, spreadBlock);
 
   stereoControls.appendChild(spreadBlock.firstChild!);

@@ -55,6 +55,7 @@ interface TriBlockOptions {
   onRandomizeColumn?: (side: Side) => void;
   onUpdateReadout?: () => void;
   onUpdateLabels?: () => void;
+  noSpacer?: boolean;
 }
 
 export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement): void {
@@ -320,7 +321,7 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
 
     footswitchRack.appendChild(footswitch);
     block.appendChild(footswitchRack);
-  } else {
+  } else if (!options.noSpacer) {
     // Spacer to keep middle column aligned
     const spacer = createElement('div', 'footswitchSpacer');
     block.appendChild(spacer);

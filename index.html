@@ -15,66 +15,52 @@
     <div class="card">
       <!-- Topbar -->
       <div class="topbar">
-        <!-- Group: MIDI & Tempo -->
-        <div class="tbGroup">
-          <button id="btnEnableMIDI">Enable MIDI</button>
-          <select id="midiSelect" disabled>
-            <option value="">MIDI Output</option>
-          </select>
-          <label class="pillLabel">
-            <span>Ch</span>
-            <select id="chanSelect" disabled></select>
-          </label>
+        <div class="topbarRow">
+          <!-- Group: MIDI & Tempo -->
+          <div class="tbGroup">
+            <button id="btnEnableMIDI">Enable MIDI</button>
+            <select id="midiSelect" disabled>
+              <option value="">MIDI Output</option>
+            </select>
+            <label class="pillLabel">
+              <span>Ch</span>
+              <select id="chanSelect" disabled></select>
+            </label>
 
+            <div class="sep"></div>
 
-          <div class="sep"></div>
-
-          <button id="btnTap" disabled>Tap</button>
-          <span id="tapReadout" class="sub" style="font-variant: tabular-nums; min-width: 45px;">—</span>
-        </div>
-
-        <!-- Group: Random -->
-        <div class="tbGroup">
-          <span class="grpLabel">Random:</span>
-          <div class="segmented">
-            <button id="btnRandom"
-              title="Randomize All (Excludes: Wet, Clock, Latch, Trails, Bank, MISO, Spread, Bounce/Sweep/Polarity, Ramp Enabled)">All</button>
-            <button id="btnRandomKnobs"
-              title="Randomize Knobs Only (Excludes Master Wet and locked knobs)">Knobs</button>
+            <button id="btnTap" disabled>Tap</button>
+            <span id="tapReadout" class="sub" style="font-variant: tabular-nums; min-width: 45px;">—</span>
           </div>
-          <label class="pillLabel compact" title="Include Ramp Controls in Random All">
-            <input id="chkInclRamp" type="checkbox" class="toggleSwitch toggleSwitch--sm">
-            <span>+Ramp</span>
-          </label>
-          <span id="btnUnlockAll" title="Unlock All Knobs"
-            style="cursor: pointer; margin-left: 6px; font-size: 16px; user-select: none;">🔓</span>
         </div>
 
-        <!-- Group: Presets -->
-        <div class="tbGroup">
-          <span class="grpLabel">Preset:</span>
-          <label class="pillLabel">
-            <select id="slotSelect"></select>
-          </label>
-          <div class="segmented">
-            <button id="btnRecall">Recall</button>
-            <button id="btnStore">Store</button>
+        <div class="topbarRow">
+          <!-- Group: Presets -->
+          <div class="tbGroup">
+            <span class="grpLabel">Preset:</span>
+            <label class="pillLabel">
+              <select id="slotSelect"></select>
+            </label>
+            <div class="segmented">
+              <button id="btnRecall">Recall</button>
+              <button id="btnStore">Store</button>
+            </div>
+            <button id="btnShowManager" title="Open Preset Manager"
+              style="padding: 5px 10px; font-size: 11px;">Manage</button>
           </div>
-          <button id="btnShowManager" title="Open Preset Manager"
-            style="padding: 5px 10px; font-size: 11px;">Manage</button>
-        </div>
 
-        <!-- Group: File & Warning -->
-        <div class="tbGroup">
-          <button id="btnPushOnly" title="Send Settings to Pedal"
-            style="margin-left: 4px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 8px;">Push</button>
+          <!-- Group: File & Warning -->
+          <div class="tbGroup">
+            <button id="btnPushOnly" title="Send Settings to Pedal"
+              style="margin-left: 4px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 8px;">Push</button>
 
-          <div id="cloudStatus"
-            style="font-size: 10px; color: var(--cream-muted); display: flex; align-items: center; gap: 6px; opacity: 0.8; user-select: none; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 8px; margin-left: 4px;"
-            title="Tracks local changes vs Cloud backup. Enabled Auto-Sync for real-time backup.">
-            <span id="cloudStatusDot"
-              style="width: 6px; height: 6px; border-radius: 50%; background: #666; transition: background 0.3s; border: 1px solid rgba(255,255,255,0.1);"></span>
-            <span id="cloudStatusText">Cloud Offline</span>
+            <div id="cloudStatus"
+              style="font-size: 10px; color: var(--cream-muted); display: flex; align-items: center; gap: 6px; opacity: 0.8; user-select: none; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 8px; margin-left: 4px;"
+              title="Tracks local changes vs Cloud backup. Enabled Auto-Sync for real-time backup.">
+              <span id="cloudStatusDot"
+                style="width: 6px; height: 6px; border-radius: 50%; background: #666; transition: background 0.3s; border: 1px solid rgba(255,255,255,0.1);"></span>
+              <span id="cloudStatusText">Cloud Offline</span>
+            </div>
           </div>
         </div>
       </div>

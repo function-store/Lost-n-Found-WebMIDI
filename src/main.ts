@@ -26,6 +26,7 @@ function init(): void {
   buildUI();
   setupEventListeners();
   stateService.load();
+  fillChannels(); // Update UI with loaded channel
   updateReadout();
   initSlots();
   updateMidiStatusUI();
@@ -431,6 +432,7 @@ function fillChannels(): void {
     o.textContent = String(ch);
     sel.appendChild(o);
   }
+
   sel.value = String(midiService.currentChannel);
 }
 
@@ -655,21 +657,36 @@ function setupEventListeners(): void {
   });
 
   // Name modal confirm
-  document.getElementById('btnConfirmName')?.addEventListener('click', () => {
-    const input = document.getElementById('customNameInput') as HTMLInputElement;
-    const modal = document.getElementById('nameModal');
-    const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
+  const btnConfirmName = document.getElementById('btnConfirmName');
+  const customNameInput = document.getElementById('customNameInput') as HTMLInputElement;
 
+  const handleConfirmStore = () => {
+    const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
     if (slot === 0) {
       alert('Choose slot 1-122 to store.');
       return;
     }
 
-    presetService.store(slot, input.value, false, () => {
+    presetService.store(slot, customNameInput.value, false, () => {
       initSlots();
       triggerAutoUpload();
+
+      // If manager is open, refresh it to show "Used" status
+      const modal = document.getElementById('pmModal');
+      if (modal && modal.style.display !== 'none') {
+        openManager();
+      }
     });
+
+    const modal = document.getElementById('nameModal');
     if (modal) modal.style.display = 'none';
+  };
+
+  btnConfirmName?.addEventListener('click', handleConfirmStore);
+  customNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      handleConfirmStore();
+    }
   });
 }
 
@@ -904,6 +921,7 @@ function openManager(): void {
         <div class="pmCellWrap center" style="gap:6px;">
           <button class="pmBtn secondary" data-action="recall" data-slot="${i}">Recall</button>
           <button class="pmBtn primary" data-action="store" data-slot="${i}">Store</button>
+          <button class="pmBtn secondary" data-action="export" data-slot="${i}" title="Export this slot to JSON" ${!m.occupied ? 'disabled' : ''}>Export</button>
         </div>
       </td>
     `;
@@ -923,6 +941,8 @@ function openManager(): void {
             initSlots();
             triggerAutoUpload();
           });
+        } else if (action === 'export') {
+          presetService.exportSlot(slot);
         }
       });
     });
@@ -943,14 +963,19 @@ function saveManagerChanges(): void {
     const occupiedInput = row.querySelector('.pmOccupied') as HTMLInputElement;
     if (!nameInput) return;
 
-    const slot = nameInput.dataset.slot;
+    const slotNum = Number(nameInput.dataset.slot);
+    const existingEntry = meta[slotNum];
     const name = nameInput.value;
     const occupied = occupiedInput?.checked ?? false;
 
     if (name || occupied) {
-      meta[Number(slot)] = { name, occupied };
+      meta[slotNum] = {
+        ...existingEntry,
+        name,
+        occupied
+      };
     } else {
-      delete meta[Number(slot)];
+      delete meta[slotNum];
     }
   });
 

@@ -11,9 +11,9 @@ function getEffectTooltip(blockTitle: string, optionName: string): string | null
   else if (blockTitle === 'Right FX') blockKey = 'rightFx';
   else if (blockTitle === 'Routing') blockKey = 'routing';
   else if (blockTitle === 'Spread') {
-    // Spread options are in stereo config
-    const spreadOptions = TOOLTIPS.stereo.spread.options as Record<string, string>;
-    return spreadOptions[optionName] || null;
+    // Spread options no longer have individual tooltips
+    // The block itself has a tooltip, but not each option
+    return null;
   }
 
   if (!blockKey) return null;

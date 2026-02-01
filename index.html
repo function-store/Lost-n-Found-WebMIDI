@@ -54,7 +54,6 @@
         <div class="tbGroup">
           <span class="grpLabel">Preset:</span>
           <label class="pillLabel">
-            <span>Slot</span>
             <select id="slotSelect"></select>
           </label>
           <div class="segmented">
@@ -67,11 +66,8 @@
 
         <!-- Group: File & Warning -->
         <div class="tbGroup">
-          <button id="btnExportPreset" title="Export Pattern to File">Export</button>
-          <button id="btnImportPreset" title="Import Pattern from File">Import</button>
           <button id="btnPushOnly" title="Send Settings to Pedal"
             style="margin-left: 4px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 8px;">Push</button>
-          <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
 
           <div id="cloudStatus"
             style="font-size: 10px; color: var(--cream-muted); display: flex; align-items: center; gap: 6px; opacity: 0.8; user-select: none; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 8px; margin-left: 4px;"
@@ -170,10 +166,20 @@
 
       <div
         style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; padding-top:16px; margin-top:auto; flex-shrink: 0;">
-        <div style="display:flex; gap:8px; align-items: center;">
-          <button id="btnExportMeta" class="pmBtn secondary">Export Library</button>
-          <button id="btnImportMeta" class="pmBtn secondary">Import Library</button>
-          <div id="pmCloudActions" style="margin-left: 4px;"></div>
+        <div style="display:flex; flex-direction: column; gap: 8px;">
+          <div style="display:flex; gap:8px; align-items: center;">
+            <span
+              style="font-size: 10px; font-weight: 700; color: #999; text-transform: uppercase; width: 60px;">Library</span>
+            <button id="btnExportMeta" class="pmBtn secondary">Export</button>
+            <button id="btnImportMeta" class="pmBtn secondary">Import</button>
+            <div id="pmCloudActions" style="margin-left: 4px;"></div>
+          </div>
+          <div style="display:flex; gap:8px; align-items: center;">
+            <span
+              style="font-size: 10px; font-weight: 700; color: #999; text-transform: uppercase; width: 60px;">Pattern</span>
+            <button id="btnExportPreset" class="pmBtn secondary" title="Export Current Pattern to File">Export</button>
+            <button id="btnImportPreset" class="pmBtn secondary" title="Import Pattern from File">Import</button>
+          </div>
         </div>
         <div style="display:flex; gap:8px;">
           <button class="pmBtn secondary"
@@ -182,7 +188,9 @@
         </div>
       </div>
       <input id="fileMeta" type="file" accept="application/json,.json" style="display:none">
+      <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
     </div>
+  </div>
   </div>
 
   <script type="module" src="/src/main.ts"></script>

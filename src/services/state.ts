@@ -124,6 +124,7 @@ class StateService {
       rampCollapsed: this.rampCollapsed,
       autoSync: this.autoSync,
     };
+
     localStorage.setItem(STATE_KEY, JSON.stringify(data));
   }
 
@@ -137,11 +138,15 @@ class StateService {
       // Restore state
       if (data.state) {
         Object.assign(this.state, data.state);
-        // Update all UI controls
+        // Update all UI controls (wrapped in try-catch to prevent errors from blocking critical settings)
         for (const cc in this.state) {
           const control = this.uiControls.get(Number(cc));
           if (control?.set) {
-            control.set(this.state[Number(cc)]);
+            try {
+              control.set(this.state[Number(cc)]);
+            } catch (e) {
+              console.warn(`Failed to set UI control for CC ${cc}:`, e);
+            }
           }
         }
       }
@@ -151,8 +156,9 @@ class StateService {
         this.lockedKnobs = new Set(data.lockedKnobs);
       }
 
-      // Restore other settings
+      // Restore other settings (these should always work even if UI updates fail)
       if (data.channel !== undefined) {
+
         midiService.setChannel(data.channel);
       }
 

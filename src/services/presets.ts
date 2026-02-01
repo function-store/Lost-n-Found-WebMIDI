@@ -116,6 +116,33 @@ class PresetService {
     this.downloadJSON(obj, `lost-found-preset-${safeTs}.json`);
   }
 
+  exportSlot(slot: number): void {
+    const meta = this.getSlotMeta(slot);
+    if (!meta.occupied || !meta.data) {
+      alert('Slot is empty.');
+      return;
+    }
+
+    const preset: ExportedPreset = {
+      app: 'Lost+Found MIDI Editor (Stored Slot)',
+      build: document.getElementById('buildBadge')?.textContent || '',
+      ts: new Date().toISOString(),
+      channel: midiService.currentChannel,
+      slot: slot,
+      lockMix: (meta.data[15] !== undefined), // Best guess from stored data
+      lEngage: meta.data[103] === 1,
+      rEngage: meta.data[102] === 1,
+      ccs: {}
+    };
+
+    Object.entries(meta.data).forEach(([cc, val]) => {
+      preset.ccs[cc] = val;
+    });
+
+    const safeName = (meta.name || 'preset').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    this.downloadJSON(preset, `lost-found-${slot}-${safeName}.json`);
+  }
+
   applyPreset(preset: ExportedPreset): void {
     if (!preset || typeof preset !== 'object') {
       throw new Error('Invalid preset.');

@@ -166,7 +166,7 @@ select option {
 }
 
 #slotSelect {
-  max-width: 70px;
+  max-width: 197px;
 }
 
 #btnEnableMIDI {
@@ -1365,7 +1365,7 @@ button:active:not(:disabled) {
 
 .pmTable th:nth-child(4),
 .pmTable td:nth-child(4) {
-  width: 160px;
+  width: 220px;
 }
 
 .pmIndex {
@@ -1407,7 +1407,7 @@ button:active:not(:disabled) {
 }
 
 .pmBtn {
-  padding: 0 14px;
+  padding: 0 8px;
   height: 34px;
   line-height: 34px;
   border-radius: 8px;
@@ -1417,6 +1417,8 @@ button:active:not(:disabled) {
   font-size: 11px;
   transition: all 0.15s;
   display: inline-block;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .pmBtn.primary {

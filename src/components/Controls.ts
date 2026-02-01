@@ -16,6 +16,7 @@ export function createDipRow(
   lab.textContent = name;
 
   const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
+  if (name === 'Polarity') cb.classList.add('toggleSwitch--polarity');
   cb.type = 'checkbox';
   cb.addEventListener('change', () => {
     const v = cb.checked ? 127 : 0;
@@ -45,6 +46,7 @@ export function createRampToggle(
   const toggle = createElement('label', 'rampToggle');
 
   const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
+  if (name === 'Sweep') cb.classList.add('toggleSwitch--sweep');
   cb.type = 'checkbox';
   cb.id = `ramp${name}`;
   cb.addEventListener('change', () => {

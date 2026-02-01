@@ -448,6 +448,47 @@ button:active:not(:disabled) {
   border-radius: 6px;
 }
 
+/* Specialized labels for toggles */
+.toggleSwitch--sweep::after {
+  content: 'B';
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--cream-muted);
+  pointer-events: none;
+  font-family: inherit;
+}
+
+.toggleSwitch--sweep:checked::after {
+  content: 'T';
+  left: 4px;
+  right: auto;
+  color: var(--cream);
+}
+
+.toggleSwitch--polarity::after {
+  content: 'F';
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--cream-muted);
+  pointer-events: none;
+  font-family: inherit;
+}
+
+.toggleSwitch--polarity:checked::after {
+  content: 'R';
+  left: 4px;
+  right: auto;
+  color: var(--cream);
+}
+
 .toggleSwitch--sm::before {
   top: 1.5px;
   left: 1.5px;

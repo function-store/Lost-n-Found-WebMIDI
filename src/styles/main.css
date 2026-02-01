@@ -320,11 +320,11 @@ button:active:not(:disabled) {
   padding: 10px;
 }
 
-/* Routing positioned between Blend and Spill knobs (like rampTopCenter) */
+/* Routing positioned between Blend and Spill knobs (floating/absolute) */
 .routingBetweenRows {
   position: absolute;
-  bottom: -12px;
-  /* Position in the gap between rows */
+  bottom: -42px;
+  /* Adjusted for footswitch spacing */
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -388,7 +388,7 @@ button:active:not(:disabled) {
 }
 
 .routingBetweenRows>.lockIconBtnMini:hover {
-  opacity: 0.8;
+  opacity: 0.3;
 }
 
 .routingBetweenRows>.lockIconBtnMini.locked {
@@ -433,45 +433,88 @@ button:active:not(:disabled) {
   transform: scale(1.05);
 }
 
-/* ===== ENGAGE TOGGLE ===== */
-.engageToggle {
+/* Realistic Footswitch Rack (LED + Metallic Plunger) */
+.footswitchRack {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 5px 10px;
-  border-radius: 3px;
-  border: none;
-  background: rgba(0, 0, 0, 0.4);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--cream-muted);
+  gap: 8px;
+  margin-top: 8px;
+  padding: 0 0;
+}
+
+/* Red status LED */
+.statusLed {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #300;
+  /* Dark off state */
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.statusLed.active {
+  background: #f11;
+  box-shadow: 0 0 8px #f11, 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+.statusLed.hold {
+  background: #0f0;
+  box-shadow: 0 0 8px #0f0, 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+/* Hold mode takes precedence over active */
+.statusLed.hold.active {
+  background: #0f0;
+  box-shadow: 0 0 8px #0f0, 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+/* Metallic Footswitch (Plunger) */
+.footswitch.plunger {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #eee 0%, #aaa 40%, #777 100%);
+  border: 2px solid #555;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  transition: all 0.15s;
-  user-select: none;
-  margin-top: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  position: relative;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+  padding: 0;
 }
 
-.engageToggle.active {
-  background: var(--yellow);
-  color: #1a1f1c;
-  box-shadow: 0 0 8px rgba(197, 217, 78, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+.footswitch.plunger::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ddd 0%, #999 50%, #666 100%);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.engageToggle:hover {
-  background: rgba(0, 0, 0, 0.5);
+.footswitch.plunger:hover {
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #bbb 40%, #888 100%);
 }
 
-.engageToggle.active:hover {
-  background: var(--yellow);
-  filter: brightness(1.1);
+.footswitch.plunger.pressed {
+  transform: translateY(2px) scale(0.98);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
-.engageToggle input[type="checkbox"] {
-  display: none;
+.footswitchSpacer {
+  height: 80px;
+  /* Aligns with footswitchRack height */
 }
 
 /* ===== CUSTOM TOGGLE SWITCHES ===== */
@@ -715,26 +758,8 @@ button:active:not(:disabled) {
   color: var(--yellow-muted);
 }
 
-/* Engage toggle tints */
-.toggle-l .engageToggle {
-  color: var(--green-muted);
-}
-
-.toggle-l .engageToggle.active {
-  background: var(--green-muted);
-  color: #1a1f1c;
-  box-shadow: 0 0 8px rgba(125, 163, 123, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.toggle-r .engageToggle {
-  color: var(--yellow-muted);
-}
-
-.toggle-r .engageToggle.active {
-  background: var(--yellow-muted);
-  color: #1a1f1c;
-  box-shadow: 0 0 8px rgba(157, 170, 82, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
+/* Footswitch Rack Tints (optional, currently using standard red LED) */
+/* .toggle-l .statusLed.active { ... } */
 
 .readout {
   margin: 6px 0 0;
@@ -951,6 +976,20 @@ button:active:not(:disabled) {
 .modifyArc svg {
   width: 100%;
   height: 100%;
+}
+
+/* Arc Text Styling */
+.arcText {
+  font-weight: bold;
+}
+
+.arcText--primary {
+  font-size: 10px;
+}
+
+.arcText--secondary {
+  font-size: 9px;
+  opacity: 0.7;
 }
 
 /* Label Area Styling */

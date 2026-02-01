@@ -130,41 +130,35 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     pathR.setAttribute('stroke-linecap', 'round');
 
     const textA1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textA1.classList.add('arcText', 'arcText--primary');
     textA1.setAttribute('x', '15'); // Justified to arc end
     textA1.setAttribute('y', '78'); // Moved UP
     textA1.setAttribute('fill', arcColor);
-    textA1.setAttribute('font-size', '8');
-    textA1.setAttribute('font-weight', 'bold');
     textA1.setAttribute('text-anchor', 'end'); // Anchor END
     textA1.textContent = 'A1';
 
     const textA2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textA2.classList.add('arcText', 'arcText--secondary');
     textA2.setAttribute('x', '15');
     textA2.setAttribute('y', '88'); // Moved UP
     textA2.setAttribute('fill', arcColor);
-    textA2.setAttribute('font-size', '7');
-    textA2.setAttribute('font-weight', 'bold');
     textA2.setAttribute('text-anchor', 'end'); // Anchor END
-    textA2.style.opacity = '0.7';
     textA2.textContent = 'A2';
 
     const textB1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textB1.classList.add('arcText', 'arcText--primary');
     textB1.setAttribute('x', '85'); // Justified to arc end
     textB1.setAttribute('y', '78'); // Moved UP
     textB1.setAttribute('fill', arcColor);
-    textB1.setAttribute('font-size', '8');
-    textB1.setAttribute('font-weight', 'bold');
     textB1.setAttribute('text-anchor', 'start'); // Anchor START
     textB1.textContent = 'B1';
 
     const textB2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textB2.classList.add('arcText', 'arcText--secondary');
     textB2.setAttribute('x', '85');
     textB2.setAttribute('y', '88'); // Moved UP
     textB2.setAttribute('fill', arcColor);
-    textB2.setAttribute('font-size', '7');
-    textB2.setAttribute('font-weight', 'bold');
     textB2.setAttribute('text-anchor', 'start'); // Anchor START
-    textB2.style.opacity = '0.7';
     textB2.textContent = 'B2';
 
     svg.appendChild(pathL);

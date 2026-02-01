@@ -216,40 +216,103 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   block.appendChild(tRow);
   block.appendChild(seg);
 
-  // Engage toggle for Left/Right FX
+  // Footswitch Rack (LED + Foot Button) for side columns
   if (side && engageCC && (side === 'L' || side === 'R')) {
-    stateService.set(engageCC, 0, false);
+    const footswitchRack = createElement('div', 'footswitchRack');
 
-    const engageLabel = createElement('label', 'engageToggle');
-    engageLabel.id = `engage${side}`;
+    // Status LED
+    const led = createElement('div', 'statusLed');
+    footswitchRack.appendChild(led);
 
-    const engageCb = createElement('input') as HTMLInputElement;
-    engageCb.type = 'checkbox';
-    engageCb.checked = false;
+    // Determine hold CC based on side
+    const holdCC = side === 'L' ? 105 : 106;
 
-    const engageText = createElement('span');
-    engageText.textContent = 'ENGAGE';
+    // Initialize hold state
+    stateService.set(holdCC, 0, false);
 
-    engageCb.addEventListener('change', () => {
-      const v = engageCb.checked ? 1 : 0;
-      stateService.set(engageCC, v);
-      engageLabel.classList.toggle('active', engageCb.checked);
+    // Realistic Footswitch (Metallic Button)
+    const footswitch = createElement('button', 'footswitch plunger');
+    footswitch.type = 'button';
+
+    // Long-press detection
+    let pressTimer: number | null = null;
+    const LONG_PRESS_DURATION = 500; // ms
+
+    footswitch.addEventListener('mousedown', () => {
+      pressTimer = window.setTimeout(() => {
+        // Long press detected - toggle hold mode
+        const currentHold = stateService.get(holdCC) === 1;
+        const newHold = currentHold ? 0 : 1;
+        stateService.set(holdCC, newHold);
+
+        // Update LED appearance based on hold state
+        led.classList.toggle('hold', newHold === 1);
+
+        // Add press animation
+        footswitch.classList.add('pressed');
+        setTimeout(() => footswitch.classList.remove('pressed'), 100);
+
+        pressTimer = null;
+      }, LONG_PRESS_DURATION);
+    });
+
+    footswitch.addEventListener('mouseup', () => {
+      if (pressTimer !== null) {
+        // Short press - if either engage or hold is active, turn both off
+        // Otherwise, turn engage on
+        clearTimeout(pressTimer);
+        pressTimer = null;
+
+        const isEngaged = stateService.get(engageCC!) === 1;
+        const isHold = stateService.get(holdCC) === 1;
+
+        // If either is on, turn both off. Otherwise turn engage on.
+        if (isEngaged || isHold) {
+          stateService.set(engageCC!, 0);
+          stateService.set(holdCC, 0);
+          led.classList.remove('active', 'hold');
+          footswitch.classList.remove('active');
+        } else {
+          stateService.set(engageCC!, 1);
+          led.classList.add('active');
+          footswitch.classList.add('active');
+        }
+
+        // Add a momentary press class for animation
+        footswitch.classList.add('pressed');
+        setTimeout(() => footswitch.classList.remove('pressed'), 100);
+      }
+    });
+
+    footswitch.addEventListener('mouseleave', () => {
+      if (pressTimer !== null) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
     });
 
     stateService.registerControl(engageCC, {
       type: 'engage',
       set(v: MIDIValue) {
-        engageCb.checked = Number(v) === 1;
-        engageLabel.classList.toggle('active', engageCb.checked);
+        const isActive = Number(v) === 1;
+        led.classList.toggle('active', isActive);
+        footswitch.classList.toggle('active', isActive);
       }
     });
 
-    engageLabel.appendChild(engageCb);
-    engageLabel.appendChild(engageText);
-    block.appendChild(engageLabel);
+    stateService.registerControl(holdCC, {
+      type: 'dip',
+      set(v: MIDIValue) {
+        const isHold = Number(v) === 1;
+        led.classList.toggle('hold', isHold);
+      }
+    });
+
+    footswitchRack.appendChild(footswitch);
+    block.appendChild(footswitchRack);
   } else {
-    // Spacer to keep middle column aligned with side columns that have ENGAGE buttons
-    const spacer = createElement('div', 'engageSpacer');
+    // Spacer to keep middle column aligned
+    const spacer = createElement('div', 'footswitchSpacer');
     block.appendChild(spacer);
   }
 

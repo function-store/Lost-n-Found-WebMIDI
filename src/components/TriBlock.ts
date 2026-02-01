@@ -55,6 +55,7 @@ interface TriBlockOptions {
   onRandomizeColumn?: (side: Side) => void;
   onUpdateReadout?: () => void;
   onUpdateLabels?: () => void;
+  noSpacer?: boolean;
 }
 
 export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement): void {
@@ -80,60 +81,28 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
 
   // Title row
   const tRow = createElement('div', 'toggleHeader');
-  // Style moved to CSS
 
   const titleRow = createElement('div', 'toggleTitle');
-
   const titleText = createElement('span');
   titleText.textContent = title;
-  titleRow.appendChild(titleText);
 
-  tRow.appendChild(titleRow);
-
-  // Routing Lock - append to header, not title
-  if (cc === 22) {
-    const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
-    // Position it relatively since we are in a flex container
-    lockBtn.style.position = 'relative';
-    lockBtn.style.left = 'auto';
-    lockBtn.style.top = 'auto';
-    lockBtn.style.transform = 'none';
-    lockBtn.style.marginLeft = '6px';
-
-    const isLocked = stateService.isLocked(cc);
-    lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
-    lockBtn.classList.toggle('locked', isLocked);
-
-    lockBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const newState = !stateService.isLocked(cc);
-      stateService.setLocked(cc, newState);
-      lockBtn.innerHTML = newState ? '🔒' : '🔓';
-      lockBtn.classList.toggle('locked', newState);
-    });
-
-    // Append lock to header, not title
-    tRow.appendChild(lockBtn);
-  }
-
-  // Randomize button for Left/Right FX
+  // Prepare Randomize button if needed
+  let randomBtn: HTMLButtonElement | null = null;
   if (hasRandomize && side && (side === 'L' || side === 'R')) {
-    const randomBtn = createElement('button', 'randomizeBtn');
+    randomBtn = createElement('button', 'randomizeBtn');
     randomBtn.textContent = '🎲';
     randomBtn.title = `Randomize ${side === 'L' ? 'Left' : 'Right'} Column`;
     randomBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       onRandomizeColumn?.(side);
     });
-    titleRow.appendChild(randomBtn);
   }
 
-  tRow.appendChild(titleRow);
-
-  // Swap toggle
+  // Prepare Swap toggle if needed
   let swapCheck: HTMLInputElement | null = null;
+  let sLabel: HTMLElement | null = null;
   if (side && swapCC) {
-    const sLabel = createElement('label');
+    sLabel = createElement('label');
     sLabel.style.cssText = 'font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:500;color:var(--cream-muted)';
     sLabel.innerHTML = `<input type="checkbox" class="toggleSwitch" id="${side.toLowerCase()}SwapToggle"> Swap`;
 
@@ -153,8 +122,50 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
         onUpdateReadout?.();
       }
     });
+  }
 
-    tRow.appendChild(sLabel);
+
+  // Assemble the header based on side (Mirrored for Right)
+  if (side === 'R') {
+    // 1. Swap on the left
+    if (sLabel) tRow.appendChild(sLabel);
+
+    // 2. Title block on the right
+    if (randomBtn) titleRow.appendChild(randomBtn);
+    titleRow.appendChild(titleText);
+    tRow.appendChild(titleRow);
+  } else {
+    // Standard order (Left FX, Routing, etc.)
+    // 1. Title block on the left
+    titleRow.appendChild(titleText);
+    if (randomBtn) titleRow.appendChild(randomBtn);
+    tRow.appendChild(titleRow);
+
+    // 2. Lock for Routing (cc 22)
+    if (cc === 22) {
+      const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
+      lockBtn.style.position = 'relative';
+      lockBtn.style.left = 'auto';
+      lockBtn.style.top = 'auto';
+      lockBtn.style.transform = 'none';
+      lockBtn.style.marginLeft = '6px';
+
+      const isLocked = stateService.isLocked(cc);
+      lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
+      lockBtn.classList.toggle('locked', isLocked);
+
+      lockBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const newState = !stateService.isLocked(cc);
+        stateService.setLocked(cc, newState);
+        lockBtn.innerHTML = newState ? '🔒' : '🔓';
+        lockBtn.classList.toggle('locked', newState);
+      });
+      tRow.appendChild(lockBtn);
+    }
+
+    // 3. Swap on the right
+    if (sLabel) tRow.appendChild(sLabel);
   }
 
   // Segment buttons
@@ -320,7 +331,7 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
 
     footswitchRack.appendChild(footswitch);
     block.appendChild(footswitchRack);
-  } else {
+  } else if (!options.noSpacer) {
     // Spacer to keep middle column aligned
     const spacer = createElement('div', 'footswitchSpacer');
     block.appendChild(spacer);

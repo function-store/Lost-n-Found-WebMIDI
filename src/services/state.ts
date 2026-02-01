@@ -203,12 +203,19 @@ class StateService {
       const control = this.uiControls.get(cc);
       const value = this.state[cc];
 
-      if (control?.type === 'tri') {
-        midiService.sendCC(cc, value ?? 1);
-      } else if (control?.type === 'dip') {
-        midiService.sendCC(cc, value ?? 0);
-      } else if (control?.type === 'knob' || control?.type === 'modify') {
-        midiService.sendCC(cc, value ?? 64);
+      // If we have a stored value, push it.
+      // Use fallback defaults only if value is absolutely missing.
+      if (value !== undefined) {
+        midiService.sendCC(cc, value);
+      } else if (control) {
+        // Fallback defaults based on type
+        if (control.type === 'tri') {
+          midiService.sendCC(cc, 1);
+        } else if (control.type === 'knob' || control.type === 'modify' || control.type === 'slider') {
+          midiService.sendCC(cc, 64);
+        } else {
+          midiService.sendCC(cc, 0);
+        }
       }
 
       setTimeout(step, 3);

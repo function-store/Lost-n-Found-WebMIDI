@@ -57,12 +57,17 @@ body.midi-disabled {
   position: relative;
   z-index: 50;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  align-items: center;
-  padding: 4px 10px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 10px;
   background: transparent;
+}
+
+.topbarRow {
+  display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .tbGroup {
@@ -305,7 +310,7 @@ button:active:not(:disabled) {
   padding: 14px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; - removed to allow floating panel */
 }
 
 /* ===== TOGGLE ROW ===== */
@@ -323,7 +328,7 @@ button:active:not(:disabled) {
 /* Routing positioned between Blend and Spill knobs (floating/absolute) */
 .routingBetweenRows {
   position: absolute;
-  bottom: -42px;
+  bottom: -15px;
   /* Adjusted for footswitch spacing */
   left: 50%;
   transform: translateX(-50%);
@@ -910,6 +915,99 @@ button:active:not(:disabled) {
     inset 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
+
+
+.knobBlock--small {
+  margin-top: -25px;
+  /* Gently move it up */
+}
+
+/* ===== RANDOM FLOATER ===== */
+.randomFloater {
+  position: absolute;
+  top: 95px;
+  /* Brought closer to the Master Wet labels */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  min-width: 150px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.randomFloater__label {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--cream-muted);
+  margin-bottom: 2px;
+  opacity: 0.6;
+}
+
+.randomFloater__btns {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.randomFloater__btn {
+  flex: 1;
+  padding: 5px 0;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--cream);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.randomFloater__btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.randomFloater__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.randomFloater__ramp {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--cream-muted);
+  cursor: pointer;
+}
+
+#btnUnlockAll {
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+#btnUnlockAll:hover {
+  opacity: 1;
+}
+
 .dial {
   position: absolute;
   inset: 4px;
@@ -1100,6 +1198,42 @@ button:active:not(:disabled) {
   margin-bottom: 4px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+#tapReadout {
+  font-variant: tabular-nums;
+  width: 60px;
+  display: inline-block;
+  text-align: right;
+  font-size: 10px;
+  color: var(--yellow);
+  font-weight: 600;
+}
+
+.headerActions button {
+  padding: 2px 8px;
+  font-size: 8px;
+  height: 18px;
+  line-height: 1;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.headerActions button:hover:not(:disabled) {
+  background: var(--sage-dark);
+  border-color: var(--sage);
 }
 
 .stereoControls,
@@ -1532,18 +1666,18 @@ button:active:not(:disabled) {
 }
 
 .pmBtn {
-  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
   height: 34px;
-  line-height: 34px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 600;
   font-size: 11px;
   transition: all 0.15s;
-  display: inline-block;
   text-align: center;
-  vertical-align: middle;
 }
 
 .pmBtn.primary {
@@ -2070,6 +2204,39 @@ button:active:not(:disabled) {
 [data-tooltip]::before {
   display: none;
   /* Hide arrow for fixed positioning */
+}
+
+/* Overriding global knob size for the 'small' variant */
+.knob.knob--small {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.knob.knob--small .dial {
+  inset: 2px !important;
+}
+
+.knob.knob--small .indicator {
+  width: 3px !important;
+}
+
+.knob.knob--small .dialCenter {
+  inset: 6px !important;
+}
+
+/* Aligning labels for the small knob version */
+.knobBlock--small .knobContainer {
+  width: 50px !important;
+  height: 50px !important;
+  margin: 0 0;
+}
+
+.knobBlock--small .valueRow {
+  margin-top: 0px !important;
+}
+
+.knobBlock--small .labelArea {
+  margin-top: 2px !important;
 }
 
 /* Tooltips only show when Alt/Option key is held AND element is active */

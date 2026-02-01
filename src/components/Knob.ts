@@ -10,10 +10,11 @@ interface KnobOptions {
   rampCC?: CCNumber;
   column?: string; // 'left', 'center', 'right'
   onUpdateReadout?: () => void;
+  small?: boolean;
 }
 
 export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): void {
-  const { label, cc, kind, rampCC: optionsRampCC, column, onUpdateReadout } = options;
+  const { label, cc, kind, rampCC: optionsRampCC, column, onUpdateReadout, small } = options;
   const rampCC = KNOB_RAMP_MAP[String(cc)] || optionsRampCC;
 
   // Initialize state with default
@@ -24,6 +25,8 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
   if (column) {
     block.classList.add(`knob-${column}`);
   }
+  if (small) block.classList.add('knobBlock--small');
+  parentEl.appendChild(block);
 
   // Add tooltip from config
   const tooltipData = (TOOLTIPS.knobs as Record<string, { label: string; description: string }>)[String(cc)];
@@ -37,6 +40,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
 
   // Knob element
   const knob = createElement('div', 'knob');
+  if (small) knob.classList.add('knob--small');
   const dial = createElement('div', 'dial');
 
   const rot = createElement('div', 'rot');

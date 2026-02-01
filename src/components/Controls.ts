@@ -184,6 +184,23 @@ export function createRampSlider(
 
   const labelText = createElement('span');
   labelText.textContent = 'Ramp Speed';
+  labelText.style.position = 'relative';
+
+  // Lock Icon for Ramp Speed
+  const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
+  const isLocked = stateService.isLocked(cc);
+  lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
+  lockBtn.classList.toggle('locked', isLocked);
+
+  lockBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const newState = !stateService.isLocked(cc);
+    stateService.setLocked(cc, newState);
+    lockBtn.innerHTML = newState ? '🔒' : '🔓';
+    lockBtn.classList.toggle('locked', newState);
+  });
+
+  labelText.appendChild(lockBtn);
 
   const labelValue = createElement('span');
   labelValue.textContent = '50%';
@@ -199,17 +216,23 @@ export function createRampSlider(
 
   slider.addEventListener('input', () => {
     const v = Number(slider.value);
-    stateService.set(cc, v);
+    // Invert: 127 slider = 0 MIDI (Fast), 0 slider = 127 MIDI (Slow)
+    const midiVal = 127 - v;
+    stateService.set(cc, midiVal);
     labelValue.textContent = Math.round((v / 127) * 100) + '%';
   });
 
+  // Register lockIcon handle for mass-unlocking if needed
   stateService.registerControl(cc, {
     type: 'slider',
-    set(v: MIDIValue) {
+    set(midiVal: MIDIValue) {
+      const v = 127 - Number(midiVal);
       slider.value = String(v);
-      labelValue.textContent = Math.round((Number(v) / 127) * 100) + '%';
+      labelValue.textContent = Math.round((v / 127) * 100) + '%';
     }
   });
+  const control = stateService.getControl(cc);
+  if (control) control.lockIcon = lockBtn;
 
   parentEl.appendChild(sliderLabel);
   parentEl.appendChild(slider);

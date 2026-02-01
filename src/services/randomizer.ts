@@ -109,6 +109,7 @@ class RandomizerService {
   // Randomize ramp controls
   private randomizeRampControls(): void {
     RAMP_CCS.forEach(cc => {
+      if (NEVER_RANDOM_CCS.has(cc) || stateService.isLocked(cc)) return;
       const control = stateService.getControl(cc);
       if (!control?.set) return;
 

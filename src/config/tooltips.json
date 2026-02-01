@@ -1,0 +1,164 @@
+{
+  "knobs": {
+    "14": {
+      "label": "L Time",
+      "description": "Controls the primary time-based parameter for the left channel effect. Function varies by effect: Size (Reverb), Swell Time/Delay (Pitch), Rate (Warp)."
+    },
+    "15": {
+      "label": "Mix",
+      "description": "Balance between your dry input signal and the Lost+Found effect. Lock this to preserve your wet/dry balance when loading presets."
+    },
+    "16": {
+      "label": "R Time",
+      "description": "Controls the primary time-based parameter for the right channel effect. Function varies by effect: Delay Time/Grain Size (Delay), Portamento/Onset (Synth), Rate (Bend)."
+    },
+    "17": {
+      "label": "L Modify",
+      "description": "Morphs between two variations of the left effect (A and B). Turn left for variant A, right for variant B. The arc labels show which effects you're blending between."
+    },
+    "18": {
+      "label": "Blend",
+      "description": "Balance between the left and right effect channels. Turn left to favor left channel, right to favor right channel. Center is equal blend."
+    },
+    "19": {
+      "label": "R Modify",
+      "description": "Morphs between two variations of the right effect (A and B). Turn left for variant A, right for variant B. The arc labels show which effects you're blending between."
+    },
+    "24": {
+      "label": "L Alt",
+      "description": "Secondary parameter for the left channel effect. Function varies by effect: Diffusion (Reverb), Feedback/Repeats (Pitch), Resonance (Warp)."
+    },
+    "25": {
+      "label": "Spill",
+      "description": "Controls how much of each channel bleeds into the other. Higher values create more interplay between left and right effects."
+    },
+    "26": {
+      "label": "R Alt",
+      "description": "Secondary parameter for the right channel effect. Function varies by effect: Stability/Grain Shape (Delay), Attack-Release/Octave (Synth), Voices/Crinkles (Bend)."
+    },
+    "27": {
+      "label": "L EQ",
+      "description": "Tone control for the left channel. Turn left to cut highs for darker tones, right to boost highs for brighter tones. Center is neutral."
+    },
+    "28": {
+      "label": "Glue",
+      "description": "Adds subtle compression and saturation to glue the effects together. Creates cohesion between the two channels."
+    },
+    "29": {
+      "label": "R EQ",
+      "description": "Tone control for the right channel. Turn left to cut highs for darker tones, right to boost highs for brighter tones. Center is neutral."
+    },
+    "30": {
+      "label": "Master Wet",
+      "description": "Master output level for the wet signal. Use to match the overall effect level to your dry signal."
+    }
+  },
+  "effects": {
+    "leftFx": {
+      "title": "Left FX",
+      "description": "Select the effect family for the left channel. Toggle Swap to access the alternate effect set.",
+      "options": {
+        "Reverb": "Lush reverb effects: Slow-verb (A) or Useful Ambience (B)",
+        "Pitch": "Pitch-based effects: Orchestral Swell (A) or Pitch Repeater (B)",
+        "Warp": "Modulation effects: Pinging Phaser (A) or Spectral Modulator (B)",
+        "Delay": "Delay effects: Tape Echo (A) or Grain Tumbler (B)",
+        "Synth": "Synth-like effects: Impulse Synthesizer (A) or Sympathetic Resonator (B)",
+        "Bend": "Chorus/Warp effects: Ensemble Expander (A) or Gen Lite (B)"
+      }
+    },
+    "routing": {
+      "title": "Routing",
+      "description": "Signal routing between left and right channels",
+      "options": {
+        "L>R": "Series: Left channel feeds into right channel",
+        "L+R": "Parallel: Left and right channels run independently",
+        "L<R": "Series: Right channel feeds into left channel"
+      }
+    },
+    "rightFx": {
+      "title": "Right FX",
+      "description": "Select the effect family for the right channel. Toggle Swap to access the alternate effect set.",
+      "options": {
+        "Delay": "Delay effects: Tape Echo (A) or Grain Tumbler (B)",
+        "Synth": "Synth-like effects: Impulse Synthesizer (A) or Sympathetic Resonator (B)",
+        "Bend": "Chorus/Warp effects: Ensemble Expander (A) or Gen Lite (B)",
+        "Reverb": "Lush reverb effects: Slow-verb (A) or Useful Ambience (B)",
+        "Pitch": "Pitch-based effects: Orchestral Swell (A) or Pitch Repeater (B)",
+        "Warp": "Modulation effects: Pinging Phaser (A) or Spectral Modulator (B)"
+      }
+    }
+  },
+  "ramp": {
+    "bounce": {
+      "label": "Bounce",
+      "description": "When enabled, the ramp oscillates back and forth instead of resetting to the start position."
+    },
+    "sweep": {
+      "label": "Sweep",
+      "description": "When enabled, the expression sweep range is inverted (heel becomes toe and vice versa)."
+    },
+    "speed": {
+      "label": "Ramp Speed",
+      "description": "Controls how fast the ramp cycles through its range. Faster speeds create more obvious modulation effects."
+    },
+    "enabled": {
+      "label": "Enabled",
+      "description": "Master enable for the ramping system. When on, enabled knobs will automatically sweep through their range."
+    }
+  },
+  "stereo": {
+    "spread": {
+      "title": "Spread",
+      "description": "Controls which channels receive the effect output",
+      "options": {
+        "L Only": "Effect output only on the left channel",
+        "Both": "Effect output on both channels (stereo)",
+        "R Only": "Effect output only on the right channel"
+      }
+    },
+    "miso": {
+      "label": "MISO",
+      "description": "Mono In Stereo Out: Sums the input to mono before processing, then outputs in stereo. Useful for mono sources."
+    },
+    "spreadDip": {
+      "label": "Spread DIP",
+      "description": "Enables the Spread control. When off, stereo image is controlled only by the blend knob."
+    }
+  },
+  "clock": {
+    "midiClockFollow": {
+      "label": "MIDI Clock Follow",
+      "description": "When enabled, time-based effects sync to incoming MIDI clock. Tap tempo is ignored when active."
+    },
+    "unsync": {
+      "label": "Unsync",
+      "description": "When enabled, left and right time parameters are independent. When off, both channels share the same time setting."
+    },
+    "lSubdivision": {
+      "label": "L Tap Subdivision",
+      "description": "When synced to MIDI clock or tap tempo, sets the time subdivision for the left channel."
+    },
+    "rSubdivision": {
+      "label": "R Tap Subdivision",
+      "description": "When synced to MIDI clock or tap tempo, sets the time subdivision for the right channel."
+    }
+  },
+  "dip": {
+    "latch": {
+      "label": "Latch",
+      "description": "Changes footswitch behavior: when on, tap to toggle effect on/off. When off, effect is only active while holding the switch."
+    },
+    "trails": {
+      "label": "Trails",
+      "description": "When on, effects trail off naturally when bypassed. When off, effects cut immediately on bypass."
+    },
+    "bank": {
+      "label": "Bank",
+      "description": "Enables preset bank mode for accessing additional presets via MIDI program changes."
+    },
+    "polarity": {
+      "label": "Polarity",
+      "description": "Inverts the expression pedal polarity. Use if your expression pedal works backwards."
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import type { CCNumber, MIDIValue, KnobKind, UIControl } from '../types';
 import { stateService } from '../services/state';
 import { valueToDegrees, valueToPercent, createElement, clampMIDI } from '../utils/helpers';
-import { KNOB_RAMP_MAP } from '../config';
+import { KNOB_RAMP_MAP, TOOLTIPS } from '../config';
 
 interface KnobOptions {
   label: string;
@@ -23,6 +23,12 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
   const block = createElement('div', 'knobBlock');
   if (column) {
     block.classList.add(`knob-${column}`);
+  }
+
+  // Add tooltip from config
+  const tooltipData = (TOOLTIPS.knobs as Record<string, { label: string; description: string }>)[String(cc)];
+  if (tooltipData) {
+    block.setAttribute('data-tooltip', tooltipData.description);
   }
 
   // Value display

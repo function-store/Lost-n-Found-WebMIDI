@@ -1,6 +1,32 @@
 import type { CCNumber, MIDIValue, SubdivisionOption } from '../types';
 import { stateService } from '../services/state';
 import { createElement } from '../utils/helpers';
+import { TOOLTIPS } from '../config';
+
+// Tooltip lookup maps keyed by label
+const RAMP_TOOLTIPS: Record<string, string> = {
+  'Bounce': TOOLTIPS.ramp.bounce.description,
+  'Sweep': TOOLTIPS.ramp.sweep.description,
+};
+
+const STEREO_TOOLTIPS: Record<string, string> = {
+  'MISO': TOOLTIPS.stereo.miso.description,
+  'Spread DIP': TOOLTIPS.stereo.spreadDip.description,
+};
+
+const CLOCK_TOOLTIPS: Record<string, string> = {
+  'MIDI Clock Follow': TOOLTIPS.clock.midiClockFollow.description,
+  'Unsync': TOOLTIPS.clock.unsync.description,
+  'L Tap Subdivision': TOOLTIPS.clock.lSubdivision.description,
+  'R Tap Subdivision': TOOLTIPS.clock.rSubdivision.description,
+};
+
+const DIP_TOOLTIPS: Record<string, string> = {
+  'Latch': TOOLTIPS.dip.latch.description,
+  'Trails': TOOLTIPS.dip.trails.description,
+  'Bank': TOOLTIPS.dip.bank.description,
+  'Polarity': TOOLTIPS.dip.polarity.description,
+};
 
 // Create a DIP switch row (checkbox)
 export function createDipRow(
@@ -11,6 +37,12 @@ export function createDipRow(
   stateService.set(cc, 0, false);
 
   const row = createElement('div', 'dipRow');
+
+  // Add tooltip
+  const tooltip = DIP_TOOLTIPS[name];
+  if (tooltip) {
+    row.setAttribute('data-tooltip', tooltip);
+  }
 
   const lab = createElement('label');
   lab.textContent = name;
@@ -45,6 +77,12 @@ export function createRampToggle(
 
   const toggle = createElement('label', 'rampToggle');
 
+  // Add tooltip
+  const tooltip = RAMP_TOOLTIPS[name];
+  if (tooltip) {
+    toggle.setAttribute('data-tooltip', tooltip);
+  }
+
   const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   if (name === 'Sweep') cb.classList.add('toggleSwitch--sweep');
   cb.type = 'checkbox';
@@ -77,6 +115,12 @@ export function createStereoToggle(
   stateService.set(cc, 0, false);
 
   const toggle = createElement('label', 'stereoToggle');
+
+  // Add tooltip
+  const tooltip = STEREO_TOOLTIPS[name];
+  if (tooltip) {
+    toggle.setAttribute('data-tooltip', tooltip);
+  }
 
   const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   cb.type = 'checkbox';
@@ -112,6 +156,12 @@ export function createOtherCheckbox(
 
   const row = createElement('div', 'dipRow');
 
+  // Add tooltip
+  const tooltip = CLOCK_TOOLTIPS[name];
+  if (tooltip) {
+    row.setAttribute('data-tooltip', tooltip);
+  }
+
   const lab = createElement('label');
   lab.textContent = name;
 
@@ -144,6 +194,12 @@ export function createOtherSelect(
   stateService.set(cc, 0, false);
 
   const row = createElement('div', 'dipRow');
+
+  // Add tooltip
+  const tooltip = CLOCK_TOOLTIPS[name];
+  if (tooltip) {
+    row.setAttribute('data-tooltip', tooltip);
+  }
 
   const lab = createElement('label');
   lab.textContent = name;
@@ -183,6 +239,7 @@ export function createRampSlider(
   stateService.set(cc, 64, false);
 
   const sliderLabel = createElement('div', 'rampSliderLabel');
+  sliderLabel.setAttribute('data-tooltip', TOOLTIPS.ramp.speed.description);
 
   const labelText = createElement('span');
   labelText.textContent = 'Ramp Speed';
@@ -244,6 +301,9 @@ export function createRampSlider(
 export function createRampEnabled(parentEl: HTMLElement): void {
   const cc = 52; // Ramp Enabled CC
   stateService.set(cc, 127, false); // Default: ramping disabled (127=disabled, 0=enabled)
+
+  // Add tooltip to parent
+  parentEl.setAttribute('data-tooltip', TOOLTIPS.ramp.enabled.description);
 
   const enabledCb = createElement('input', 'toggleSwitch') as HTMLInputElement;
   enabledCb.type = 'checkbox';

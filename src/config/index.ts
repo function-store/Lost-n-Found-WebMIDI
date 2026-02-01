@@ -2,11 +2,13 @@ import midiCC from './midi-cc.json';
 import effects from './effects.json';
 import knobs from './knobs.json';
 import controls from './controls.json';
+import tooltips from './tooltips.json';
 
 export const MIDI_CC = midiCC;
 export const EFFECTS = effects;
 export const KNOBS = knobs;
 export const CONTROLS = controls;
+export const TOOLTIPS = tooltips;
 
 // Derived constants for easy access
 export const KNOB_CCS = MIDI_CC.groups.knobCCs;

@@ -81,9 +81,9 @@
       "title": "Spread",
       "cc": 32,
       "options": [
-        "L ONLY",
-        "BOTH",
-        "R ONLY"
+        "L Only",
+        "Both",
+        "R Only"
       ]
     },
     "toggles": [

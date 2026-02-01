@@ -770,6 +770,39 @@ function saveManagerChanges(): void {
   });
 };
 
+// Alt/Option key enables tooltips
+window.addEventListener('keydown', (e) => {
+  if (e.altKey) document.body.classList.add('tooltips-enabled');
+});
+window.addEventListener('keyup', (e) => {
+  if (!e.altKey) document.body.classList.remove('tooltips-enabled');
+});
+window.addEventListener('blur', () => {
+  document.body.classList.remove('tooltips-enabled');
+});
+
+// Position fixed tooltips on hover (only show innermost tooltip)
+let activeTooltipEl: HTMLElement | null = null;
+document.addEventListener('mouseover', (e) => {
+  const target = (e.target as HTMLElement).closest('[data-tooltip]') as HTMLElement;
+  if (activeTooltipEl && activeTooltipEl !== target) {
+    activeTooltipEl.classList.remove('tooltip-active');
+  }
+  if (!target) {
+    activeTooltipEl = null;
+    return;
+  }
+  const rect = target.getBoundingClientRect();
+  target.style.setProperty('--tooltip-x', `${rect.left + rect.width / 2}px`);
+  target.style.setProperty('--tooltip-y', `${rect.top - 12}px`);
+  target.classList.add('tooltip-active');
+  activeTooltipEl = target;
+});
+document.addEventListener('mouseout', (e) => {
+  const target = (e.target as HTMLElement).closest('[data-tooltip]') as HTMLElement;
+  if (target) target.classList.remove('tooltip-active');
+});
+
 // Initialize on DOM ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);

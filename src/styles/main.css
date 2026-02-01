@@ -1856,3 +1856,57 @@ button:active:not(:disabled) {
 .labelArea {
   margin-top: 3px !important;
 }
+
+/* ===== TOOLTIPS ===== */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: fixed;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  color: var(--cream);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: normal;
+  width: max-content;
+  max-width: 220px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 99999;
+  text-align: left;
+  text-transform: none;
+  /* Position will be set via CSS custom properties from JS */
+  left: var(--tooltip-x, 50%);
+  top: var(--tooltip-y, 0);
+  transform: translate(-50%, -50%);
+}
+
+[data-tooltip]::before {
+  display: none;
+  /* Hide arrow for fixed positioning */
+}
+
+/* Tooltips only show when Alt/Option key is held AND element is active */
+body.tooltips-enabled [data-tooltip].tooltip-active::after {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.15s;
+}
+
+/* Disable tooltips on mobile for better UX */
+@media (max-width: 768px) {
+
+  [data-tooltip]::after,
+  [data-tooltip]::before {
+    display: none;
+  }
+}

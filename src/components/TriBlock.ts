@@ -1,6 +1,47 @@
 import type { CCNumber, MIDIValue, Side } from '../types';
 import { stateService } from '../services/state';
 import { triValueForCC, triPosFromValue, createElement } from '../utils/helpers';
+import { TOOLTIPS } from '../config';
+
+// Get tooltip for effect option
+function getEffectTooltip(blockTitle: string, optionName: string): string | null {
+  // Map block title to config key
+  let blockKey: string | null = null;
+  if (blockTitle === 'Left FX') blockKey = 'leftFx';
+  else if (blockTitle === 'Right FX') blockKey = 'rightFx';
+  else if (blockTitle === 'Routing') blockKey = 'routing';
+  else if (blockTitle === 'Spread') {
+    // Spread options are in stereo config
+    const spreadOptions = TOOLTIPS.stereo.spread.options as Record<string, string>;
+    return spreadOptions[optionName] || null;
+  }
+
+  if (!blockKey) return null;
+
+  const effectConfig = TOOLTIPS.effects[blockKey as keyof typeof TOOLTIPS.effects];
+  if (!effectConfig) return null;
+
+  const optionTooltips = effectConfig.options as Record<string, string>;
+  return optionTooltips[optionName] || null;
+}
+
+// Get block description
+function getBlockTooltip(blockTitle: string): string | null {
+  // Map block title to config key
+  if (blockTitle === 'Spread') {
+    return TOOLTIPS.stereo.spread.description;
+  }
+
+  let blockKey: string | null = null;
+  if (blockTitle === 'Left FX') blockKey = 'leftFx';
+  else if (blockTitle === 'Right FX') blockKey = 'rightFx';
+  else if (blockTitle === 'Routing') blockKey = 'routing';
+
+  if (!blockKey) return null;
+
+  const effectConfig = TOOLTIPS.effects[blockKey as keyof typeof TOOLTIPS.effects];
+  return effectConfig?.description || null;
+}
 
 interface TriBlockOptions {
   title: string;
@@ -31,6 +72,12 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
     block.classList.add(`toggle-${side.toLowerCase()}`);
   }
 
+  // Add block tooltip
+  const blockTooltip = getBlockTooltip(title);
+  if (blockTooltip) {
+    block.setAttribute('data-tooltip', blockTooltip);
+  }
+
   // Title row
   const tRow = createElement('div', 'toggleHeader');
   // Style moved to CSS
@@ -40,6 +87,32 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   const titleText = createElement('span');
   titleText.textContent = title;
   titleRow.appendChild(titleText);
+
+  // Routing Lock
+  if (cc === 22) {
+    const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
+    // Position it relatively since we are in a flex container
+    lockBtn.style.position = 'relative';
+    lockBtn.style.left = 'auto';
+    lockBtn.style.top = 'auto';
+    lockBtn.style.transform = 'none';
+    lockBtn.style.marginLeft = '6px';
+
+    const isLocked = stateService.isLocked(cc);
+    lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
+    lockBtn.classList.toggle('locked', isLocked);
+
+    lockBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newState = !stateService.isLocked(cc);
+      stateService.setLocked(cc, newState);
+      lockBtn.innerHTML = newState ? '🔒' : '🔓';
+      lockBtn.classList.toggle('locked', newState);
+    });
+
+
+    titleRow.appendChild(lockBtn);
+  }
 
   // Randomize button for Left/Right FX
   if (hasRandomize && side && (side === 'L' || side === 'R')) {
@@ -93,6 +166,12 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
     const labels = isSwapped ? swapped : defaultLabels;
     btns.forEach((b, i) => {
       b.textContent = labels[i];
+      // Update button tooltip
+      const tooltip = getEffectTooltip(title, labels[i]);
+      if (tooltip) {
+        b.setAttribute('data-tooltip', tooltip);
+        b.setAttribute('data-tooltip-position', 'bottom');
+      }
     });
     onUpdateLabels?.();
     onUpdateReadout?.();

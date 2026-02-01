@@ -56,6 +56,7 @@ class RandomizerService {
 
     // 2. Randomize FX Types (21, 23) & Routing (22)
     [21, 22, 23].forEach(cc => {
+      if (stateService.isLocked(cc)) return;
       const v = triValueForCC(cc, Math.floor(Math.random() * 3) as 0 | 1 | 2);
       stateService.set(cc, v);
     });

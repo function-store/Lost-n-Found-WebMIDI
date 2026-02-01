@@ -40,7 +40,49 @@ function init(): void {
   console.log('[Lost+Found Editor] Ready');
 }
 
+async function downloadFromCloud(silent = false): Promise<void> {
+  try {
+    updateCloudStatusUI('syncing', silent ? undefined : 'Downloading...');
+    const cloudPresets = await cloudService.loadPresets();
+    if (cloudPresets) {
+      presetService.setMeta(cloudPresets);
+      initSlots();
+      const modal = document.getElementById('pmModal');
+      if (modal && getComputedStyle(modal).display !== 'none') openManager();
+      updateCloudStatusUI('online', 'Synced');
+      if (!silent) alert('Downloaded from Cloud!');
+    } else {
+      updateCloudStatusUI('online', 'No backup');
+      if (!silent) alert('No backup found.');
+    }
+  } catch (err) {
+    updateCloudStatusUI('error');
+    if (!silent) alert('Download failed: ' + (err as Error).message);
+  }
+}
+
+async function triggerAutoUpload(): Promise<boolean> {
+  if (stateService.autoSync && cloudService.currentUser) {
+    try {
+      updateCloudStatusUI('syncing', 'Uploading...');
+      const meta = presetService.getMeta();
+      await cloudService.savePresets(meta);
+      updateCloudStatusUI('online', 'Synced');
+      return true;
+    } catch (e) {
+      console.error('Auto-upload failed:', e);
+      updateCloudStatusUI('error', 'Upload failed');
+      return false;
+    }
+  } else if (cloudService.currentUser && !stateService.autoSync) {
+    updateCloudStatusUI('modified');
+  }
+  return false;
+}
+
 function setupCloudUI(): void {
+  let isManualLogin = false;
+
   const attachCloudSyncUI = (container: HTMLElement) => {
     const wrapper = createElement('div');
     wrapper.style.position = 'relative';
@@ -70,13 +112,25 @@ function setupCloudUI(): void {
         const syncLbl = createElement('label');
         syncLbl.style.cssText = 'font-size:11px;color:var(--cream);cursor:pointer;display:flex;align-items:center;gap:6px;width:100%;';
         syncLbl.innerHTML = `<input type="checkbox" ${stateService.autoSync ? 'checked' : ''}> 🔄 Auto-Sync`;
-        syncLbl.onchange = (e) => {
-          const chk = (e.target as HTMLInputElement);
-          stateService.autoSync = chk.checked;
+
+        syncLbl.onchange = async (e) => {
+          const chk = (e.currentTarget as HTMLElement).querySelector('input') as HTMLInputElement;
+          const isChecked = chk.checked;
+
+          stateService.autoSync = isChecked;
           stateService.save();
-          if (stateService.autoSync) triggerAutoUpload();
-          else updateCloudStatusUI('modified', 'Sync Off');
+
+          if (isChecked) {
+            if (confirm('Download presets from Cloud now?')) {
+              await downloadFromCloud();
+            } else {
+              triggerAutoUpload();
+            }
+          } else {
+            updateCloudStatusUI('modified', 'Sync Off');
+          }
         };
+
         syncGroup.appendChild(syncLbl);
         menu.appendChild(syncGroup);
 
@@ -108,24 +162,7 @@ function setupCloudUI(): void {
           e.stopPropagation();
           menu.style.display = 'none';
           if (!confirm('Overwrite Local presets with Cloud backup?')) return;
-          try {
-            updateCloudStatusUI('syncing');
-            const cloudPresets = await cloudService.loadPresets();
-            if (cloudPresets) {
-              presetService.setMeta(cloudPresets);
-              initSlots();
-              const modal = document.getElementById('pmModal');
-              if (modal && modal.style.display !== 'none') openManager();
-              updateCloudStatusUI('online');
-              alert('Downloaded!');
-            } else {
-              updateCloudStatusUI('online', 'No backup');
-              alert('No backup found.');
-            }
-          } catch (err) {
-            updateCloudStatusUI('error');
-            alert('Download failed: ' + (err as Error).message);
-          }
+          await downloadFromCloud();
         };
 
         menu.appendChild(btnUpload);
@@ -149,6 +186,7 @@ function setupCloudUI(): void {
         btnLogin.onclick = (e) => {
           e.stopPropagation();
           menu.style.display = 'none';
+          isManualLogin = true;
           cloudService.login();
         };
         menu.appendChild(btnLogin);
@@ -164,26 +202,39 @@ function setupCloudUI(): void {
     window.addEventListener('click', () => {
       menu.style.display = 'none';
     });
+
     cloudService.onUserChange(async (user) => {
       rebuildMenu(user);
-      if (user && stateService.autoSync) {
-        try {
-          updateCloudStatusUI('syncing', 'Downloading...');
-          const cloudPresets = await cloudService.loadPresets();
-          if (cloudPresets) {
-            presetService.setMeta(cloudPresets);
-            initSlots();
-            const modal = document.getElementById('pmModal');
-            if (modal && modal.style.display !== 'none') openManager();
-            updateCloudStatusUI('online', 'Synced');
+
+      if (user) {
+        if (isManualLogin) {
+          isManualLogin = false;
+          if (confirm('Enable Auto-Sync? This will keep your presets backed up automatically.')) {
+            stateService.autoSync = true;
+            stateService.save();
+            // Rebuild menu to show checked state
+            rebuildMenu(user);
+            if (confirm('Download presets from Cloud now?')) {
+              await downloadFromCloud();
+            } else {
+              // Assuming if they enabled auto-sync but didn't download, 
+              // they want their current local state to be the source of truth.
+              triggerAutoUpload();
+            }
           } else {
-            updateCloudStatusUI('online', 'Ready');
+            // User denied Auto-Sync, but still ask about download
+            if (confirm('Download presets from Cloud?')) {
+              await downloadFromCloud();
+            }
           }
-        } catch (e) {
-          updateCloudStatusUI('error', 'Sync failed');
+        } else {
+          // Automatic login (Page load)
+          if (stateService.autoSync) {
+            downloadFromCloud(true); // Silent download
+          } else {
+            updateCloudStatusUI('online', 'Connected');
+          }
         }
-      } else if (user) {
-        updateCloudStatusUI('online', 'Connected');
       } else {
         updateCloudStatusUI('offline');
       }
@@ -225,25 +276,6 @@ function updateCloudStatusUI(status: 'offline' | 'online' | 'syncing' | 'error' 
           status === 'modified' ? 'Modified' :
             'Error'
   );
-}
-
-async function triggerAutoUpload(): Promise<boolean> {
-  if (stateService.autoSync && cloudService.currentUser) {
-    try {
-      updateCloudStatusUI('syncing', 'Uploading...');
-      const meta = presetService.getMeta();
-      await cloudService.savePresets(meta);
-      updateCloudStatusUI('online', 'Synced');
-      return true;
-    } catch (e) {
-      console.error('Auto-upload failed:', e);
-      updateCloudStatusUI('error', 'Upload failed');
-      return false;
-    }
-  } else if (cloudService.currentUser && !stateService.autoSync) {
-    updateCloudStatusUI('modified');
-  }
-  return false;
 }
 
 function buildUI(): void {

@@ -257,7 +257,8 @@ Contributions are welcome! Please:
 ## Acknowledgments
 
 - **Chase Bliss Audio** for creating the [Lost + Found](https://www.chasebliss.com/lost-and-found) pedal
-- [PedalPylot](https://pedalpylot.com/) for the inspiration, please consider donating to him for a good cause!
+- Inspired by [PedalPylot](https://pedalpylot.com). Please consider [donating to support Phil G Music](https://www.paypal.com/paypalme/philgmusic).
+- Support the developer of this web editor on [Patreon](https://patreon.com/function_store)
 - Built with [Vite](https://vitejs.dev/) and [TypeScript](https://www.typescriptlang.org/)
 - Cloud sync powered by [Firebase](https://firebase.google.com/)
 

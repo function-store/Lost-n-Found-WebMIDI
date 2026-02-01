@@ -84,17 +84,18 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
   stateService.registerControl(cc, control);
 
   // Main Build Layout
-  // 1. Percentage Display - Moved to TOP
+  // 1. Arc/Knob Container
+  const knobContainer = createElement('div', 'knobContainer');
+  block.appendChild(knobContainer);
+
+  // 2. Percentage Display (Sitting just below knob)
   const vRow = createElement('div', 'valueRow');
   vRow.style.width = '100%';
   vRow.style.textAlign = 'center';
-  vRow.style.marginBottom = '-4px'; // Bring knob closer to value
+  vRow.style.marginTop = '-6px'; // Pull value up towards knob
+  vRow.style.marginBottom = '-2px'; // Pull labels up towards value
   vRow.appendChild(val);
   block.appendChild(vRow);
-
-  // 2. Arc/Knob Container
-  const knobContainer = createElement('div', 'knobContainer');
-  block.appendChild(knobContainer);
 
   if (kind === 'modify') {
     const arc = createElement('div', 'modifyArc');
@@ -187,9 +188,11 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
   // Primary Label - NOW SECOND
   const lab = createElement('div', 'kLabel');
   lab.textContent = label;
+  labelArea.appendChild(lab);
 
   // Lock Icon - Inline with Label
   const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
+  lab.appendChild(lockBtn); // Mount as absolute child of label
   const isLocked = stateService.isLocked(cc);
   lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
   lockBtn.classList.toggle('locked', isLocked);
@@ -227,16 +230,15 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
 
   // Ramp Control - Top Right Absolute
   if (rampCC) {
-    const rampContainer = createElement('div', 'rampTopRight');
+    const rampContainer = createElement('div', 'rampTopCenter');
 
     const rampCheck = createElement('input') as HTMLInputElement;
     rampCheck.type = 'checkbox';
     rampCheck.id = `ramp${cc}`;
-    rampCheck.className = 'toggleSwitch toggleSwitch--sm';
+    rampCheck.className = 'toggleSwitch toggleSwitch--xs';
 
     const rampLabel = createElement('label', 'miniRampLabel');
-    rampLabel.textContent = '(RAMP)'; // Or empty if icon only? User image shows text.
-    rampLabel.style.fontSize = '9px';
+    rampLabel.textContent = '(RAMP)';
     rampLabel.appendChild(rampCheck);
 
     rampCheck.addEventListener('change', () => {

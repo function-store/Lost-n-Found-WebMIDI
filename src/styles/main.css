@@ -459,6 +459,39 @@ button:active:not(:disabled) {
   left: 12px;
 }
 
+/* Extra Small variant for compact use */
+.toggleSwitch--xs {
+  width: 18px;
+  height: 9px;
+  border-radius: 5px;
+}
+
+.toggleSwitch--xs::before {
+  top: 1px;
+  left: 1px;
+  width: 7px;
+  height: 7px;
+}
+
+.toggleSwitch--xs:checked::before {
+  left: 10px;
+}
+
+.miniRampLabel {
+  font-size: 8px !important;
+  color: var(--yellow-muted) !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.toggleSwitch--sm:checked::before {
+  left: 12px;
+}
+
 /* ===== SEGMENT BUTTONS (Slider Style) ===== */
 .seg {
   display: grid;
@@ -653,12 +686,34 @@ button:active:not(:disabled) {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   line-height: 1.2;
+  position: relative;
+}
+
+
+
+.inlineLock {
+  position: absolute;
+  left: calc(100% + 2px);
+  /* Tightly anchored to text end */
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.3;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inlineLock.locked {
+  opacity: 0.9;
+  filter: grayscale(0);
 }
 
 .kValue {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--cream-muted);
-  min-height: 16px;
+  min-height: 12px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1408,6 +1463,46 @@ button:active:not(:disabled) {
   transform: rotate(var(--rotation));
 }
 
+.scatter-shape--squircle {
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  border-radius: 35%;
+  transform: rotate(var(--rotation));
+}
+
+.scatter-shape--pill {
+  width: 24px;
+  height: 12px;
+  background: currentColor;
+  border-radius: 10px;
+  transform: rotate(var(--rotation));
+}
+
+.scatter-shape--blossom {
+  width: 22px;
+  height: 22px;
+  background: currentColor;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  transform: rotate(var(--rotation));
+}
+
+.scatter-shape--semicircle {
+  width: 20px;
+  height: 10px;
+  background: currentColor;
+  border-radius: 20px 20px 0 0;
+  transform: rotate(var(--rotation));
+}
+
+.scatter-shape--starburst {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  clip-path: polygon(50% 0%, 64% 18%, 82% 7%, 82% 28%, 100% 30%, 87% 46%, 97% 64%, 78% 64%, 76% 85%, 59% 76%, 50% 100%, 41% 76%, 24% 85%, 22% 64%, 3% 64%, 13% 46%, 0% 30%, 18% 28%, 18% 7%, 36% 18%);
+  transform: rotate(var(--rotation));
+}
+
 /* Size modifiers */
 .scatter-shape--sm {
   transform: scale(0.7) rotate(var(--rotation));
@@ -1664,28 +1759,19 @@ button:active:not(:disabled) {
 }
 
 /* Reorganized Knob Layout - Global */
-.rampTopRight {
+.rampTopCenter {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 5;
   display: flex;
   align-items: center;
   pointer-events: auto;
+  white-space: nowrap;
 }
 
-/* Ensure knobBlock is relative for absolute positioning */
-.knobBlock {
-  position: relative !important;
-}
-
-.inlineLock {
-  margin-left: 4px;
-  vertical-align: middle;
-  position: relative;
-  top: -1px;
-  display: inline-block;
-}
+/* Consistent spacing for labels */
 
 /* Consistent spacing for labels */
 .labelArea {

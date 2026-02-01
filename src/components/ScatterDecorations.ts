@@ -1,6 +1,10 @@
 // Organic scatter decorations inspired by the Chase Bliss Lost+Found pedal
+// Now procedurally generated for a unique look on every reload
 
-type ShapeType = 'square' | 'diamond' | 'circle' | 'rect' | 'pentagon';
+type ShapeType =
+  | 'square' | 'diamond' | 'circle' | 'rect' | 'pentagon'
+  | 'squircle' | 'pill' | 'blossom' | 'semicircle' | 'starburst';
+
 type Zone = 'left' | 'center' | 'right';
 type Size = 'sm' | 'md' | 'lg';
 
@@ -13,31 +17,43 @@ interface ScatterShape {
   zone: Zone;
 }
 
-// Carefully positioned shapes to create organic scatter effect
-// Matches the aesthetic of the physical Lost+Found pedal
-const SCATTER_SHAPES: ScatterShape[] = [
-  // Left zone (green tints) - around L Time, L Modify knobs
-  { type: 'square', x: 4, y: 8, size: 'md', rotation: 15, zone: 'left' },
-  { type: 'diamond', x: 12, y: 28, size: 'sm', rotation: 0, zone: 'left' },
-  { type: 'circle', x: 6, y: 52, size: 'lg', rotation: 0, zone: 'left' },
-  { type: 'rect', x: 18, y: 72, size: 'md', rotation: -12, zone: 'left' },
-  { type: 'pentagon', x: 8, y: 88, size: 'sm', rotation: 20, zone: 'left' },
-  { type: 'square', x: 22, y: 42, size: 'sm', rotation: 45, zone: 'left' },
-
-  // Center zone (muted cream) - around Mix, Blend knobs
-  { type: 'circle', x: 42, y: 12, size: 'sm', rotation: 0, zone: 'center' },
-  { type: 'rect', x: 52, y: 35, size: 'md', rotation: -25, zone: 'center' },
-  { type: 'square', x: 48, y: 65, size: 'sm', rotation: 30, zone: 'center' },
-  { type: 'diamond', x: 55, y: 85, size: 'md', rotation: 0, zone: 'center' },
-
-  // Right zone (yellow tints) - around R Time, R Modify knobs
-  { type: 'diamond', x: 78, y: 15, size: 'lg', rotation: 0, zone: 'right' },
-  { type: 'square', x: 88, y: 32, size: 'md', rotation: -18, zone: 'right' },
-  { type: 'circle', x: 82, y: 55, size: 'sm', rotation: 0, zone: 'right' },
-  { type: 'rect', x: 92, y: 48, size: 'sm', rotation: 35, zone: 'right' },
-  { type: 'pentagon', x: 85, y: 75, size: 'md', rotation: -10, zone: 'right' },
-  { type: 'square', x: 75, y: 90, size: 'sm', rotation: 22, zone: 'right' },
+const SHAPE_TYPES: ShapeType[] = [
+  'square', 'diamond', 'circle', 'rect', 'pentagon',
+  'squircle', 'pill', 'blossom', 'semicircle', 'starburst'
 ];
+
+function getRandomZone(x: number): Zone {
+  if (x < 35) return 'left';
+  if (x > 65) return 'right';
+  return 'center';
+}
+
+function getRandomSize(): Size {
+  const r = Math.random();
+  if (r < 0.4) return 'sm';
+  if (r < 0.8) return 'md';
+  return 'lg';
+}
+
+function generateRandomShapes(count: number): ScatterShape[] {
+  const shapes: ScatterShape[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+
+    shapes.push({
+      type: SHAPE_TYPES[Math.floor(Math.random() * SHAPE_TYPES.length)],
+      x,
+      y,
+      size: getRandomSize(),
+      rotation: Math.floor(Math.random() * 360),
+      zone: getRandomZone(x)
+    });
+  }
+
+  return shapes;
+}
 
 function createShapeElement(shape: ScatterShape): HTMLDivElement {
   const el = document.createElement('div');
@@ -55,7 +71,7 @@ function createShapeElement(shape: ScatterShape): HTMLDivElement {
   el.style.left = `${shape.x}%`;
   el.style.top = `${shape.y}%`;
 
-  // Apply rotation (combine with any transform from the shape type)
+  // Apply rotation
   if (shape.rotation !== 0) {
     el.style.setProperty('--rotation', `${shape.rotation}deg`);
   }
@@ -67,8 +83,10 @@ export function createScatterLayer(parentEl: HTMLElement): HTMLDivElement {
   const layer = document.createElement('div');
   layer.className = 'scatter-layer';
 
-  // Create all scatter shapes
-  SCATTER_SHAPES.forEach(shape => {
+  // Generate ~45 random shapes (organic variety)
+  const shapes = generateRandomShapes(45);
+
+  shapes.forEach(shape => {
     const shapeEl = createShapeElement(shape);
     layer.appendChild(shapeEl);
   });

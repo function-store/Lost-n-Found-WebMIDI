@@ -135,12 +135,21 @@ Check **+Ramp** to include ramping parameters in the randomization.
 - **Recall** — Load the selected preset from the pedal
 - **Store** — Save current settings to the selected slot
 
-**Preset Manager (Manage button):**
+**Cloud-Based Preset Manager (Manage button):**
 - View all 122 slots with names and status
 - Mark slots as "Used" to help track which are occupied
 - Rename presets inline
 - Export/Import individual presets as JSON
 - **Swap** two preset slots on the pedal (useful for reordering)
+  - *Note: Swapping uses **slot 122** as a temporary buffer. Any preset stored in slot 122 will be overwritten during a swap operation.*
+
+> **⚠️ Important: One-Way Communication**
+> The interface cannot read current knob positions from the pedal.
+> - Only values **edited within the web interface** are stored in the library/cloud.
+> - If you tweak knobs physically on the pedal and then save, those physical changes **will not** be reflected in the saved preset.
+> - Always adjust parameters in the editor if you intend to save them to your library.
+
+![Lost + Found Editor](docs/preset_manager.png)
 
 ### Cloud Sync
 

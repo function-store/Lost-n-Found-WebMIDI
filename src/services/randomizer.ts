@@ -42,7 +42,7 @@ class RandomizerService {
 
     // 1. Randomize knobs
     KNOB_CCS.forEach(cc => {
-      if (stateService.isLocked(cc)) return;
+      if (stateService.isLocked(cc) || NEVER_RANDOM_CCS.has(cc)) return;
 
       const control = stateService.getControl(cc);
       if (control?.type !== 'knob' && control?.type !== 'modify') return;
@@ -100,7 +100,7 @@ class RandomizerService {
     const knobs = side === 'L' ? COLUMN_KNOBS.left : COLUMN_KNOBS.right;
 
     knobs.forEach((cc: CCNumber) => {
-      if (stateService.isLocked(cc)) return;
+      if (stateService.isLocked(cc) || NEVER_RANDOM_CCS.has(cc)) return;
       const v = randomMIDI();
       stateService.set(cc, v);
     });

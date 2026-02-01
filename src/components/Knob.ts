@@ -185,42 +185,42 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
 
 
 
-  // Primary Label - NOW SECOND
+  // Primary Label
   const lab = createElement('div', 'kLabel');
   lab.textContent = label;
   labelArea.appendChild(lab);
 
-  // Lock Icon - Inline with Label
-  const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
-  lab.appendChild(lockBtn); // Mount as absolute child of label
-  const isLocked = stateService.isLocked(cc);
-  lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
-  lockBtn.classList.toggle('locked', isLocked);
+  // Lock Icon - Inline with Label (Excluded for Master Wet)
+  if (cc !== 30) {
+    const lockBtn = createElement('button', 'lockIconBtnMini inlineLock');
+    lab.appendChild(lockBtn);
+    const isLockedInitial = stateService.isLocked(cc);
+    lockBtn.innerHTML = isLockedInitial ? '🔒' : '🔓';
+    lockBtn.classList.toggle('locked', isLockedInitial);
 
-  lockBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const newState = !stateService.isLocked(cc);
-    stateService.setLocked(cc, newState);
-    lockBtn.innerHTML = newState ? '🔒' : '🔓';
-    lockBtn.classList.toggle('locked', newState);
-    if (cc === 15) stateService.set(55, newState ? 127 : 0);
-  });
-
-  if (cc === 15) {
-    stateService.registerControl(55, {
-      type: 'dip',
-      set(v: MIDIValue) {
-        const checked = Number(v) === 127;
-        stateService.setLocked(15, checked);
-        lockBtn.innerHTML = checked ? '🔒' : '🔓';
-        lockBtn.classList.toggle('locked', checked);
-      }
+    lockBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newState = !stateService.isLocked(cc);
+      stateService.setLocked(cc, newState);
+      lockBtn.innerHTML = newState ? '🔒' : '🔓';
+      lockBtn.classList.toggle('locked', newState);
+      if (cc === 15) stateService.set(55, newState ? 127 : 0);
     });
-  }
+    control.lockIcon = lockBtn;
 
-  lab.appendChild(lockBtn);
-  control.lockIcon = lockBtn; // Register lockIcon handle
-  labelArea.appendChild(lab);
+    // Special case for Mix knob lock sync
+    if (cc === 15) {
+      stateService.registerControl(55, {
+        type: 'dip',
+        set(v: MIDIValue) {
+          const locked = Number(v) === 127;
+          stateService.setLocked(15, locked);
+          lockBtn.innerHTML = locked ? '🔒' : '🔓';
+          lockBtn.classList.toggle('locked', locked);
+        }
+      });
+    }
+  }
 
   // Sub-label (Effect specific) - NOW LAST (Bottom of stack)
   const subLab = createElement('div', 'subLabel');

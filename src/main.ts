@@ -14,7 +14,7 @@ import {
 import { createScatterLayer, randomizeScatter } from './components/ScatterDecorations';
 import { EFFECTS, KNOBS, CONTROLS } from './config';
 import { triPosFromValue, getVariantFromModify, createElement } from './utils/helpers';
-import type { Side, MIDIChannel, KnobKind } from './types';
+import type { Side, MIDIChannel, KnobKind, CCNumber } from './types';
 
 // Tap tempo state
 let lastTapMs: number | null = null;
@@ -78,9 +78,9 @@ function buildUI(): void {
   KNOBS.layout.forEach(knob => {
     createKnobBlock({
       label: knob.label,
-      cc: knob.cc,
+      cc: knob.cc as CCNumber,
       kind: knob.kind as KnobKind,
-      column: knob.column, // Pass column for styling
+      column: knob.column,
       onUpdateReadout: updateReadout,
     }, knobGrid);
   });
@@ -93,7 +93,7 @@ function buildUI(): void {
   // Master Wet knob
   createKnobBlock({
     label: KNOBS.masterWet.label,
-    cc: KNOBS.masterWet.cc,
+    cc: KNOBS.masterWet.cc as CCNumber,
     kind: KNOBS.masterWet.kind as KnobKind,
     onUpdateReadout: updateReadout,
   }, knobGrid);

@@ -240,13 +240,23 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
 
     footswitch.addEventListener('mousedown', () => {
       pressTimer = window.setTimeout(() => {
-        // Long press detected - toggle hold mode
+        // Long press detected - activate hold mode
+        // Hardware requires engage to be active before hold can be set
         const currentHold = stateService.get(holdCC) === 1;
         const newHold = currentHold ? 0 : 1;
-        stateService.set(holdCC, newHold);
 
-        // Update LED appearance based on hold state
-        led.classList.toggle('hold', newHold === 1);
+        if (newHold === 1) {
+          // Turning hold ON: first engage, then hold
+          stateService.set(engageCC!, 1);
+          stateService.set(holdCC, 1);
+          led.classList.add('active', 'hold');
+          footswitch.classList.add('active');
+        } else {
+          // Turning hold OFF: turn off hold but keep engage ON
+          stateService.set(holdCC, 0);
+          led.classList.remove('hold');
+          // Keep active class (engage stays on)
+        }
 
         // Add press animation
         footswitch.classList.add('pressed');

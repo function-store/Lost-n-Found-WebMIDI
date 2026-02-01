@@ -95,6 +95,7 @@ export interface SavedEditorState {
   activeSlot: number;
   lastMidiOutId: string | null;
   rampCollapsed: boolean;
+  autoSync: boolean;
 }
 
 export interface ExportedPreset {

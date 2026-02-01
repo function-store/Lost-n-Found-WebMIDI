@@ -30,7 +30,7 @@
     },
     "25": {
       "label": "Spill",
-      "description": "Controls how much of each channel bleeds into the other. Higher values create more interplay between left and right effects."
+      "description": "When in series routing, apply the second effect in the series to your dry signal as well."
     },
     "26": {
       "label": "R Alt",
@@ -109,12 +109,7 @@
   "stereo": {
     "spread": {
       "title": "Spread",
-      "description": "Controls which channels receive the effect output",
-      "options": {
-        "L Only": "Effect output only on the left channel",
-        "Both": "Effect output on both channels (stereo)",
-        "R Only": "Effect output only on the right channel"
-      }
+      "description": "Lets you apply stereo spread to only one channel. This might be helpful, for example, if you want a wide stereo reverb with an echo cutting through the middle."
     },
     "miso": {
       "label": "MISO",

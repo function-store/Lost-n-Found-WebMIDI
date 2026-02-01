@@ -1,5 +1,5 @@
 import './styles/main.css';
-import { midiService, stateService, presetService, randomizerService } from './services';
+import { midiService, stateService, presetService, randomizerService, cloudService } from './services';
 import {
   createKnobBlock,
   createTriBlock,
@@ -34,7 +34,168 @@ function init(): void {
     updateMidiStatusUI();
   });
 
+  setupCloudUI();
+
   console.log('[Lost+Found Editor] Ready');
+}
+
+function setupCloudUI(): void {
+  const attachCloudSyncUI = (container: HTMLElement) => {
+    const wrapper = createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+
+    const syncBtn = createElement('button');
+    syncBtn.style.cssText = 'background:transparent;border:none;color:var(--cream-muted);cursor:pointer;font-size:14px;margin-left:3px;opacity:0.4;transition:opacity 0.2s;';
+    syncBtn.textContent = '☁️';
+    syncBtn.title = 'Cloud Sync & Account';
+
+    // Cloud Menu
+    const menu = createElement('div', 'cloud-menu');
+    menu.style.display = 'none';
+
+    wrapper.appendChild(syncBtn);
+    wrapper.appendChild(menu);
+    container.appendChild(wrapper);
+
+    const rebuildMenu = (user: any) => {
+      menu.innerHTML = '';
+      if (user) {
+        // Auto-Sync Toggle
+        const syncGroup = createElement('div');
+        syncGroup.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;';
+
+        const syncLbl = createElement('label');
+        syncLbl.style.cssText = 'font-size:11px;color:var(--cream);cursor:pointer;display:flex;align-items:center;gap:6px;width:100%;';
+        syncLbl.innerHTML = `<input type="checkbox" ${stateService.autoSync ? 'checked' : ''}> 🔄 Auto-Sync`;
+        syncLbl.onchange = (e) => {
+          const chk = (e.target as HTMLInputElement);
+          stateService.autoSync = chk.checked;
+          stateService.save();
+          if (stateService.autoSync) triggerAutoUpload();
+          else updateCloudStatusUI('modified', 'Auto-Sync Off');
+        };
+        syncGroup.appendChild(syncLbl);
+        menu.appendChild(syncGroup);
+
+        const header = createElement('div', 'menu-header');
+        header.textContent = user.displayName || user.email || 'USER';
+        menu.appendChild(header);
+
+        const btnUpload = createElement('button');
+        btnUpload.textContent = '⬆ Upload to Cloud';
+        btnUpload.onclick = async (e) => {
+          e.stopPropagation();
+          menu.style.display = 'none';
+          if (!confirm('Overwrite Cloud backup with current Local presets?')) return;
+          try {
+            updateCloudStatusUI('syncing');
+            const meta = presetService.getMeta();
+            await cloudService.savePresets(meta);
+            updateCloudStatusUI('online');
+            alert('Uploaded!');
+          } catch (err) {
+            updateCloudStatusUI('error');
+            alert('Upload failed: ' + (err as Error).message);
+          }
+        };
+
+        const btnDownload = createElement('button');
+        btnDownload.textContent = '⬇ Download from Cloud';
+        btnDownload.onclick = async (e) => {
+          e.stopPropagation();
+          menu.style.display = 'none';
+          if (!confirm('Overwrite Local presets with Cloud backup?')) return;
+          try {
+            updateCloudStatusUI('syncing');
+            const cloudPresets = await cloudService.loadPresets();
+            if (cloudPresets) {
+              presetService.setMeta(cloudPresets);
+              initSlots();
+              const modal = document.getElementById('pmModal');
+              if (modal && modal.style.display !== 'none') openManager();
+              updateCloudStatusUI('online');
+              alert('Downloaded!');
+            } else {
+              updateCloudStatusUI('online', 'No backup found');
+              alert('No backup found.');
+            }
+          } catch (err) {
+            updateCloudStatusUI('error');
+            alert('Download failed: ' + (err as Error).message);
+          }
+        };
+
+        menu.appendChild(btnUpload);
+        menu.appendChild(btnDownload);
+        menu.appendChild(createElement('div', 'menu-sep'));
+
+        const btnLogout = createElement('button');
+        btnLogout.textContent = '🚪 Logout';
+        btnLogout.onclick = (e) => {
+          e.stopPropagation();
+          menu.style.display = 'none';
+          if (confirm('Logout?')) cloudService.logout();
+        };
+        menu.appendChild(btnLogout);
+        syncBtn.style.opacity = '1';
+        syncBtn.style.color = 'var(--yellow)';
+      } else {
+        updateCloudStatusUI('offline');
+        const btnLogin = createElement('button');
+        btnLogin.textContent = '🔑 Login with Google';
+        btnLogin.onclick = (e) => {
+          e.stopPropagation();
+          menu.style.display = 'none';
+          cloudService.login();
+        };
+        menu.appendChild(btnLogin);
+        syncBtn.style.opacity = '0.4';
+        syncBtn.style.color = 'var(--cream-muted)';
+      }
+    };
+
+    syncBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+    });
+    window.addEventListener('click', () => {
+      menu.style.display = 'none';
+    });
+    cloudService.onUserChange(async (user) => {
+      rebuildMenu(user);
+      if (user && stateService.autoSync) {
+        try {
+          updateCloudStatusUI('syncing', 'Auto-downloading...');
+          const cloudPresets = await cloudService.loadPresets();
+          if (cloudPresets) {
+            presetService.setMeta(cloudPresets);
+            initSlots();
+            const modal = document.getElementById('pmModal');
+            if (modal && modal.style.display !== 'none') openManager();
+            updateCloudStatusUI('online', 'Cloud Level: Synced');
+          } else {
+            updateCloudStatusUI('online', 'Cloud Ready');
+          }
+        } catch (e) {
+          updateCloudStatusUI('error', 'Auto-sync failed');
+        }
+      } else if (user) {
+        updateCloudStatusUI('online', 'Cloud Connected');
+      } else {
+        updateCloudStatusUI('offline');
+      }
+    });
+  };
+
+  // Topbar
+  const tbGroups = document.querySelectorAll('.topbar .tbGroup');
+  if (tbGroups[2]) attachCloudSyncUI(tbGroups[2] as HTMLElement);
+
+  // Manage Modal
+  const pmCloudActions = document.getElementById('pmCloudActions');
+  if (pmCloudActions) attachCloudSyncUI(pmCloudActions);
 }
 
 function updateMidiStatusUI(): void {
@@ -42,7 +203,48 @@ function updateMidiStatusUI(): void {
   document.body.classList.toggle('midi-disabled', !isEnabled);
 }
 
-// Build the main UI
+function updateCloudStatusUI(status: 'offline' | 'online' | 'syncing' | 'error' | 'modified', text?: string): void {
+  const dot = document.getElementById('cloudStatusDot');
+  const txt = document.getElementById('cloudStatusText');
+  if (!dot || !txt) return;
+
+  const colors = {
+    offline: '#666',
+    online: '#4CAF50',
+    syncing: '#FFC107',
+    modified: '#FF9800',
+    error: '#F44336'
+  };
+
+  dot.style.background = colors[status];
+  txt.textContent = text || (
+    status === 'offline' ? 'Cloud Offline' :
+      status === 'online' ? 'Cloud Synced' :
+        status === 'syncing' ? 'Cloud Syncing...' :
+          status === 'modified' ? 'Local Changes' :
+            'Cloud Error'
+  );
+}
+
+async function triggerAutoUpload(): Promise<boolean> {
+  if (stateService.autoSync && cloudService.currentUser) {
+    try {
+      updateCloudStatusUI('syncing', 'Auto-uploading...');
+      const meta = presetService.getMeta();
+      await cloudService.savePresets(meta);
+      updateCloudStatusUI('online', 'Cloud Level: Synced');
+      return true;
+    } catch (e) {
+      console.error('Auto-upload failed:', e);
+      updateCloudStatusUI('error', 'Auto-upload failed');
+      return false;
+    }
+  } else if (cloudService.currentUser && !stateService.autoSync) {
+    updateCloudStatusUI('modified', 'Local Changes');
+  }
+  return false;
+}
+
 function buildUI(): void {
   const toggleRow = document.getElementById('toggleRow');
   const knobGrid = document.getElementById('knobGrid');
@@ -444,6 +646,7 @@ function setupEventListeners(): void {
         await presetService.importMeta(file);
         initSlots();
         openManager();
+        triggerAutoUpload();
       }
     } catch (err) {
       alert(`Failed to import: ${(err as Error).message}`);
@@ -464,6 +667,7 @@ function setupEventListeners(): void {
 
     presetService.store(slot, input.value, false, () => {
       initSlots();
+      triggerAutoUpload();
     });
     if (modal) modal.style.display = 'none';
   });
@@ -574,8 +778,10 @@ function showStoreDialog(): void {
 
   const modal = document.getElementById('nameModal');
   const input = document.getElementById('customNameInput') as HTMLInputElement;
+  const slotLabel = document.getElementById('storeSlotLabel');
 
   if (modal && input) {
+    if (slotLabel) slotLabel.textContent = `(Slot ${slot})`;
     input.value = existingName;
     modal.style.display = 'flex';
     input.focus();
@@ -650,6 +856,7 @@ function openManager(): void {
         });
         openManager();
         initSlots();
+        triggerAutoUpload();
       } catch (e) {
         if (statusEl) statusEl.textContent = 'Error';
         alert('Swap failed: ' + (e as Error).message);
@@ -713,6 +920,8 @@ function openManager(): void {
           const nameInput = document.querySelector(`.pmName[data-slot="${slot}"]`) as HTMLInputElement;
           presetService.store(slot, nameInput?.value || '', false, () => {
             openManager();
+            initSlots();
+            triggerAutoUpload();
           });
         }
       });
@@ -747,6 +956,7 @@ function saveManagerChanges(): void {
 
   presetService.setMeta(meta);
   initSlots();
+  triggerAutoUpload();
 
   const modal = document.getElementById('pmModal');
   if (modal) modal.style.display = 'none';
@@ -767,6 +977,8 @@ function saveManagerChanges(): void {
   const nameInput = document.querySelector(`.pmName[data-slot="${slot}"]`) as HTMLInputElement;
   presetService.store(slot, nameInput?.value || '', false, () => {
     openManager();
+    initSlots();
+    triggerAutoUpload();
   });
 };
 

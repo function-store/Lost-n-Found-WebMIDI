@@ -73,11 +73,12 @@
             style="margin-left: 4px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 8px;">Push</button>
           <input id="filePreset" type="file" accept="application/json,.json" style="display:none">
 
-          <div
-            style="font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 4px; border-left: 1px solid rgba(95,125,106,0.3); padding-left: 8px; margin-left: 4px; opacity: 0.8;"
-            title="This editor is one-way (Unidirectional). Changes made on physical hardware knobs are NOT reflected here and will NOT be exported.">
-            <span>⚠️</span>
-            <span style="font-weight: 600;">Editor State Only</span>
+          <div id="cloudStatus"
+            style="font-size: 10px; color: var(--cream-muted); display: flex; align-items: center; gap: 6px; opacity: 0.8; user-select: none; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 8px; margin-left: 4px;"
+            title="Tracks local changes vs Cloud backup. Enabled Auto-Sync for real-time backup.">
+            <span id="cloudStatusDot"
+              style="width: 6px; height: 6px; border-radius: 50%; background: #666; transition: background 0.3s; border: 1px solid rgba(255,255,255,0.1);"></span>
+            <span id="cloudStatusText">Cloud Offline</span>
           </div>
         </div>
       </div>
@@ -86,7 +87,8 @@
       <div id="nameModal"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999999; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
         <div class="card" style="width:300px; padding:20px; display:flex; flex-direction:column; gap:12px;">
-          <h3 style="margin:0; font-size:16px;">Preset Name</h3>
+          <h3 style="margin:0; font-size:16px;">Store Preset <span id="storeSlotLabel"
+              style="font-size:12px; color:var(--cream-muted); margin-left:8px;"></span></h3>
           <input type="text" id="customNameInput"
             style="padding:8px; border-radius:8px; border:1px solid var(--border);" placeholder="Enter name...">
           <div style="display:flex; justify-content:flex-end; gap:8px;">
@@ -152,7 +154,6 @@
         <button class="pmBtn secondary" style="padding: 4px 10px; border-radius: 8px; font-size: 14px;"
           onclick="document.getElementById('pmModal').style.display='none'">✕</button>
       </div>
-
       <div class="pmTableContainer">
         <table class="pmTable">
           <thead>
@@ -169,9 +170,10 @@
 
       <div
         style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; padding-top:16px; margin-top:auto; flex-shrink: 0;">
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; align-items: center;">
           <button id="btnExportMeta" class="pmBtn secondary">Export Library</button>
           <button id="btnImportMeta" class="pmBtn secondary">Import Library</button>
+          <div id="pmCloudActions" style="margin-left: 4px;"></div>
         </div>
         <div style="display:flex; gap:8px;">
           <button class="pmBtn secondary"

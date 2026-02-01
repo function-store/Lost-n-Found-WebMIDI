@@ -58,7 +58,7 @@ body.midi-disabled {
   z-index: 50;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 4px 8px;
   align-items: center;
   padding: 4px 10px;
   background: transparent;
@@ -68,7 +68,7 @@ body.midi-disabled {
 .tbGroup {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -1234,7 +1234,7 @@ button:active:not(:disabled) {
   border-radius: 4px;
   margin: 0 0 8px;
   background: rgba(0, 0, 0, 0.15);
-  padding: 6px 10px;
+  padding: 4px 8px;
 }
 
 /* ===== BUILD BADGE ===== */
@@ -1884,10 +1884,60 @@ button:active:not(:disabled) {
   z-index: 99999;
   text-align: left;
   text-transform: none;
+  text-transform: none;
   /* Position will be set via CSS custom properties from JS */
   left: var(--tooltip-x, 50%);
   top: var(--tooltip-y, 0);
   transform: translate(-50%, -50%);
+}
+
+.cloud-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+  min-width: 120px;
+  margin-top: 4px;
+}
+
+.cloud-menu button {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  text-align: left;
+  padding: 6px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.cloud-menu button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-header {
+  padding: 6px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--yellow-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 4px;
+}
+
+.menu-sep {
+  height: 1px;
+  background: var(--border-light);
+  margin: 4px 0;
 }
 
 [data-tooltip]::before {

@@ -35,11 +35,28 @@ class PresetService {
   recall(slot: number): void {
     stateService.currentActiveSlot = slot;
     midiService.sendPC(slot);
+
+    // Restore UI state from metadata (silently)
+    const meta = this.getMeta();
+    const storedState = meta[slot]?.data;
+
+    if (storedState) {
+      Object.entries(storedState).forEach(([cc, val]) => {
+        // Essential: Pass false to prevent sending MIDI back to the pedal
+        // since the PC message handled the hardware side.
+        stateService.set(Number(cc), val as number, false);
+      });
+    }
   }
 
   store(slot: number, name: string, syncFirst = false, callback?: () => void): void {
     const meta = this.getMeta();
-    meta[slot] = { name, occupied: true };
+    // Save current state with the preset
+    meta[slot] = {
+      name,
+      occupied: true,
+      data: stateService.getAll()
+    };
     this.setMeta(meta);
 
     stateService.currentActiveSlot = slot;

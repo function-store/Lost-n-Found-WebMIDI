@@ -80,6 +80,7 @@ export interface EditorState {
 export interface PresetMetadata {
   name: string;
   occupied: boolean;
+  data?: EditorState;
 }
 
 export interface PresetMetadataStore {

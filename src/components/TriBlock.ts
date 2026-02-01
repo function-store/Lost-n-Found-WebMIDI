@@ -65,7 +65,8 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
   } = options;
 
   // Initialize state
-  const defaultValue = cc === 23 ? 4 : 1; // R Effects mode defaults different
+  const existingVal = stateService.get(cc);
+  const defaultValue = existingVal !== 0 ? existingVal : (cc === 23 ? 4 : (cc === 32 ? 2 : 1));
   stateService.set(cc, defaultValue, false);
 
   const block = createElement('div', 'toggleBlock');
@@ -222,7 +223,7 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
     }
   });
 
-  paint(0);
+  paint(triPosFromValue(cc, stateService.get(cc)));
 
   block.appendChild(tRow);
   block.appendChild(seg);

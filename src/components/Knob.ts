@@ -71,7 +71,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
 
   set(stateService.get(cc));
 
-  // Drag handling
+  // Drag handling - Mouse events
   let dragging = false;
   knob.addEventListener('mousedown', () => dragging = true);
   window.addEventListener('mouseup', () => dragging = false);
@@ -79,6 +79,33 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     if (!dragging) return;
     const currentVal = stateService.get(cc) ?? 64;
     const newVal = clampMIDI(currentVal - e.movementY);
+    stateService.set(cc, newVal);
+    set(newVal);
+  });
+
+  // Touch event handling for mobile
+  let touchDragging = false;
+  let lastTouchY = 0;
+
+  knob.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Prevent scrolling
+    touchDragging = true;
+    lastTouchY = e.touches[0].clientY;
+  });
+
+  window.addEventListener('touchend', () => {
+    touchDragging = false;
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!touchDragging) return;
+    e.preventDefault(); // Prevent scrolling
+    const touch = e.touches[0];
+    const deltaY = lastTouchY - touch.clientY;
+    lastTouchY = touch.clientY;
+
+    const currentVal = stateService.get(cc) ?? 64;
+    const newVal = clampMIDI(currentVal + deltaY);
     stateService.set(cc, newVal);
     set(newVal);
   });
@@ -161,7 +188,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     pathR.setAttribute('stroke-linecap', 'round');
 
     const textA1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    textA1.classList.add('arcText', 'arcText--primary');
+    textA1.classList.add('arcText', 'arcText--primary', 'arcText--left');
     textA1.setAttribute('x', '15'); // Justified to arc end
     textA1.setAttribute('y', '78'); // Moved UP
     textA1.setAttribute('fill', arcColor);
@@ -169,7 +196,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     textA1.textContent = 'A1';
 
     const textA2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    textA2.classList.add('arcText', 'arcText--secondary');
+    textA2.classList.add('arcText', 'arcText--secondary', 'arcText--left');
     textA2.setAttribute('x', '15');
     textA2.setAttribute('y', '88'); // Moved UP
     textA2.setAttribute('fill', arcColor);
@@ -177,7 +204,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     textA2.textContent = 'A2';
 
     const textB1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    textB1.classList.add('arcText', 'arcText--primary');
+    textB1.classList.add('arcText', 'arcText--primary', 'arcText--right');
     textB1.setAttribute('x', '85'); // Justified to arc end
     textB1.setAttribute('y', '78'); // Moved UP
     textB1.setAttribute('fill', arcColor);
@@ -185,7 +212,7 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
     textB1.textContent = 'B1';
 
     const textB2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    textB2.classList.add('arcText', 'arcText--secondary');
+    textB2.classList.add('arcText', 'arcText--secondary', 'arcText--right');
     textB2.setAttribute('x', '85');
     textB2.setAttribute('y', '88'); // Moved UP
     textB2.setAttribute('fill', arcColor);

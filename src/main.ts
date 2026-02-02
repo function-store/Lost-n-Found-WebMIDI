@@ -775,12 +775,13 @@ function setupEventListeners(): void {
       alert('Enable MIDI first.');
       return;
     }
-    const originalText = btn.textContent;
-    btn.textContent = 'Pushing...';
+    const originalHTML = btn.innerHTML;
+    btn.style.opacity = '0.5';
     btn.disabled = true;
 
     stateService.pushToPedal(() => {
-      btn.textContent = originalText;
+      btn.innerHTML = originalHTML;
+      btn.style.opacity = '';
       btn.disabled = false;
     });
   });

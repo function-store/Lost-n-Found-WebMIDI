@@ -762,6 +762,9 @@ button:active:not(:disabled) {
   position: relative;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
   --active-index: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Sliding highlight */
@@ -797,6 +800,35 @@ button:active:not(:disabled) {
   /* Safari */
   -webkit-tap-highlight-color: transparent;
   /* Remove tap highlight on iOS */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  /* Explicit transparent for iOS */
+  outline: none;
+  /* Remove focus outline */
+  -webkit-touch-callout: none;
+  /* Disable callout on iOS */
+  touch-action: manipulation;
+  /* Disable double-tap zoom */
+  appearance: none;
+  /* Remove default styling */
+  -webkit-appearance: none;
+  /* Remove default webkit styling */
+}
+
+.seg button:focus {
+  outline: none;
+  /* Ensure no outline on focus */
+  background: transparent;
+}
+
+.seg button:active {
+  background: transparent;
+  /* Prevent background change on click */
+  outline: none;
+}
+
+.seg button:focus-visible {
+  outline: none;
+  /* Remove focus-visible outline */
 }
 
 .seg button:hover {
@@ -1885,7 +1917,15 @@ button:active:not(:disabled) {
   --delay: 0s;
   --duration: 5s;
   --drift: 5%;
-  transition: left 1s ease-in-out, top 1s ease-in-out, transform 1s ease-in-out;
+  transition:
+    left 1s ease-in-out,
+    top 1s ease-in-out,
+    transform 1s ease-in-out,
+    color 0.8s ease,
+    opacity 0.8s ease,
+    clip-path 0.8s ease,
+    border-radius 0.8s ease;
+  /* Smooth morphing in both directions */
   transform: translate(0, 0) rotate(calc(var(--base-rotation) + var(--rotation)));
   animation: organic-float var(--duration) ease-in-out var(--delay) infinite alternate;
 }
@@ -1997,6 +2037,88 @@ button:active:not(:disabled) {
 
 .scatter-shape--right {
   color: var(--yellow-muted);
+}
+
+/* ===== MIDI DISABLED STATE ===== */
+/* Base overlay (invisible when MIDI is enabled) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 50, 35, 0.1);
+  opacity: 0;
+  /* Hidden by default */
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.8s ease;
+}
+
+/* Dark greenish overlay when MIDI is disconnected */
+body.midi-disabled::before {
+  opacity: 1;
+  /* Fade in when disconnected */
+}
+
+/* When MIDI is disabled, shapes become spiky and agitated with brighter red color */
+body.midi-disabled .scatter-shape {
+  color: #c85555 !important;
+  /* Brighter red for all shapes */
+  opacity: 0.25 !important;
+  /* More visible when disconnected */
+  animation: spiky-agitated var(--duration) ease-in-out var(--delay) infinite alternate !important;
+  transition: color 0.8s ease, opacity 0.8s ease, clip-path 0.8s ease, border-radius 0.8s ease;
+  /* Smooth morphing */
+}
+
+/* Spiky, agitated animation for MIDI-disabled state */
+@keyframes spiky-agitated {
+  0% {
+    transform: translate(0, 0) rotate(calc(var(--base-rotation) + var(--rotation))) scale(1.1);
+    opacity: 0.25;
+  }
+
+  25% {
+    transform: translate(calc(var(--drift) * 1.5), calc(var(--drift) * -1.5)) rotate(calc(var(--base-rotation) + var(--rotation) + 15deg)) scale(0.9);
+    opacity: 0.15;
+  }
+
+  50% {
+    transform: translate(calc(var(--drift) * -1), calc(var(--drift) * 1.2)) rotate(calc(var(--base-rotation) + var(--rotation) - 10deg)) scale(1.15);
+    opacity: 0.22;
+  }
+
+  75% {
+    transform: translate(calc(var(--drift) * 0.8), calc(var(--drift) * -0.8)) rotate(calc(var(--base-rotation) + var(--rotation) + 8deg)) scale(0.95);
+    opacity: 0.18;
+  }
+
+  100% {
+    transform: translate(calc(var(--drift) * -0.5), var(--drift)) rotate(calc(var(--base-rotation) + var(--rotation) - 12deg)) scale(1.05);
+    opacity: 0.2;
+  }
+}
+
+/* Make shapes spikier when MIDI is disabled */
+body.midi-disabled .scatter-shape--circle {
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  /* Becomes star-like */
+  border-radius: 0;
+}
+
+body.midi-disabled .scatter-shape--squircle {
+  border-radius: 5%;
+  /* More angular */
+}
+
+body.midi-disabled .scatter-shape--pill {
+  border-radius: 2px;
+  /* Sharp corners */
+}
+
+body.midi-disabled .scatter-shape--semicircle {
+  border-radius: 0;
+  clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+  /* Triangle */
 }
 
 /* Ensure controls are above scatter layer */

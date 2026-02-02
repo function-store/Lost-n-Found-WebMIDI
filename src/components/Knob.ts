@@ -86,11 +86,26 @@ export function createKnobBlock(options: KnobOptions, parentEl: HTMLElement): vo
   // Touch event handling for mobile
   let touchDragging = false;
   let lastTouchY = 0;
+  let lastTapTime = 0;
+  const DOUBLE_TAP_DELAY = 300; // ms
 
   knob.addEventListener('touchstart', (e) => {
     e.preventDefault(); // Prevent scrolling
     touchDragging = true;
     lastTouchY = e.touches[0].clientY;
+
+    // Double-tap detection
+    const now = Date.now();
+    const timeSinceLastTap = now - lastTapTime;
+
+    if (timeSinceLastTap < DOUBLE_TAP_DELAY && timeSinceLastTap > 0) {
+      // Double-tap detected - reset to default
+      stateService.set(cc, defaultValue);
+      set(defaultValue);
+      lastTapTime = 0; // Reset to prevent triple-tap
+    } else {
+      lastTapTime = now;
+    }
   });
 
   window.addEventListener('touchend', () => {

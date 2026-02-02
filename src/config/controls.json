@@ -189,6 +189,10 @@
     {
       "label": "Polarity",
       "cc": 68
+    },
+    {
+      "label": "Dry Kill",
+      "cc": 57
     }
   ],
   "presetSlots": {

@@ -19,9 +19,9 @@ class RandomizerService {
       const control = stateService.getControl(cc);
       if (control?.type !== 'knob' && control?.type !== 'modify') return;
 
-      // Avoid 60-68 range for Modify knobs (effect off zone)
+      // Avoid 58-69 range for Modify knobs (NONE/blanking zone)
       const v = (cc === 17 || cc === 19)
-        ? randomMIDI(60, 68)
+        ? randomMIDI(58, 69)
         : randomMIDI();
 
       stateService.set(cc, v);
@@ -48,7 +48,7 @@ class RandomizerService {
       if (control?.type !== 'knob' && control?.type !== 'modify') return;
 
       const v = (cc === 17 || cc === 19)
-        ? randomMIDI(60, 68)
+        ? randomMIDI(58, 69)
         : randomMIDI();
 
       stateService.set(cc, v);

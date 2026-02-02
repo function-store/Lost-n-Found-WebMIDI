@@ -2730,3 +2730,177 @@ body.tooltips-enabled [data-tooltip].tooltip-active::after {
     display: none;
   }
 }
+
+/* ===== PRESET MANAGER MOBILE (Vertical) ===== */
+@media (max-width: 600px) {
+  #pmContent {
+    padding: 16px;
+    border-radius: 16px;
+    height: 95vh;
+    max-height: none;
+  }
+
+  #pmContent h2 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  /* Hide table headers on mobile */
+  .pmTable thead {
+    display: none;
+  }
+
+  /* Convert table to block layout */
+  .pmTable,
+  .pmTable tbody,
+  .pmTable tr,
+  .pmTable td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Each row becomes a card */
+  .pmTable tr {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .pmTable tr:hover {
+    background: var(--bg-elevated);
+  }
+
+  .pmRowActive {
+    box-shadow: inset 0 0 0 2px var(--yellow);
+    background: rgba(197, 217, 78, 0.08) !important;
+  }
+
+  /* First row: Slot # and Name */
+  .pmTable td:nth-child(1) {
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .pmTable td:nth-child(1) .pmCellWrap {
+    justify-content: flex-start;
+  }
+
+  .pmTable td:nth-child(1) .pmIndex {
+    font-size: 14px;
+    font-weight: 700;
+    background: rgba(0,0,0,0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .pmTable td:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pmTable td:nth-child(2) .pmName {
+    height: 38px;
+    font-size: 14px;
+  }
+
+  /* Second row: Used checkbox and Actions */
+  .pmTable td:nth-child(3) {
+    width: auto;
+    order: 3;
+  }
+
+  .pmTable td:nth-child(3) .pmCellWrap {
+    gap: 6px;
+  }
+
+  .pmTable td:nth-child(3) .pmCellWrap::before {
+    content: 'Used';
+    font-size: 10px;
+    color: var(--cream-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .pmTable td:nth-child(4) {
+    width: 100%;
+    order: 4;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .pmTable td:nth-child(4) .pmCellWrap {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .pmTable td:nth-child(4) .pmBtn {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  /* Footer adjustments */
+  #pmContent > div[style*="border-top"] {
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 12px 0 !important;
+    align-items: stretch !important;
+  }
+
+  /* Footer inner container */
+  #pmContent > div[style*="border-top"] > div {
+    width: 100%;
+  }
+
+  /* Library and Pattern rows */
+  #pmContent > div[style*="border-top"] > div > div {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  #pmSwapBox {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  #pmSwapBox > span:first-child {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  #pmSwapBox input {
+    width: 60px !important;
+  }
+
+  /* Cloud actions */
+  #pmCloudActions {
+    margin-left: 0 !important;
+    margin-top: 8px;
+  }
+
+  /* Modal header */
+  #pmContent > div:first-child {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  #pmContent > div:first-child h3 {
+    font-size: 16px !important;
+  }
+
+  #pmContent > div:first-child p {
+    font-size: 10px !important;
+  }
+}

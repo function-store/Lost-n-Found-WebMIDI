@@ -325,6 +325,6 @@ export function createRampEnabled(parentEl: HTMLElement): void {
   parentEl.appendChild(enabledCb);
 
   const enabledSpan = createElement('span');
-  enabledSpan.textContent = 'Enabled';
+  enabledSpan.textContent = 'Stop';
   parentEl.appendChild(enabledSpan);
 }

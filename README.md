@@ -118,8 +118,7 @@ The colored arc shows the current blend position, with labels identifying which 
 
 Click the **lock icon** (🔓/🔒) next to a parameter to lock it:
 - Locked knobs are **preserved during randomization**
-- Locked knobs are **preserved during preset recall**
-- Useful for keeping your Mix, EQ, or other settings consistent
+- Useful for keeping your Mix, EQ, or other settings consistent during random patches
 
 The **Unlock All** button (🔓) in the Random section clears all locks.
 

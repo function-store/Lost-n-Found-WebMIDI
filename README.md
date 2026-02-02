@@ -1,4 +1,4 @@
-# Lost + Found MIDI Editor
+# Lost + Found MIDI Editor and Preset Manager
 
 A web-based MIDI editor for the [**Chase Bliss Lost + Found**](https://www.chasebliss.com/lost-and-found) dual-engine effects pedal. Control every parameter, manage presets, and explore the full sonic palette of this powerful ambient machine—all from your browser.
 

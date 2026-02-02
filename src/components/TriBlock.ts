@@ -313,6 +313,70 @@ export function createTriBlock(options: TriBlockOptions, parentEl: HTMLElement):
       }
     });
 
+    // Touch event handlers for mobile long-tap support
+    footswitch.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Prevent default touch behavior
+      pressTimer = window.setTimeout(() => {
+        // Long tap detected - activate hold mode
+        const currentHold = stateService.get(holdCC) === 1;
+        const newHold = currentHold ? 0 : 1;
+
+        if (newHold === 1) {
+          // Turning hold ON: first engage, then hold
+          stateService.set(engageCC!, 1);
+          stateService.set(holdCC, 1);
+          led.classList.add('active', 'hold');
+          footswitch.classList.add('active');
+        } else {
+          // Turning hold OFF: turn off hold but keep engage ON
+          stateService.set(holdCC, 0);
+          led.classList.remove('hold');
+        }
+
+        // Add press animation
+        footswitch.classList.add('pressed');
+        setTimeout(() => footswitch.classList.remove('pressed'), 100);
+
+        pressTimer = null;
+      }, LONG_PRESS_DURATION);
+    });
+
+    footswitch.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      if (pressTimer !== null) {
+        // Short tap - if either engage or hold is active, turn both off
+        // Otherwise, turn engage on
+        clearTimeout(pressTimer);
+        pressTimer = null;
+
+        const isEngaged = stateService.get(engageCC!) === 1;
+        const isHold = stateService.get(holdCC) === 1;
+
+        // If either is on, turn both off. Otherwise turn engage on.
+        if (isEngaged || isHold) {
+          stateService.set(engageCC!, 0);
+          stateService.set(holdCC, 0);
+          led.classList.remove('active', 'hold');
+          footswitch.classList.remove('active');
+        } else {
+          stateService.set(engageCC!, 1);
+          led.classList.add('active');
+          footswitch.classList.add('active');
+        }
+
+        // Add a momentary press class for animation
+        footswitch.classList.add('pressed');
+        setTimeout(() => footswitch.classList.remove('pressed'), 100);
+      }
+    });
+
+    footswitch.addEventListener('touchcancel', () => {
+      if (pressTimer !== null) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    });
+
     stateService.registerControl(engageCC, {
       type: 'engage',
       set(v: MIDIValue) {

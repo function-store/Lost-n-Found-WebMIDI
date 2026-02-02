@@ -791,6 +791,12 @@ button:active:not(:disabled) {
   transition: color 0.15s;
   position: relative;
   z-index: 1;
+  user-select: none;
+  /* Prevent text selection on mobile tap */
+  -webkit-user-select: none;
+  /* Safari */
+  -webkit-tap-highlight-color: transparent;
+  /* Remove tap highlight on iOS */
 }
 
 .seg button:hover {

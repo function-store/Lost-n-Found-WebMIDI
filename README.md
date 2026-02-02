@@ -24,6 +24,7 @@ A web-based MIDI editor for the [**Chase Bliss Lost + Found**](https://www.chase
 - **Export/Import** — Save individual presets or your entire library as JSON files
 - **Alt-Key Tooltips** — Hold `Alt/Option` to see detailed descriptions of every control
 - **Responsive Design** — Works on desktop, tablet, and mobile
+- **Session Persistence** — All settings automatically saved to browser storage between sessions
 
 <p align="center">
   <img src="docs/mobile_view.png" alt="Mobile View" width="280">

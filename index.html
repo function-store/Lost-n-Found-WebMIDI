@@ -19,7 +19,12 @@
       <!-- Topbar -->
       <div class="topbar">
         <div class="tbGroup">
-          <button id="btnEnableMIDI">Enable MIDI</button>
+          <button id="btnEnableMIDI" class="iconBtn" data-tip="Enable MIDI">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path
+                d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0 1 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.06.88-3.91 2.58-5.42L6.17 5.17A8.93 8.93 0 0 0 3 12a9 9 0 0 0 18 0c0-2.68-1.17-5.08-3.17-6.83z" />
+            </svg>
+          </button>
           <select id="midiSelect" disabled>
             <option value="">MIDI Output</option>
           </select>
@@ -27,12 +32,19 @@
         </div>
 
         <div class="tbGroup">
+          <div class="segmented">
+            <button id="btnSlotDown" title="Previous preset">▼</button>
+            <button id="btnSlotUp" title="Next preset">▲</button>
+          </div>
           <label class="pillLabel">
             <select id="slotSelect"></select>
           </label>
           <div class="segmented">
             <button id="btnRecall">Recall</button>
             <button id="btnStore">Store</button>
+          </div>
+          <div class="segmented">
+            <button id="btnAutoRecall" title="Auto-recall when the preset selection changes">Auto</button>
           </div>
           <button id="btnShowManager" class="iconBtn" data-tip="Preset Library">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">

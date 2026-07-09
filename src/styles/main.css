@@ -101,6 +101,11 @@ body.midi-disabled {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Dot-only status; the text lives in the tooltip (title attribute) */
+#cloudStatusText {
+  display: none;
+}
+
 .sep {
   width: 1px;
   height: 16px;
@@ -228,10 +233,11 @@ select option {
 }
 
 #btnEnableMIDI {
-  width: 90px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-align: center;
+  color: var(--text-muted);
+}
+
+#btnEnableMIDI.on {
+  color: var(--green-muted);
 }
 
 select:disabled,
@@ -2195,11 +2201,6 @@ body.midi-disabled .scatter-shape--semicircle {
     padding: 2px 4px !important;
   }
 
-  /* Hide cloud status text on mobile, keep dot */
-  #cloudStatusText {
-    display: none;
-  }
-
   #cloudStatus {
     padding-left: 4px;
     margin-left: 2px;
@@ -2208,13 +2209,6 @@ body.midi-disabled .scatter-shape--semicircle {
   /* Create space for the absolute routing controls between Blend (5th) and Spill (8th) */
   .knobGrid>.knobBlock:nth-child(5) {
     margin-bottom: 24px;
-  }
-
-  #btnEnableMIDI {
-    width: auto !important;
-    min-width: 50px;
-    max-width: 80px;
-    text-overflow: ellipsis;
   }
 
   #slotSelect {

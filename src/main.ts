@@ -32,6 +32,7 @@ function init(): void {
   fillChannels(); // Update UI with loaded channel
   updateReadout();
   initSlots();
+  updateAutoRecallUI();
   updateMidiStatusUI();
 
   midiService.setOnStateChange(() => {
@@ -287,6 +288,12 @@ function setupCloudUI(): void {
 function updateMidiStatusUI(): void {
   const isEnabled = midiService.isEnabled;
   document.body.classList.toggle('midi-disabled', !isEnabled);
+
+  const btnEnable = document.getElementById('btnEnableMIDI');
+  if (btnEnable) {
+    btnEnable.classList.toggle('on', isEnabled);
+    btnEnable.setAttribute('data-tip', isEnabled ? 'Disable MIDI' : 'Enable MIDI');
+  }
 }
 
 function updateCloudStatusUI(status: 'offline' | 'online' | 'syncing' | 'error' | 'modified', text?: string): void {
@@ -303,13 +310,17 @@ function updateCloudStatusUI(status: 'offline' | 'online' | 'syncing' | 'error' 
   };
 
   dot.style.background = colors[status];
-  txt.textContent = text || (
+  const label = text || (
     status === 'offline' ? 'Offline' :
       status === 'online' ? 'Synced' :
         status === 'syncing' ? 'Syncing...' :
           status === 'modified' ? 'Modified' :
             'Error'
   );
+  txt.textContent = label;
+  // Text is visually hidden; expose the status on hover instead
+  const container = document.getElementById('cloudStatus');
+  if (container) container.title = `Cloud: ${label} — tracks local changes vs Cloud backup`;
 }
 
 function buildUI(): void {
@@ -662,6 +673,27 @@ function initSlots(): void {
   }
 }
 
+// Step preset slot up/down (wraps around, slot 0 = Live)
+function stepSlot(delta: number): void {
+  const sel = document.getElementById('slotSelect') as HTMLSelectElement;
+  if (!sel) return;
+
+  const max = presetService.maxSlots;
+  let slot = Number(sel.value) + delta;
+  if (slot < 0) slot = max;
+  if (slot > max) slot = 0;
+
+  sel.value = String(slot);
+  stateService.currentActiveSlot = slot;
+  stateService.save();
+
+  if (stateService.autoRecall) presetService.recall(slot);
+}
+
+function updateAutoRecallUI(): void {
+  document.getElementById('btnAutoRecall')?.classList.toggle('active', stateService.autoRecall);
+}
+
 // Update effect readout display
 function updateReadout(): void {
   const lSwap = stateService.get(74) === 127;
@@ -744,11 +776,7 @@ function updateReadout(): void {
 // Setup event listeners
 function setupEventListeners(): void {
   // MIDI Toggle
-  const btnMIDI = document.getElementById('btnEnableMIDI');
-  if (btnMIDI) {
-    btnMIDI.textContent = midiService.isEnabled ? 'Disable MIDI' : 'Enable MIDI';
-    btnMIDI.addEventListener('click', toggleMIDI);
-  }
+  document.getElementById('btnEnableMIDI')?.addEventListener('click', toggleMIDI);
 
   // MIDI Output select
   document.getElementById('midiSelect')?.addEventListener('change', (e) => {
@@ -793,6 +821,15 @@ function setupEventListeners(): void {
   });
 
   // Preset controls
+  document.getElementById('btnSlotUp')?.addEventListener('click', () => stepSlot(1));
+  document.getElementById('btnSlotDown')?.addEventListener('click', () => stepSlot(-1));
+
+  document.getElementById('btnAutoRecall')?.addEventListener('click', () => {
+    stateService.autoRecall = !stateService.autoRecall;
+    stateService.save();
+    updateAutoRecallUI();
+  });
+
   document.getElementById('btnRecall')?.addEventListener('click', () => {
     const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
     presetService.recall(slot);
@@ -843,8 +880,10 @@ function setupEventListeners(): void {
 
   // Slot select change
   document.getElementById('slotSelect')?.addEventListener('change', () => {
-    stateService.currentActiveSlot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
+    const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
+    stateService.currentActiveSlot = slot;
     stateService.save();
+    if (stateService.autoRecall) presetService.recall(slot);
   });
 
   // Preset Manager
@@ -972,10 +1011,7 @@ async function toggleMIDI(): Promise<void> {
   if (midiService.isEnabled) {
     // Disable
     midiService.disable();
-    if (btnEnable) {
-      btnEnable.textContent = 'Enable MIDI';
-      btnEnable.disabled = false;
-    }
+    if (btnEnable) btnEnable.disabled = false;
     if (midiSelect) {
       midiSelect.disabled = true;
       midiSelect.innerHTML = '<option value="">MIDI Output</option>';
@@ -993,10 +1029,7 @@ async function toggleMIDI(): Promise<void> {
     populateOutputs();
     midiService.setOnStateChange(populateOutputs);
 
-    if (btnEnable) {
-      btnEnable.textContent = 'Disable MIDI';
-      btnEnable.disabled = false;
-    }
+    if (btnEnable) btnEnable.disabled = false;
     if (midiSelect) midiSelect.disabled = false;
     if (chanSelect) chanSelect.disabled = false;
     if (btnTap) btnTap.disabled = false;

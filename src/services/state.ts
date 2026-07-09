@@ -18,6 +18,7 @@ class StateService {
   inclRamp = false;
   rampCollapsed = true;
   autoSync = false;
+  autoRecall = false;
 
   constructor() {
     this.initializeDefaults();
@@ -123,6 +124,7 @@ class StateService {
       lastMidiOutId: midiService.outputId,
       rampCollapsed: this.rampCollapsed,
       autoSync: this.autoSync,
+      autoRecall: this.autoRecall,
     };
 
     localStorage.setItem(STATE_KEY, JSON.stringify(data));
@@ -176,6 +178,10 @@ class StateService {
 
       if (data.autoSync !== undefined) {
         this.autoSync = data.autoSync;
+      }
+
+      if (data.autoRecall !== undefined) {
+        this.autoRecall = data.autoRecall;
       }
 
       // MIDI output restoration happens separately after MIDI is enabled

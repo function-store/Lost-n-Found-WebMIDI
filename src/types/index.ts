@@ -96,6 +96,7 @@ export interface SavedEditorState {
   lastMidiOutId: string | null;
   rampCollapsed: boolean;
   autoSync: boolean;
+  autoRecall: boolean;
 }
 
 export interface ExportedPreset {

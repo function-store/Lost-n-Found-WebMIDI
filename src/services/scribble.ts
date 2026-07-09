@@ -8,8 +8,15 @@ import { midiService } from './midi';
 // settings come from an imported config (or the default template below).
 
 const SCRIBBLE_PRESET_COUNT = 128;
-const SCRIBBLE_NAME_MAX = 12; // display limit for bankName on the device
-const LIBRARY_SLOTS = 121;    // app slots 1-121 map to entries 0-120 (122 is the swap buffer)
+// Observed display cutoff for bankName (with mainTextResize on); anything
+// past this is spilled into secondaryText so the full name stays readable.
+const SCRIBBLE_NAME_MAX = 14;
+// Entry 0 is the reserved #live preset; app slots 1-121 map to entries 1-121.
+// With zeroIndexBanks the device displays entry N as preset N, so slot
+// numbers line up with the on-device numbering. App slot 122 is the swap
+// buffer and its entry is labelled #swap.
+const LIBRARY_SLOTS = 121;
+const BUFFER_SLOT = 122;
 
 // Defaults captured from a Scribble editor export (firmware 0.1.5).
 const DEFAULT_DEVICE_SETTINGS = {
@@ -38,7 +45,7 @@ const DEFAULT_GLOBAL_SETTINGS = {
   usbdThruHandles: { usbd: true, ble: true, midi1: true },
   bleThruHandles: { usbd: true, ble: true, midi1: true },
   midi1ThruHandles: { usbd: true, ble: true, midi1: true },
-  midiClockOutHandles: { usbd: true, ble: true, midi1: true },
+  midiClockOutHandles: { usbd: false, ble: false, midi1: false },
   switches: [
     {
       mode: 'pressPresetDown',
@@ -69,17 +76,13 @@ const DEFAULT_GLOBAL_SETTINGS = {
   gatewayIp: '0.0.0.0',
 };
 
-// Names follow the device's zero-indexed display (zeroIndexBanks: true),
-// so app slot N is shown as preset N-1.
-function defaultPresetName(slot: number): string {
-  return `Preset ${slot - 1}`;
-}
-
-function defaultPresetEntry(slot: number): ScribblePresetEntry {
+function defaultPresetEntry(index: number): ScribblePresetEntry {
+  const isLive = index === 0;
+  const isBuffer = index === BUFFER_SLOT;
   return {
     bankId: 0,
-    bankName: defaultPresetName(slot),
-    secondaryText: '',
+    bankName: isLive ? '#live' : isBuffer ? '#swap' : `Preset ${index}`,
+    secondaryText: isLive ? 'live' : isBuffer ? 'swap' : '',
     colourOverride: false,
     colour: 0,
     textColourOverride: false,
@@ -115,25 +118,31 @@ class ScribbleService {
     return {
       deviceSettings: { ...DEFAULT_DEVICE_SETTINGS },
       globalSettings,
-      presetSettings: Array.from({ length: SCRIBBLE_PRESET_COUNT }, (_, i) => defaultPresetEntry(i + 1)),
+      presetSettings: Array.from({ length: SCRIBBLE_PRESET_COUNT }, (_, i) => defaultPresetEntry(i)),
     };
   }
 
-  // Overwrites bankName for entries mapped to library slots 1-121.
-  // Occupied slots take the library name; empty slots reset to the device
-  // default so the device list mirrors the library exactly. Entries beyond
-  // the library range and all other fields are left untouched.
+  // Overwrites bankName/secondaryText for entries mapped to library slots
+  // (slot N -> entry N). Occupied slots take the full library name, with any
+  // overflow past the display cutoff repeated in secondaryText; empty slots
+  // reset to the device default so the device list mirrors the library
+  // exactly. Entry 0 (#live), entries beyond the library range and all other
+  // fields are left untouched.
   applyLibraryNames(config: ScribbleConfig): ScribbleConfig {
     const meta = presetService.getMeta();
-    const count = Math.min(config.presetSettings.length, LIBRARY_SLOTS);
+    const last = Math.min(config.presetSettings.length - 1, LIBRARY_SLOTS);
 
-    for (let i = 0; i < count; i++) {
-      const slot = i + 1;
+    for (let slot = 1; slot <= last; slot++) {
       const m = meta[slot];
-      const name = m?.occupied && m.name?.trim()
-        ? m.name.trim().slice(0, SCRIBBLE_NAME_MAX)
-        : defaultPresetName(slot);
-      config.presetSettings[i].bankName = name;
+      const name = m?.occupied && m.name?.trim() ? m.name.trim() : `Preset ${slot}`;
+      config.presetSettings[slot].bankName = name;
+      config.presetSettings[slot].secondaryText = name.slice(SCRIBBLE_NAME_MAX).trim();
+    }
+
+    // Mark the app's swap-buffer slot so it is identifiable on the device
+    if (config.presetSettings.length > BUFFER_SLOT) {
+      config.presetSettings[BUFFER_SLOT].bankName = '#swap';
+      config.presetSettings[BUFFER_SLOT].secondaryText = 'swap';
     }
 
     return config;

@@ -163,6 +163,15 @@ Optional Google sign-in enables cloud backup:
 2. Sign in with Google
 3. Enable **Auto-Sync** to automatically backup changes
 
+**Login with Email (for iOS Web MIDI browser apps):**
+
+Google's sign-in popup cannot open inside embedded browser apps (like the iOS Web MIDI browsers needed for MIDI on iPhone/iPad). Use **Login with Email** there instead:
+
+1. Click the **☁️** icon → **Login with Email**
+2. Enter the **same email address as your Google account** — this signs you into the same account, so your synced presets carry over
+3. Check your inbox **(and spam folder)** for the sign-in link
+4. **Copy the link** (don't tap it — that would open it in Safari) and **paste it into the Web MIDI browser's address bar**
+
 Manual options:
 - **Upload to Cloud** — Overwrite cloud backup with local data
 - **Download from Cloud** — Restore from cloud backup

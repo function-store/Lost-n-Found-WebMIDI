@@ -83,6 +83,15 @@ async function triggerAutoUpload(): Promise<boolean> {
 function setupCloudUI(): void {
   let isManualLogin = false;
 
+  // Finish a pending email-link sign-in (page was opened via a login link).
+  if (cloudService.isEmailLinkLogin()) {
+    isManualLogin = true;
+    cloudService.completeEmailLinkLogin().catch((error) => {
+      const message = error instanceof Error ? error.message : String(error);
+      alert(`Email login failed: ${message}`);
+    });
+  }
+
   const attachCloudSyncUI = (container: HTMLElement) => {
     const wrapper = createElement('div');
     wrapper.style.position = 'relative';
@@ -194,6 +203,24 @@ function setupCloudUI(): void {
           });
         };
         menu.appendChild(btnLogin);
+
+        const btnEmailLogin = createElement('button');
+        btnEmailLogin.textContent = '✉️ Login with Email';
+        btnEmailLogin.onclick = async (e) => {
+          e.stopPropagation();
+          menu.style.display = 'none';
+          const email = prompt('Enter your email address (use the same one as your Google account to keep your presets):');
+          if (!email) return;
+          try {
+            await cloudService.sendLoginLink(email.trim());
+            alert('Login link sent! Check your inbox (and spam folder). Open the email on this device, copy the link, and paste it into THIS browser\'s address bar to finish signing in.');
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            alert(`Could not send login link: ${message}`);
+          }
+        };
+        menu.appendChild(btnEmailLogin);
+
         syncBtn.style.opacity = '0.4';
         syncBtn.style.color = 'var(--cream-muted)';
       }

@@ -2,6 +2,9 @@ import { auth, db } from '../config/firebase';
 import {
     signInWithPopup,
     GoogleAuthProvider,
+    sendSignInLinkToEmail,
+    isSignInWithEmailLink,
+    signInWithEmailLink,
     signOut,
     onAuthStateChanged,
     type User
@@ -34,6 +37,36 @@ export class CloudService {
             console.error('Login failed:', error);
             throw error;
         }
+    }
+
+    // Email-link (passwordless) auth — the login path for browsers where the
+    // Google popup can't open, e.g. iOS Web MIDI browser apps.
+    async sendLoginLink(email: string): Promise<void> {
+        await sendSignInLinkToEmail(auth, email, {
+            url: window.location.origin + window.location.pathname,
+            handleCodeInApp: true
+        });
+        // Remembered so completing the link on this device needs no re-entry.
+        localStorage.setItem('emailForSignIn', email);
+    }
+
+    isEmailLinkLogin(): boolean {
+        return isSignInWithEmailLink(auth, window.location.href);
+    }
+
+    // Call on page load when isEmailLinkLogin() is true. Returns the signed-in
+    // user, or null if the user didn't supply their email.
+    async completeEmailLinkLogin(): Promise<User | null> {
+        let email = localStorage.getItem('emailForSignIn');
+        if (!email) {
+            email = prompt('Confirm your email address to finish signing in:');
+            if (!email) return null;
+        }
+        const result = await signInWithEmailLink(auth, email, window.location.href);
+        localStorage.removeItem('emailForSignIn');
+        // Strip the one-time sign-in code from the address bar.
+        window.history.replaceState({}, '', window.location.pathname);
+        return result.user;
     }
 
     async logout(): Promise<void> {

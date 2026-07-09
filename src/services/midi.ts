@@ -12,7 +12,9 @@ type StateChangeCallback = () => void;
 // Minimum gap between outgoing CC bursts. Values arriving faster than this
 // (e.g. knob drags at mouse polling rate) are coalesced per-CC, latest wins,
 // so the pedal never has to drain a backlog of stale intermediate values.
-const CC_THROTTLE_MS = 20;
+// The pedal firmware processes CCs slower than the wire carries them, so
+// this must stay at or below the device's real intake rate.
+const DEFAULT_CC_THROTTLE_MS = 50;
 
 class MIDIService {
   private access: MIDIAccess | null = null;
@@ -23,6 +25,15 @@ class MIDIService {
   private onStateChange: StateChangeCallback | null = null;
   private pendingCC: Map<CCNumber, MIDIValue> = new Map();
   private ccThrottleTimer: ReturnType<typeof setTimeout> | null = null;
+  private ccThrottleMs = DEFAULT_CC_THROTTLE_MS;
+
+  get ccThrottleInterval(): number {
+    return this.ccThrottleMs;
+  }
+
+  setCCThrottleInterval(ms: number): void {
+    this.ccThrottleMs = Math.max(0, Math.min(500, ms));
+  }
 
   get isEnabled(): boolean {
     return this.access !== null;
@@ -133,7 +144,7 @@ class MIDIService {
         this.flushPendingCC();
         this.scheduleCCFlush();
       }
-    }, CC_THROTTLE_MS);
+    }, this.ccThrottleMs);
   }
 
   sendCCRaw(cc: CCNumber, value: MIDIValue): void {

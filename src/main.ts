@@ -1274,6 +1274,10 @@ function saveManagerChanges(): void {
   });
 };
 
+// Console access for tuning the outgoing CC throttle against the pedal's
+// real intake rate, e.g. midiService.setCCThrottleInterval(100)
+(window as unknown as { midiService: typeof midiService }).midiService = midiService;
+
 // Alt/Option key enables tooltips
 window.addEventListener('keydown', (e) => {
   if (e.altKey) document.body.classList.add('tooltips-enabled');

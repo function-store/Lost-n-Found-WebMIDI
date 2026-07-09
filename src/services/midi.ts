@@ -44,7 +44,7 @@ class MIDIService {
     }
 
     try {
-      this.access = await navigator.requestMIDIAccess({ sysex: true });
+      this.access = await navigator.requestMIDIAccess({ sysex: false });
       this.access.onstatechange = () => this.onStateChange?.();
       return true;
     } catch (e) {

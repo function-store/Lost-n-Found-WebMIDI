@@ -81,7 +81,15 @@ async function triggerAutoUpload(): Promise<boolean> {
 }
 
 function setupCloudUI(): void {
-  let isManualLogin = false;
+  // The redirect login flow reloads the page, so the manual-login flag has to
+  // survive in sessionStorage rather than a local variable.
+  let isManualLogin = sessionStorage.getItem('cloudManualLogin') === '1';
+  sessionStorage.removeItem('cloudManualLogin');
+
+  cloudService.checkRedirectResult().catch((error) => {
+    const message = error instanceof Error ? error.message : String(error);
+    alert(`Google login failed: ${message}`);
+  });
 
   const attachCloudSyncUI = (container: HTMLElement) => {
     const wrapper = createElement('div');
@@ -188,7 +196,12 @@ function setupCloudUI(): void {
           e.stopPropagation();
           menu.style.display = 'none';
           isManualLogin = true;
-          cloudService.login();
+          sessionStorage.setItem('cloudManualLogin', '1');
+          cloudService.login().catch((error) => {
+            sessionStorage.removeItem('cloudManualLogin');
+            const message = error instanceof Error ? error.message : String(error);
+            alert(`Google login failed: ${message}`);
+          });
         };
         menu.appendChild(btnLogin);
         syncBtn.style.opacity = '0.4';

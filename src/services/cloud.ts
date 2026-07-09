@@ -1,6 +1,8 @@
 import { auth, db } from '../config/firebase';
 import {
     signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult,
     GoogleAuthProvider,
     signOut,
     onAuthStateChanged,
@@ -31,9 +33,24 @@ export class CloudService {
         try {
             await signInWithPopup(auth, provider);
         } catch (error) {
+            const code = (error as { code?: string }).code;
+            // WebView browsers (e.g. iOS Web MIDI apps) can't open popup
+            // windows — fall back to a full-page redirect there.
+            if (code === 'auth/popup-blocked' ||
+                code === 'auth/operation-not-supported-in-this-environment') {
+                await signInWithRedirect(auth, provider);
+                return;
+            }
             console.error('Login failed:', error);
             throw error;
         }
+    }
+
+    // Resolves the pending redirect sign-in after the page reloads from Google.
+    // Returns null when the page load is not a redirect callback.
+    async checkRedirectResult(): Promise<User | null> {
+        const result = await getRedirectResult(auth);
+        return result?.user ?? null;
     }
 
     async logout(): Promise<void> {

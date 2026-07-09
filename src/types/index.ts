@@ -110,6 +110,21 @@ export interface ExportedPreset {
   ccs: Record<string, MIDIValue>;
 }
 
+// Pirate MIDI Scribble device config (as exported by the Scribble editor).
+// Only the fields we touch are typed; everything else passes through untouched.
+export interface ScribblePresetEntry {
+  bankId: number;
+  bankName: string;
+  secondaryText: string;
+  [key: string]: unknown;
+}
+
+export interface ScribbleConfig {
+  deviceSettings: Record<string, unknown>;
+  globalSettings: Record<string, unknown>;
+  presetSettings: ScribblePresetEntry[];
+}
+
 // Subdivision option
 export interface SubdivisionOption {
   label: string;

@@ -1,5 +1,5 @@
 import './styles/main.css';
-import { midiService, stateService, presetService, randomizerService, cloudService } from './services';
+import { midiService, stateService, presetService, randomizerService, cloudService, scribbleService } from './services';
 import {
   createKnobBlock,
   createTriBlock,
@@ -868,6 +868,31 @@ function setupEventListeners(): void {
       }
     } catch (err) {
       showAlert(`Meta load failed: ${(err as Error).message}`);
+    }
+  });
+
+  // Scribble compatibility export
+  document.getElementById('btnExportScribble')?.addEventListener('click', async () => {
+    const useBase = await showConfirm(
+      'Merge preset names into a config exported from the Scribble editor? This keeps all your device settings.\n\nCancel to export a default template instead.',
+      'Scribble Export'
+    );
+    if (useBase) {
+      document.getElementById('fileScribble')?.click();
+    } else {
+      scribbleService.exportDefault();
+    }
+  });
+
+  document.getElementById('fileScribble')?.addEventListener('change', async (e) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    try {
+      await scribbleService.exportMerged(file);
+    } catch (err) {
+      showAlert(`Scribble export failed: ${(err as Error).message}`);
     }
   });
 

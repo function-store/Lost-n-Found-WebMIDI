@@ -64,7 +64,7 @@ const DEFAULT_GLOBAL_SETTINGS = {
   goToPresetCC: 3,
   globalCustomMessagesCC: 17,
   presetCustomMessagesCC: 16,
-  midiValueDisplay: 'barPercent',
+  midiValueDisplay: 'none',
   midiValueDisplayCC: 0,
   wirelessType: 'ble',
   bleMode: 'server',

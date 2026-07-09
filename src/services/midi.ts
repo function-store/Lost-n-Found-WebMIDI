@@ -14,7 +14,7 @@ type StateChangeCallback = () => void;
 // so the pedal never has to drain a backlog of stale intermediate values.
 // The pedal firmware processes CCs slower than the wire carries them, so
 // this must stay at or below the device's real intake rate.
-const DEFAULT_CC_THROTTLE_MS = 50;
+const DEFAULT_CC_THROTTLE_MS = 60;
 
 class MIDIService {
   private access: MIDIAccess | null = null;

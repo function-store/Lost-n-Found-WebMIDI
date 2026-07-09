@@ -8,9 +8,6 @@ import { midiService } from './midi';
 // settings come from an imported config (or the default template below).
 
 const SCRIBBLE_PRESET_COUNT = 128;
-// Observed display cutoff for bankName (with mainTextResize on); anything
-// past this is spilled into secondaryText so the full name stays readable.
-const SCRIBBLE_NAME_MAX = 14;
 // Entry 0 is the reserved #live preset; app slots 1-121 map to entries 1-121.
 // With zeroIndexBanks the device displays entry N as preset N, so slot
 // numbers line up with the on-device numbering. App slot 122 is the swap
@@ -122,12 +119,11 @@ class ScribbleService {
     };
   }
 
-  // Overwrites bankName/secondaryText for entries mapped to library slots
-  // (slot N -> entry N). Occupied slots take the full library name, with any
-  // overflow past the display cutoff repeated in secondaryText; empty slots
-  // reset to the device default so the device list mirrors the library
-  // exactly. Entry 0 (#live), entries beyond the library range and all other
-  // fields are left untouched.
+  // Overwrites bankName for entries mapped to library slots (slot N -> entry N).
+  // Occupied slots take the full library name (the device truncates the
+  // display itself); empty slots reset to the device default so the device
+  // list mirrors the library exactly. Entry 0 (#live), entries beyond the
+  // library range, secondaryText and all other fields are left untouched.
   applyLibraryNames(config: ScribbleConfig): ScribbleConfig {
     const meta = presetService.getMeta();
     const last = Math.min(config.presetSettings.length - 1, LIBRARY_SLOTS);
@@ -136,7 +132,6 @@ class ScribbleService {
       const m = meta[slot];
       const name = m?.occupied && m.name?.trim() ? m.name.trim() : `Preset ${slot}`;
       config.presetSettings[slot].bankName = name;
-      config.presetSettings[slot].secondaryText = name.slice(SCRIBBLE_NAME_MAX).trim();
     }
 
     // Mark the app's swap-buffer slot so it is identifiable on the device

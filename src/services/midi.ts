@@ -9,6 +9,11 @@ export interface MIDIServiceState {
 
 type StateChangeCallback = () => void;
 
+// Minimum gap between outgoing CC bursts. Values arriving faster than this
+// (e.g. knob drags at mouse polling rate) are coalesced per-CC, latest wins,
+// so the pedal never has to drain a backlog of stale intermediate values.
+const CC_THROTTLE_MS = 20;
+
 class MIDIService {
   private access: MIDIAccess | null = null;
   private output: MIDIOutput | null = null;
@@ -16,6 +21,8 @@ class MIDIService {
   private altMenuActive = false;
   private altMenuTimer: ReturnType<typeof setTimeout> | null = null;
   private onStateChange: StateChangeCallback | null = null;
+  private pendingCC: Map<CCNumber, MIDIValue> = new Map();
+  private ccThrottleTimer: ReturnType<typeof setTimeout> | null = null;
 
   get isEnabled(): boolean {
     return this.access !== null;
@@ -59,6 +66,11 @@ class MIDIService {
       this.access = null;
     }
     this.output = null;
+    if (this.ccThrottleTimer) {
+      clearTimeout(this.ccThrottleTimer);
+      this.ccThrottleTimer = null;
+    }
+    this.pendingCC.clear();
     this.onStateChange?.();
   }
 
@@ -97,15 +109,42 @@ class MIDIService {
   sendCC(cc: CCNumber, value: MIDIValue): void {
     // Block certain CCs (like tap tempo which is handled separately)
     if (BLOCKED_CCS.has(cc)) return;
-    this.sendRaw([0xB0 + this.channel, cc, value]);
+    this.pendingCC.set(cc, value);
+    if (this.ccThrottleTimer === null) {
+      // Idle: send right away for responsiveness, then gate further sends
+      this.flushPendingCC();
+      this.scheduleCCFlush();
+    }
+  }
+
+  // Sends queued CC values in insertion order (Map preserves it), so
+  // cross-CC ordering like "knob values before store command" holds.
+  private flushPendingCC(): void {
+    for (const [cc, value] of this.pendingCC) {
+      this.sendRaw([0xB0 + this.channel, cc, value]);
+    }
+    this.pendingCC.clear();
+  }
+
+  private scheduleCCFlush(): void {
+    this.ccThrottleTimer = setTimeout(() => {
+      this.ccThrottleTimer = null;
+      if (this.pendingCC.size > 0) {
+        this.flushPendingCC();
+        this.scheduleCCFlush();
+      }
+    }, CC_THROTTLE_MS);
   }
 
   sendCCRaw(cc: CCNumber, value: MIDIValue): void {
-    // Send without blocking check (for special cases like tap tempo)
+    // Send without blocking check or throttling (for timing-sensitive
+    // special cases like tap tempo and the alt-menu latch)
     this.sendRaw([0xB0 + this.channel, cc, value]);
   }
 
   sendPC(program: number): void {
+    // Flush queued CCs first so a program change never overtakes them
+    this.flushPendingCC();
     this.sendRaw([0xC0 + this.channel, program]);
   }
 

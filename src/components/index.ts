@@ -9,3 +9,4 @@ export {
   createRampSlider,
   createRampEnabled,
 } from './Controls';
+export { showAlert, showConfirm, showPrompt } from './Dialog';

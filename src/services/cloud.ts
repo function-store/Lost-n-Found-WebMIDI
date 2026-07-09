@@ -9,6 +9,7 @@ import {
     onAuthStateChanged,
     type User
 } from 'firebase/auth';
+import { showPrompt } from '../components/Dialog';
 import {
     doc,
     setDoc,
@@ -59,7 +60,7 @@ export class CloudService {
     async completeEmailLinkLogin(): Promise<User | null> {
         let email = localStorage.getItem('emailForSignIn');
         if (!email) {
-            email = prompt('Confirm your email address to finish signing in:');
+            email = await showPrompt('Confirm your email address to finish signing in:');
             if (!email) return null;
         }
         const result = await signInWithEmailLink(auth, email, window.location.href);

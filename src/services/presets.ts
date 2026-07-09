@@ -2,6 +2,7 @@ import type { PresetMetadata, PresetMetadataStore, ExportedPreset, MIDIChannel }
 import { CONTROL_CCS } from '../config';
 import { stateService } from './state';
 import { midiService } from './midi';
+import { showAlert } from '../components/Dialog';
 
 const META_KEY = 'lostFound_presetMeta';
 const MAX_SLOTS = 122;
@@ -119,7 +120,7 @@ class PresetService {
   exportSlot(slot: number): void {
     const meta = this.getSlotMeta(slot);
     if (!meta.occupied || !meta.data) {
-      alert('Slot is empty.');
+      showAlert('Slot is empty.');
       return;
     }
 

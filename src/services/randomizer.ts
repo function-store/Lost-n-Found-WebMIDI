@@ -2,13 +2,14 @@ import { stateService } from './state';
 import { midiService } from './midi';
 import { KNOB_CCS, HIDDEN_CCS, DIP_CCS, NEVER_RANDOM_CCS, RAMP_CCS, COLUMN_KNOBS } from '../config';
 import { triValueForCC, randomMIDI } from '../utils/helpers';
+import { showAlert } from '../components/Dialog';
 import type { Side, CCNumber } from '../types';
 
 class RandomizerService {
   // Randomize knobs only
   randomizeKnobs(includeRamp: boolean): void {
     if (!midiService.isEnabled) {
-      alert('Enable MIDI first.');
+      showAlert('Enable MIDI first.');
       return;
     }
 
@@ -36,7 +37,7 @@ class RandomizerService {
   // Randomize all (knobs + types + routing + settings)
   randomizeAll(includeRamp: boolean): void {
     if (!midiService.isEnabled) {
-      alert('Enable MIDI first.');
+      showAlert('Enable MIDI first.');
       return;
     }
 

@@ -10,6 +10,9 @@ import {
   createOtherSelect,
   createRampSlider,
   createRampEnabled,
+  showAlert,
+  showConfirm,
+  showPrompt,
 } from './components';
 import { createScatterLayer, randomizeScatter } from './components/ScatterDecorations';
 import { EFFECTS, KNOBS, CONTROLS } from './config';
@@ -50,14 +53,14 @@ async function downloadFromCloud(silent = false): Promise<void> {
       const modal = document.getElementById('pmModal');
       if (modal && getComputedStyle(modal).display !== 'none') openManager();
       updateCloudStatusUI('online', 'Synced');
-      if (!silent) alert('Downloaded from Cloud!');
+      if (!silent) showAlert('Downloaded from Cloud!');
     } else {
       updateCloudStatusUI('online', 'No backup');
-      if (!silent) alert('No backup found.');
+      if (!silent) showAlert('No backup found.');
     }
   } catch (err) {
     updateCloudStatusUI('error');
-    if (!silent) alert('Download failed: ' + (err as Error).message);
+    if (!silent) showAlert('Download failed: ' + (err as Error).message);
   }
 }
 
@@ -88,7 +91,7 @@ function setupCloudUI(): void {
     isManualLogin = true;
     cloudService.completeEmailLinkLogin().catch((error) => {
       const message = error instanceof Error ? error.message : String(error);
-      alert(`Email login failed: ${message}`);
+      showAlert(`Email login failed: ${message}`);
     });
   }
 
@@ -131,7 +134,7 @@ function setupCloudUI(): void {
           stateService.save();
 
           if (isChecked) {
-            if (confirm('Download presets from Cloud now?')) {
+            if (await showConfirm('Download presets from Cloud now?')) {
               await downloadFromCloud();
             } else {
               triggerAutoUpload();
@@ -153,16 +156,16 @@ function setupCloudUI(): void {
         btnUpload.onclick = async (e) => {
           e.stopPropagation();
           menu.style.display = 'none';
-          if (!confirm('Overwrite Cloud backup with current Local presets?')) return;
+          if (!await showConfirm('Overwrite Cloud backup with current Local presets?')) return;
           try {
             updateCloudStatusUI('syncing');
             const meta = presetService.getMeta();
             await cloudService.savePresets(meta);
             updateCloudStatusUI('online');
-            alert('Uploaded!');
+            showAlert('Uploaded!');
           } catch (err) {
             updateCloudStatusUI('error');
-            alert('Upload failed: ' + (err as Error).message);
+            showAlert('Upload failed: ' + (err as Error).message);
           }
         };
 
@@ -171,7 +174,7 @@ function setupCloudUI(): void {
         btnDownload.onclick = async (e) => {
           e.stopPropagation();
           menu.style.display = 'none';
-          if (!confirm('Overwrite Local presets with Cloud backup?')) return;
+          if (!await showConfirm('Overwrite Local presets with Cloud backup?')) return;
           await downloadFromCloud();
         };
 
@@ -181,10 +184,10 @@ function setupCloudUI(): void {
 
         const btnLogout = createElement('button');
         btnLogout.textContent = '🚪 Logout';
-        btnLogout.onclick = (e) => {
+        btnLogout.onclick = async (e) => {
           e.stopPropagation();
           menu.style.display = 'none';
-          if (confirm('Logout?')) cloudService.logout();
+          if (await showConfirm('Logout?')) cloudService.logout();
         };
         menu.appendChild(btnLogout);
         syncBtn.style.opacity = '1';
@@ -199,7 +202,7 @@ function setupCloudUI(): void {
           isManualLogin = true;
           cloudService.login().catch((error) => {
             const message = error instanceof Error ? error.message : String(error);
-            alert(`Google login failed: ${message}`);
+            showAlert(`Google login failed: ${message}`);
           });
         };
         menu.appendChild(btnLogin);
@@ -209,14 +212,14 @@ function setupCloudUI(): void {
         btnEmailLogin.onclick = async (e) => {
           e.stopPropagation();
           menu.style.display = 'none';
-          const email = prompt('Enter your email address (use the same one as your Google account to keep your presets):');
+          const email = await showPrompt('Enter your email address (use the same one as your Google account to keep your presets):');
           if (!email) return;
           try {
             await cloudService.sendLoginLink(email.trim());
-            alert('Login link sent! Check your inbox (and spam folder). Open the email on this device, copy the link, and paste it into THIS browser\'s address bar to finish signing in.');
+            showAlert('Login link sent! Check your inbox (and spam folder). Open the email on this device, copy the link, and paste it into THIS browser\'s address bar to finish signing in.');
           } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
-            alert(`Could not send login link: ${message}`);
+            showAlert(`Could not send login link: ${message}`);
           }
         };
         menu.appendChild(btnEmailLogin);
@@ -240,12 +243,12 @@ function setupCloudUI(): void {
       if (user) {
         if (isManualLogin) {
           isManualLogin = false;
-          if (confirm('Enable Auto-Sync? This will keep your presets backed up automatically.')) {
+          if (await showConfirm('Enable Auto-Sync? This will keep your presets backed up automatically.')) {
             stateService.autoSync = true;
             stateService.save();
             // Rebuild menu to show checked state
             rebuildMenu(user);
-            if (confirm('Download presets from Cloud now?')) {
+            if (await showConfirm('Download presets from Cloud now?')) {
               await downloadFromCloud();
             } else {
               // Assuming if they enabled auto-sync but didn't download, 
@@ -254,7 +257,7 @@ function setupCloudUI(): void {
             }
           } else {
             // User denied Auto-Sync, but still ask about download
-            if (confirm('Download presets from Cloud?')) {
+            if (await showConfirm('Download presets from Cloud?')) {
               await downloadFromCloud();
             }
           }
@@ -802,7 +805,7 @@ function setupEventListeners(): void {
   document.getElementById('btnPushOnly')?.addEventListener('click', (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
     if (!midiService.isEnabled) {
-      alert('Enable MIDI first.');
+      showAlert('Enable MIDI first.');
       return;
     }
     const originalHTML = btn.innerHTML;
@@ -834,7 +837,7 @@ function setupEventListeners(): void {
       await presetService.importPreset(file);
       updateReadout();
     } catch (err) {
-      alert(`Preset load failed: ${(err as Error).message}`);
+      showAlert(`Preset load failed: ${(err as Error).message}`);
     }
   });
 
@@ -857,14 +860,14 @@ function setupEventListeners(): void {
     const file = input.files?.[0];
     if (!file) return;
     try {
-      if (confirm('Restore all preset names and occupied status? This replaces your current list.')) {
+      if (await showConfirm('Restore all preset names and occupied status? This replaces your current list.')) {
         await presetService.importMeta(file);
         initSlots();
         openManager();
         triggerAutoUpload();
       }
     } catch (err) {
-      alert(`Meta load failed: ${(err as Error).message}`);
+      showAlert(`Meta load failed: ${(err as Error).message}`);
     }
   });
 
@@ -883,7 +886,7 @@ const customNameInput = document.getElementById('customNameInput') as HTMLInputE
 const handleConfirmStore = () => {
   const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
   if (slot === 0) {
-    alert('Choose slot 1-122 to store.');
+    showAlert('Choose slot 1-122 to store.');
     return;
   }
 
@@ -958,7 +961,7 @@ async function toggleMIDI(): Promise<void> {
     // Enable
     const success = await midiService.enable();
     if (!success) {
-      alert('MIDI Access Failed');
+      showAlert('MIDI Access Failed');
       return;
     }
 
@@ -1008,7 +1011,7 @@ function populateOutputs(): void {
 // Handle tap tempo
 function handleTap(): void {
   if (!midiService.isEnabled) {
-    alert('Enable MIDI first.');
+    showAlert('Enable MIDI first.');
     return;
   }
 
@@ -1030,7 +1033,7 @@ function handleTap(): void {
 function showStoreDialog(): void {
   const slot = Number((document.getElementById('slotSelect') as HTMLSelectElement).value);
   if (slot === 0) {
-    alert('Choose slot 1-122 to store.');
+    showAlert('Choose slot 1-122 to store.');
     return;
   }
 
@@ -1098,12 +1101,12 @@ function openManager(): void {
       const statusEl = document.getElementById('swapStatus');
 
       if (!midiService.isEnabled) {
-        alert('Enable MIDI first.');
+        showAlert('Enable MIDI first.');
         return;
       }
 
       if (!a || !b || a < 1 || a > 122 || b < 1 || b > 122 || a === b) {
-        alert('Invalid slots. Enter two different numbers between 1-122.');
+        showAlert('Invalid slots. Enter two different numbers between 1-122.');
         return;
       }
 
@@ -1119,7 +1122,7 @@ function openManager(): void {
         triggerAutoUpload();
       } catch (e) {
         if (statusEl) statusEl.textContent = 'Error';
-        alert('Swap failed: ' + (e as Error).message);
+        showAlert('Swap failed: ' + (e as Error).message);
       }
 
       btnSwap.disabled = false;

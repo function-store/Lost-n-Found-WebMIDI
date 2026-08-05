@@ -9,9 +9,10 @@
 </head>
 
 <body>
-  <header class="siteHeader">
-    Chase Bliss Lost + Found WebMIDI Editor and Preset Manager by <a href="https://functionstore.xyz/link-in-bio"
-      target="_blank" rel="noopener">Function Store</a>
+  <header class="siteHeader" id="siteHeader">
+    <span>Chase Bliss Lost + Found WebMIDI Editor and Preset Manager by <a
+        href="https://functionstore.xyz/link-in-bio" target="_blank" rel="noopener">Function Store</a></span>
+    <button id="btnDismissHeader" class="siteHeader__dismiss" title="Hide this header (restore it from the Info dialog)">✕</button>
   </header>
 
   <div class="layout">
@@ -282,6 +283,11 @@
             onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
             by Function Store
           </a>
+          <button id="btnRestoreHeader"
+            style="display:none; background:transparent; border:none; padding:0; color:var(--text-muted); font-size:12px; opacity:0.7; cursor:pointer; text-decoration:underline;"
+            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+            Restore header
+          </button>
         </div>
         <button class="pmBtn primary" onclick="document.getElementById('infoModal').style.display='none'">Got
           it</button>
@@ -303,6 +309,9 @@
     </a>
     <span class="siteFooter__sep">·</span>
     <span class="siteFooter__credit">Built with TypeScript + Vite</span>
+    <span class="siteFooter__sep">·</span>
+    <span class="siteFooter__credit">Lost + Found WebMIDI Editor by <a
+        href="https://functionstore.xyz/link-in-bio" target="_blank" rel="noopener">Function Store</a></span>
   </footer>
 
   <script type="module" src="/src/main.ts"></script>

@@ -35,6 +35,7 @@ function init(): void {
   updateAutoRecallUI();
   updateMidiStatusUI();
   updateResonatorVisibility();
+  updateHeaderVisibility();
   maybeAskFirmware();
 
   midiService.setOnStateChange(() => {
@@ -787,6 +788,12 @@ function updateAutoRecallUI(): void {
   document.getElementById('btnAutoRecall')?.classList.toggle('active', stateService.autoRecall);
 }
 
+function updateHeaderVisibility(): void {
+  document.getElementById('siteHeader')?.classList.toggle('siteHeader--hidden', stateService.headerDismissed);
+  const restore = document.getElementById('btnRestoreHeader');
+  if (restore) restore.style.display = stateService.headerDismissed ? '' : 'none';
+}
+
 const RESONATOR_MODES = ['Hybrid', 'Original', 'Distorted'];
 // Equal-length labels so the mini selector buttons match in width
 const RESONATOR_MODES_SHORT = ['Hybr', 'Orig', 'Dist'];
@@ -1099,6 +1106,19 @@ function setupEventListeners(): void {
   document.getElementById('btnShowInfo')?.addEventListener('click', () => {
     const modal = document.getElementById('infoModal');
     if (modal) modal.style.display = 'flex';
+  });
+
+  // Site header dismiss / restore
+  document.getElementById('btnDismissHeader')?.addEventListener('click', () => {
+    stateService.headerDismissed = true;
+    stateService.save();
+    updateHeaderVisibility();
+  });
+
+  document.getElementById('btnRestoreHeader')?.addEventListener('click', () => {
+    stateService.headerDismissed = false;
+    stateService.save();
+    updateHeaderVisibility();
   });
 }
 

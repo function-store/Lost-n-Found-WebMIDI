@@ -20,6 +20,7 @@ class StateService {
   autoSync = false;
   autoRecall = false;
   newFirmware: boolean | null = null;
+  headerDismissed = false;
 
   constructor() {
     this.initializeDefaults();
@@ -162,6 +163,7 @@ class StateService {
       autoSync: this.autoSync,
       autoRecall: this.autoRecall,
       newFirmware: this.newFirmware,
+      headerDismissed: this.headerDismissed,
     };
 
     localStorage.setItem(STATE_KEY, JSON.stringify(data));
@@ -227,6 +229,10 @@ class StateService {
 
       if (data.newFirmware !== undefined) {
         this.newFirmware = data.newFirmware;
+      }
+
+      if (data.headerDismissed !== undefined) {
+        this.headerDismissed = data.headerDismissed;
       }
 
       // MIDI port restoration happens separately after MIDI is enabled

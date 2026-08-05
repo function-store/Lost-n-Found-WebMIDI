@@ -41,6 +41,21 @@ function init(): void {
     updateMidiStatusUI();
   });
 
+  // Follow incoming Program Changes: the sender already switched the pedal's
+  // preset, so only mirror the change in the editor (no MIDI goes back out)
+  midiService.setOnProgramChange((program) => {
+    if (program > presetService.maxSlots) return;
+
+    presetService.applySlotState(program);
+    const sel = document.getElementById('slotSelect') as HTMLSelectElement;
+    if (sel) sel.value = String(program);
+    stateService.save();
+    updateReadout();
+
+    const modal = document.getElementById('pmModal');
+    if (modal && getComputedStyle(modal).display !== 'none') openManager();
+  });
+
   setupCloudUI();
 
   console.log('[Lost+Found Editor] Ready');
@@ -912,6 +927,13 @@ function setupEventListeners(): void {
     stateService.save();
   });
 
+  // MIDI Input select (Program Change follow)
+  document.getElementById('midiInSelect')?.addEventListener('change', (e) => {
+    const sel = e.target as HTMLSelectElement;
+    midiService.selectInput(sel.value);
+    stateService.save();
+  });
+
   // Channel select
   document.getElementById('chanSelect')?.addEventListener('change', (e) => {
     const sel = e.target as HTMLSelectElement;
@@ -1143,6 +1165,7 @@ document.addEventListener('keydown', (e) => {
 async function toggleMIDI(): Promise<void> {
   const btnEnable = document.getElementById('btnEnableMIDI') as HTMLButtonElement;
   const midiSelect = document.getElementById('midiSelect') as HTMLSelectElement;
+  const midiInSelect = document.getElementById('midiInSelect') as HTMLSelectElement;
   const chanSelect = document.getElementById('chanSelect') as HTMLSelectElement;
   const btnTap = document.getElementById('btnTap') as HTMLButtonElement;
 
@@ -1153,6 +1176,10 @@ async function toggleMIDI(): Promise<void> {
     if (midiSelect) {
       midiSelect.disabled = true;
       midiSelect.innerHTML = '<option value="">MIDI Output</option>';
+    }
+    if (midiInSelect) {
+      midiInSelect.disabled = true;
+      midiInSelect.innerHTML = '<option value="">MIDI In: Off</option>';
     }
     if (chanSelect) chanSelect.disabled = true;
     if (btnTap) btnTap.disabled = true;
@@ -1165,10 +1192,15 @@ async function toggleMIDI(): Promise<void> {
     }
 
     populateOutputs();
-    midiService.setOnStateChange(populateOutputs);
+    populateInputs();
+    midiService.setOnStateChange(() => {
+      populateOutputs();
+      populateInputs();
+    });
 
     if (btnEnable) btnEnable.disabled = false;
     if (midiSelect) midiSelect.disabled = false;
+    if (midiInSelect) midiInSelect.disabled = false;
     if (chanSelect) chanSelect.disabled = false;
     if (btnTap) btnTap.disabled = false;
   }
@@ -1201,6 +1233,29 @@ function populateOutputs(): void {
   } else if (outputs.length > 0) {
     sel.value = outputs[0].id;
     midiService.selectOutput(outputs[0].id);
+  }
+}
+
+// Populate MIDI inputs. Unlike outputs, no input is auto-selected: listening
+// is opt-in so stray Program Changes from other gear can't hijack the editor.
+function populateInputs(): void {
+  const sel = document.getElementById('midiInSelect') as HTMLSelectElement;
+  if (!sel) return;
+
+  const oldVal = sel.value || (window as unknown as { lastMidiInId?: string }).lastMidiInId;
+  sel.innerHTML = '<option value="">MIDI In: Off</option>';
+
+  const inputs = midiService.getInputs();
+  inputs.forEach(inp => {
+    const opt = document.createElement('option');
+    opt.value = inp.id;
+    opt.textContent = inp.name;
+    sel.appendChild(opt);
+  });
+
+  if (oldVal && inputs.some(i => i.id === oldVal)) {
+    sel.value = oldVal;
+    midiService.selectInput(oldVal);
   }
 }
 

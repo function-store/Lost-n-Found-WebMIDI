@@ -19,6 +19,8 @@ const DEFAULT_CC_THROTTLE_MS = 60;
 class MIDIService {
   private access: MIDIAccess | null = null;
   private output: MIDIOutput | null = null;
+  private input: MIDIInput | null = null;
+  private onProgramChange: ((program: number) => void) | null = null;
   private channel: MIDIChannel = 0;
   private altMenuActive = false;
   private altMenuTimer: ReturnType<typeof setTimeout> | null = null;
@@ -51,6 +53,14 @@ class MIDIService {
     return this.output?.id ?? null;
   }
 
+  get inputId(): string | null {
+    return this.input?.id ?? null;
+  }
+
+  setOnProgramChange(callback: ((program: number) => void) | null): void {
+    this.onProgramChange = callback;
+  }
+
   setOnStateChange(callback: StateChangeCallback | null): void {
     this.onStateChange = callback;
   }
@@ -77,6 +87,7 @@ class MIDIService {
       this.access = null;
     }
     this.output = null;
+    this.detachInput();
     if (this.ccThrottleTimer) {
       clearTimeout(this.ccThrottleTimer);
       this.ccThrottleTimer = null;
@@ -108,6 +119,41 @@ class MIDIService {
     }
     return false;
   }
+
+  // MIDI input: the editor follows incoming Program Changes on its channel
+  getInputs(): MIDIInput[] {
+    if (!this.access) return [];
+    return Array.from(this.access.inputs.values());
+  }
+
+  selectInput(id: string): boolean {
+    this.detachInput();
+    if (!this.access || !id) return false;
+    const input = this.access.inputs.get(id);
+    if (input) {
+      this.input = input;
+      input.onmidimessage = this.handleMessage;
+      return true;
+    }
+    return false;
+  }
+
+  private detachInput(): void {
+    if (this.input) {
+      this.input.onmidimessage = null;
+      this.input = null;
+    }
+  }
+
+  private handleMessage = (e: MIDIMessageEvent): void => {
+    const data = e.data;
+    if (!data || data.length < 2) return;
+    const status = data[0];
+    // Program Change on our channel (0xC0-0xCF)
+    if ((status & 0xF0) === 0xC0 && (status & 0x0F) === this.channel) {
+      this.onProgramChange?.(data[1]);
+    }
+  };
 
   setChannel(channel: MIDIChannel): void {
     this.channel = channel;

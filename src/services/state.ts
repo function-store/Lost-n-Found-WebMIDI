@@ -157,6 +157,7 @@ class StateService {
       inclRamp: this.inclRamp,
       activeSlot: this.currentActiveSlot,
       lastMidiOutId: midiService.outputId,
+      lastMidiInId: midiService.inputId,
       rampCollapsed: this.rampCollapsed,
       autoSync: this.autoSync,
       autoRecall: this.autoRecall,
@@ -228,9 +229,13 @@ class StateService {
         this.newFirmware = data.newFirmware;
       }
 
-      // MIDI output restoration happens separately after MIDI is enabled
+      // MIDI port restoration happens separately after MIDI is enabled
       if (data.lastMidiOutId) {
         (window as unknown as { lastMidiOutId: string }).lastMidiOutId = data.lastMidiOutId;
+      }
+
+      if (data.lastMidiInId) {
+        (window as unknown as { lastMidiInId: string }).lastMidiInId = data.lastMidiInId;
       }
 
     } catch (e) {

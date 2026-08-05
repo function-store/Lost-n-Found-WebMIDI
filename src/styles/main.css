@@ -224,8 +224,19 @@ select option {
 }
 
 #midiSelect {
-  width: 90px;
-  max-width: 90px;
+  width: 82px;
+  max-width: 82px;
+}
+
+#midiInSelect {
+  width: 72px;
+  max-width: 72px;
+}
+
+/* Icon buttons inside segmented groups: tighter than standalone iconBtns */
+.segmented button.iconBtn {
+  padding: 4px 6px;
+  min-width: 0;
 }
 
 #slotSelect {

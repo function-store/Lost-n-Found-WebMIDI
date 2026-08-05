@@ -94,6 +94,7 @@ export interface SavedEditorState {
   inclRamp: boolean;
   activeSlot: number;
   lastMidiOutId: string | null;
+  lastMidiInId: string | null;
   rampCollapsed: boolean;
   autoSync: boolean;
   autoRecall: boolean;

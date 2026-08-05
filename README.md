@@ -13,6 +13,7 @@ A web-based MIDI editor for the [**Chase Bliss Lost + Found**](https://www.chase
 ## Features
 
 - **Full MIDI Control** — Adjust all 12 knobs, effect selections, routing, and DIP switches via Web MIDI
+- **MIDI Input Follow** — Optionally listen to a MIDI input so incoming Program Changes update the selected preset
 - **Visual Knob Interface** — Drag-to-adjust knobs with real-time value display and smooth rotation
 - **Dynamic Labels** — Dynamic labels show different sub-titles for knobs depending on the selected effect!
 - **Preset Management** — Store, recall, rename, and organize up to 122 presets
@@ -77,6 +78,8 @@ The built files will be in the `dist/` folder, ready to deploy to any static hos
 4. Choose the MIDI channel (1-16) that matches your pedal's setting
 
 Once connected, all knob changes are sent to the pedal in real-time.
+
+**MIDI Input (optional):** select a port in the **MIDI In** dropdown to make the editor follow Program Changes from your MIDI controller — when your controller switches the pedal's preset, the editor's selected slot (and its stored UI state) follows along. Listening is off by default so stray messages from other gear can't hijack the editor; nothing is echoed back to the pedal.
 
 ### The Knob Grid
 

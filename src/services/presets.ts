@@ -32,12 +32,11 @@ class PresetService {
     this.setMeta(allMeta);
   }
 
-  // Preset operations
-  recall(slot: number): void {
+  // Restore a slot's stored UI state without sending anything to the pedal.
+  // Used by recall (after its PC message) and when following incoming PCs.
+  applySlotState(slot: number): void {
     stateService.currentActiveSlot = slot;
-    midiService.sendPC(slot);
 
-    // Restore UI state from metadata (silently)
     const meta = this.getMeta();
     const storedState = meta[slot]?.data;
 
@@ -48,6 +47,12 @@ class PresetService {
         stateService.set(Number(cc), val as number, false);
       });
     }
+  }
+
+  // Preset operations
+  recall(slot: number): void {
+    midiService.sendPC(slot);
+    this.applySlotState(slot);
   }
 
   store(slot: number, name: string, syncFirst = false, callback?: () => void): void {

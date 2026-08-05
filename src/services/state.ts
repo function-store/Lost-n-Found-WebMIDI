@@ -1,4 +1,4 @@
-import type { EditorState, SavedEditorState, CCNumber, MIDIValue, UIControl } from '../types';
+import type { EditorState, SavedEditorState, CCNumber, MIDIValue, UIControl, UIControlType } from '../types';
 import { KNOBS, CONTROL_CCS } from '../config';
 import { midiService } from './midi';
 
@@ -19,6 +19,7 @@ class StateService {
   rampCollapsed = true;
   autoSync = false;
   autoRecall = false;
+  newFirmware: boolean | null = null;
 
   constructor() {
     this.initializeDefaults();
@@ -102,10 +103,44 @@ class StateService {
     return Array.from(this.lockedKnobs);
   }
 
+  // Repaint every lock icon from the actual lock state
+  private syncLockIcons(): void {
+    this.uiControls.forEach((control, cc) => {
+      if (!control.lockIcon) return;
+      const locked = this.lockedKnobs.has(cc);
+      control.lockIcon.innerHTML = locked ? '🔒' : '🔓';
+      control.lockIcon.classList.toggle('locked', locked);
+    });
+  }
+
   // Knob default value
   getKnobDefault(cc: CCNumber): MIDIValue {
     const defaults = KNOBS.defaults as Record<string, number>;
     return defaults[String(cc)] ?? defaults.default ?? 64;
+  }
+
+  // Reset every control to its fresh-load default position.
+  // Locked controls are left alone, same contract as randomize/recall.
+  resetToDefaults(): void {
+    this.uiControls.forEach((control, cc) => {
+      if (cc === 55) return; // mix-lock companion CC, follows the lock state
+      if (this.lockedKnobs.has(cc)) return;
+      if (cc === 33 && this.newFirmware !== true) return;
+      this.set(cc, this.getResetDefault(cc, control.type));
+    });
+  }
+
+  private getResetDefault(cc: CCNumber, type: UIControlType): MIDIValue {
+    const defaults = KNOBS.defaults as Record<string, number>;
+    const explicit = defaults[String(cc)];
+    if (explicit !== undefined) return explicit;
+    if (cc === 21) return 1; // L FX: Reverb
+    if (cc === 23) return 4; // R FX build default (see TriBlock)
+    if (cc === 52) return 127; // Ramp enable is inverted: 127 = stopped
+    if (type === 'knob' || type === 'modify' || type === 'slider') {
+      return defaults.default ?? 64;
+    }
+    return 0;
   }
 
   // Persistence
@@ -125,6 +160,7 @@ class StateService {
       rampCollapsed: this.rampCollapsed,
       autoSync: this.autoSync,
       autoRecall: this.autoRecall,
+      newFirmware: this.newFirmware,
     };
 
     localStorage.setItem(STATE_KEY, JSON.stringify(data));
@@ -153,10 +189,14 @@ class StateService {
         }
       }
 
-      // Restore locks
+      // Restore locks. This happens after the state loop above (which may have
+      // touched locks via the CC55 handler), so the saved lock list wins;
+      // reconcile the Mix-lock CC and repaint icons to match.
       if (data.lockedKnobs) {
         this.lockedKnobs = new Set(data.lockedKnobs);
       }
+      this.state[55] = this.lockedKnobs.has(15) ? 127 : 0;
+      this.syncLockIcons();
 
       // Restore other settings (these should always work even if UI updates fail)
       if (data.channel !== undefined) {
@@ -184,6 +224,10 @@ class StateService {
         this.autoRecall = data.autoRecall;
       }
 
+      if (data.newFirmware !== undefined) {
+        this.newFirmware = data.newFirmware;
+      }
+
       // MIDI output restoration happens separately after MIDI is enabled
       if (data.lastMidiOutId) {
         (window as unknown as { lastMidiOutId: string }).lastMidiOutId = data.lastMidiOutId;
@@ -196,7 +240,10 @@ class StateService {
 
   // Push all state to pedal
   pushToPedal(done?: () => void): void {
-    const ccs = [...CONTROL_CCS].sort((a, b) => a - b);
+    // Resonator mode (CC33) only exists on the new firmware
+    const ccs = [...CONTROL_CCS]
+      .filter(cc => cc !== 33 || this.newFirmware === true)
+      .sort((a, b) => a - b);
     let idx = 0;
 
     const step = () => {

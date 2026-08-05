@@ -138,6 +138,19 @@
       "description": "When synced to MIDI clock or tap tempo, sets the time subdivision for the right channel."
     }
   },
+  "resonator": {
+    "title": "Resonator",
+    "description": "Selects the resonator algorithm (requires the latest pedal firmware). Sent as MIDI CC33.",
+    "options": {
+      "Hybrid": "New hybrid blend of the original and distorted resonators (CC33: 0-1)",
+      "Original": "The original Lost + Found resonator (CC33: 2)",
+      "Distorted": "The early demo distorted resonator (CC33: 3-127)"
+    },
+    "firmwareToggle": {
+      "label": "New Firmware",
+      "description": "Enable if your pedal runs the latest firmware, which adds 3 selectable resonator modes. The Resonator selector (MIDI CC33) is only shown and sent when this is on. Update your pedal at firmware.chasebliss.com."
+    }
+  },
   "dip": {
     "latch": {
       "label": "Latch",

@@ -15,8 +15,8 @@ import {
   showPrompt,
 } from './components';
 import { createScatterLayer, randomizeScatter } from './components/ScatterDecorations';
-import { EFFECTS, KNOBS, CONTROLS } from './config';
-import { triPosFromValue, getVariantFromModify, createElement } from './utils/helpers';
+import { EFFECTS, KNOBS, CONTROLS, TOOLTIPS } from './config';
+import { triPosFromValue, triValueForCC, getVariantFromModify, createElement } from './utils/helpers';
 import type { Side, MIDIChannel, KnobKind, CCNumber } from './types';
 
 // Tap tempo state
@@ -34,6 +34,8 @@ function init(): void {
   initSlots();
   updateAutoRecallUI();
   updateMidiStatusUI();
+  updateResonatorVisibility();
+  maybeAskFirmware();
 
   midiService.setOnStateChange(() => {
     updateMidiStatusUI();
@@ -397,6 +399,10 @@ function buildUI(): void {
         // Append lock directly to routing container
         routingContainer.appendChild(lockBtn);
 
+        // Register on the control so lock-icon syncing reaches it
+        const routingControl = stateService.getControl(22);
+        if (routingControl) routingControl.lockIcon = lockBtn;
+
         blendBlock.appendChild(routingContainer);
       }
     }
@@ -595,6 +601,78 @@ function buildDipSection(): void {
   CONTROLS.dipSwitches.forEach(dip => {
     createDipRow(dip.label, dip.cc, dipGrid);
   });
+
+  buildResonatorControls(dipGrid);
+}
+
+// New Firmware toggle + Resonator mode selector (CC33, new firmware only)
+function buildResonatorControls(dipGrid: HTMLElement): void {
+  // Firmware toggle — app setting, not a pedal CC
+  const row = createElement('div', 'dipRow');
+  row.setAttribute('data-tooltip', TOOLTIPS.resonator.firmwareToggle.description);
+
+  const lab = createElement('label');
+  lab.textContent = TOOLTIPS.resonator.firmwareToggle.label;
+
+  const fwLink = createElement('a');
+  fwLink.href = 'https://firmware.chasebliss.com/';
+  fwLink.target = '_blank';
+  fwLink.rel = 'noopener';
+  fwLink.textContent = '↗';
+  fwLink.title = 'Open the Chase Bliss firmware updater';
+  fwLink.style.cssText = 'margin-left:4px;color:var(--yellow);text-decoration:none;';
+  lab.appendChild(fwLink);
+
+  const cb = createElement('input', 'toggleSwitch') as HTMLInputElement;
+  cb.type = 'checkbox';
+  cb.id = 'chkNewFirmware';
+  cb.addEventListener('change', () => {
+    stateService.newFirmware = cb.checked;
+    stateService.save();
+    updateResonatorVisibility();
+  });
+
+  row.appendChild(lab);
+  row.appendChild(cb);
+  dipGrid.appendChild(row);
+
+  // Resonator mode selector
+  const wrap = createElement('div', 'resonatorRow');
+  wrap.id = 'resonatorWrap';
+  wrap.style.display = 'none';
+  createTriBlock({
+    title: 'Resonator',
+    cc: 33,
+    options: RESONATOR_MODES,
+    onUpdateReadout: updateReadout,
+    noSpacer: true,
+  }, wrap);
+  dipGrid.appendChild(wrap);
+}
+
+function updateResonatorVisibility(): void {
+  const enabled = stateService.newFirmware === true;
+  const wrap = document.getElementById('resonatorWrap');
+  if (wrap) wrap.style.display = enabled ? '' : 'none';
+  const cb = document.getElementById('chkNewFirmware') as HTMLInputElement | null;
+  if (cb) cb.checked = enabled;
+  updateReadout(); // resonator mode shows in knob sub-labels when enabled
+}
+
+// First-use firmware question — answer is stored, changeable any time via
+// the New Firmware toggle in General Settings
+function maybeAskFirmware(): void {
+  if (stateService.newFirmware !== null) return;
+  showConfirm(
+    'A Lost + Found firmware update added 3 resonator modes, which this editor can control (via CC33).\n\nHas your pedal been updated to the latest firmware?\n\nTo update, visit firmware.chasebliss.com. You can change this answer any time with the "New Firmware" toggle in General Settings.',
+    'Firmware Check',
+    'Yes, updated',
+    'Not yet'
+  ).then((yes) => {
+    stateService.newFirmware = yes;
+    stateService.save();
+    updateResonatorVisibility();
+  });
 }
 
 // Setup ramp collapse functionality
@@ -694,6 +772,51 @@ function updateAutoRecallUI(): void {
   document.getElementById('btnAutoRecall')?.classList.toggle('active', stateService.autoRecall);
 }
 
+const RESONATOR_MODES = ['Hybrid', 'Original', 'Distorted'];
+// Equal-length labels so the mini selector buttons match in width
+const RESONATOR_MODES_SHORT = ['Hybr', 'Orig', 'Dist'];
+
+// Mini resonator mode selector shown under a Modify knob while that channel
+// runs the Sympathetic Resonator (Synth family, B variant) on the new
+// firmware. CC33 keeps its single registered control (the General Settings
+// selector); these buttons write through stateService.set and are repainted
+// from updateReadout, which keeps every selector in sync.
+function ensureMiniResonator(cc: CCNumber): HTMLElement | null {
+  const block = stateService.getControl(cc)?.subLabel?.closest('.knobBlock');
+  if (!block) return null;
+
+  let mini = block.querySelector('.resonatorMini') as HTMLElement | null;
+  if (!mini) {
+    mini = createElement('div', 'resonatorMini');
+    mini.setAttribute('data-tooltip', TOOLTIPS.resonator.description);
+    RESONATOR_MODES_SHORT.forEach((name, i) => {
+      const b = createElement('button');
+      b.type = 'button';
+      b.textContent = name;
+      b.title = RESONATOR_MODES[i];
+      b.addEventListener('click', () => {
+        stateService.set(33, triValueForCC(33, i as 0 | 1 | 2));
+        updateReadout();
+      });
+      mini!.appendChild(b);
+    });
+    block.appendChild(mini);
+  }
+  return mini;
+}
+
+function updateMiniResonator(cc: CCNumber, family: string, variant: string): void {
+  const mini = ensureMiniResonator(cc);
+  if (!mini) return;
+
+  const show = stateService.newFirmware === true && family === 'Synth' && variant === 'B';
+  mini.style.display = show ? '' : 'none';
+  if (show) {
+    const pos = triPosFromValue(33, stateService.get(33));
+    [...mini.children].forEach((b, i) => b.classList.toggle('active', i === pos));
+  }
+}
+
 // Update effect readout display
 function updateReadout(): void {
   const lSwap = stateService.get(74) === 127;
@@ -771,6 +894,10 @@ function updateReadout(): void {
     stateService.getControl(19)?.subLabel && (stateService.getControl(19)!.subLabel!.textContent = rDetail.modify);
     stateService.getControl(26)?.subLabel && (stateService.getControl(26)!.subLabel!.textContent = rDetail.alt);
   }
+
+  // Mini resonator selectors under the Modify knobs
+  updateMiniResonator(17, leftFamily, leftAB);
+  updateMiniResonator(19, rightFamily, rightAB);
 }
 
 // Setup event listeners
@@ -837,6 +964,17 @@ function setupEventListeners(): void {
 
   document.getElementById('btnStore')?.addEventListener('click', () => {
     showStoreDialog();
+  });
+
+  document.getElementById('btnResetDefaults')?.addEventListener('click', async () => {
+    const ok = await showConfirm(
+      'Reset all knobs and switches to their default positions?\n\nLocked controls are kept as-is.',
+      'Reset to Defaults',
+      'Reset'
+    );
+    if (!ok) return;
+    stateService.resetToDefaults();
+    updateReadout();
   });
 
   document.getElementById('btnPushOnly')?.addEventListener('click', (e) => {

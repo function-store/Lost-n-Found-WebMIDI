@@ -130,7 +130,7 @@ class PresetService {
       ts: new Date().toISOString(),
       channel: midiService.currentChannel,
       slot: slot,
-      lockMix: (meta.data[15] !== undefined), // Best guess from stored data
+      lockMix: meta.data[55] === 127, // CC55 mirrors the Mix lock state
       lEngage: meta.data[103] === 1,
       rEngage: meta.data[102] === 1,
       ccs: {}
@@ -172,9 +172,9 @@ class PresetService {
       stateService.set(cc, v, false); // Don't send MIDI yet
     });
 
-    // Restore locks
+    // Restore locks via CC55 so the lock icon stays in sync
     if (typeof preset.lockMix === 'boolean') {
-      stateService.setLocked(15, preset.lockMix);
+      stateService.set(55, preset.lockMix ? 127 : 0, false);
     }
 
     // Push to pedal if MIDI enabled

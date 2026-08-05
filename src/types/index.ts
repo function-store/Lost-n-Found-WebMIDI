@@ -97,6 +97,8 @@ export interface SavedEditorState {
   rampCollapsed: boolean;
   autoSync: boolean;
   autoRecall: boolean;
+  /** null = user hasn't been asked about the resonator firmware update yet */
+  newFirmware: boolean | null;
 }
 
 export interface ExportedPreset {

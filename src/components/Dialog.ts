@@ -86,8 +86,8 @@ export async function showAlert(message: string, title?: string): Promise<void> 
     await openDialog({ message, title, cancelText: null });
 }
 
-export async function showConfirm(message: string, title?: string): Promise<boolean> {
-    return (await openDialog({ message, title })).ok;
+export async function showConfirm(message: string, title?: string, okText?: string, cancelText?: string): Promise<boolean> {
+    return (await openDialog({ message, title, okText, cancelText })).ok;
 }
 
 export async function showPrompt(message: string, defaultValue = '', title?: string): Promise<string | null> {

@@ -18,6 +18,8 @@ A web-based MIDI editor for the [**Chase Bliss Lost + Found**](https://www.chase
 - **Preset Management** — Store, recall, rename, and organize up to 122 presets
 - **Cloud Sync** — Optional Google sign-in to backup your preset library across devices
 - **Randomizer** — Generate fresh patches instantly (all parameters, knobs only, or per-column)
+- **Reset to Defaults** — One click returns every knob and switch to its default position (locked controls are kept)
+- **Resonator Modes** — Select between the Hybrid, Original, and Distorted resonators (requires the latest pedal firmware)
 - **Lock System** — Lock specific knobs to preserve values during randomization or preset recall
 - **Ramping Control** — Configure which knobs sweep automatically via the pedal's ramping engine
 - **Tap Tempo** — Send tap tempo messages synced to the pedal's clock
@@ -210,6 +212,23 @@ The Lost + Found's ramping system allows knobs to sweep automatically:
 | **Trails** | Effects trail off naturally when bypassed |
 | **Bank** | Enable preset bank mode for MIDI program changes |
 | **Polarity** | Invert expression pedal polarity |
+| **New Firmware** | Tell the editor your pedal runs the latest firmware (asked once on first use) |
+
+### Resonator Modes (New Firmware)
+
+The latest Lost + Found firmware adds 3 resonator modes, selectable via MIDI CC33:
+
+| Mode | Description |
+|------|-------------|
+| **Hybrid** | New hybrid blend of the original and distorted resonators |
+| **Original** | The original Lost + Found resonator |
+| **Distorted** | The early demo distorted resonator |
+
+The **Resonator** selector appears in General Settings once the **New Firmware** toggle is on. Update your pedal at [firmware.chasebliss.com](https://firmware.chasebliss.com/).
+
+### Reset to Defaults
+
+The **↺ Reset** button in the top bar returns every knob and switch to its default position (knobs at noon, Glue/Spill/Alt at zero, ramping off, and so on). Locked controls keep their values — use **Unlock All** first for a full reset.
 
 ---
 

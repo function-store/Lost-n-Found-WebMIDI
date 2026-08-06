@@ -11,6 +11,28 @@ interface DialogOptions {
     input?: { value?: string; placeholder?: string };
 }
 
+// Render message text with any URLs as clickable links (new tab). Built from
+// DOM nodes, not innerHTML, so the rest of the message stays plain text.
+function appendMessageWithLinks(el: HTMLElement, text: string): void {
+    text.split(/(https?:\/\/[^\s]+)/g).forEach(part => {
+        if (/^https?:\/\//.test(part)) {
+            // Keep trailing punctuation out of the link
+            const m = part.match(/^(.*?)([.,)]*)$/);
+            const url = m ? m[1] : part;
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = url.replace(/^https?:\/\//, '');
+            a.style.cssText = 'color:var(--yellow);text-decoration:underline;';
+            el.appendChild(a);
+            if (m && m[2]) el.appendChild(document.createTextNode(m[2]));
+        } else if (part) {
+            el.appendChild(document.createTextNode(part));
+        }
+    });
+}
+
 function openDialog(opts: DialogOptions): Promise<{ ok: boolean; value: string }> {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
@@ -31,7 +53,7 @@ function openDialog(opts: DialogOptions): Promise<{ ok: boolean; value: string }
         }
 
         const msg = document.createElement('div');
-        msg.textContent = opts.message;
+        appendMessageWithLinks(msg, opts.message);
         msg.style.cssText = 'font-size:14px;color:var(--text-muted);line-height:1.5;white-space:pre-wrap;';
         card.appendChild(msg);
 

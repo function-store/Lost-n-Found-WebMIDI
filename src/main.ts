@@ -680,7 +680,7 @@ function updateResonatorVisibility(): void {
 function maybeAskFirmware(): void {
   if (stateService.newFirmware !== null) return;
   showConfirm(
-    'A Lost + Found firmware update added 3 resonator modes, which this editor can control (via CC33).\n\nHas your pedal been updated to the latest firmware?\n\nTo update, visit firmware.chasebliss.com. You can change this answer any time with the "New Firmware" toggle in General Settings.',
+    'A Lost + Found firmware update added 3 resonator modes, which this editor can control (via CC33).\n\nHas your pedal been updated to the latest firmware?\n\nTo update, visit https://firmware.chasebliss.com. You can change this answer any time with the "New Firmware" toggle in General Settings.',
     'Firmware Check',
     'Yes, updated',
     'Not yet'

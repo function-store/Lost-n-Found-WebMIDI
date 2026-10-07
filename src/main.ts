@@ -621,7 +621,7 @@ function buildDipSection(): void {
   buildResonatorControls(dipGrid);
 }
 
-// New Firmware toggle + Resonator mode selector (CC33, new firmware only)
+// New Firmware toggle + Resonator mode selectors (CC31 left / CC33 right, new firmware only)
 function buildResonatorControls(dipGrid: HTMLElement): void {
   // Firmware toggle — app setting, not a pedal CC
   const row = createElement('div', 'dipRow');
@@ -656,13 +656,17 @@ function buildResonatorControls(dipGrid: HTMLElement): void {
   const wrap = createElement('div', 'resonatorRow');
   wrap.id = 'resonatorWrap';
   wrap.style.display = 'none';
-  createTriBlock({
-    title: 'Resonator',
-    cc: 33,
-    options: RESONATOR_MODES,
-    onUpdateReadout: updateReadout,
-    noSpacer: true,
-  }, wrap);
+  // Left channel only runs Synth with L Swap on (CC31); right channel
+  // runs it with R Swap off (CC33)
+  ([['Resonator L', 31], ['Resonator R', 33]] as const).forEach(([title, cc]) => {
+    createTriBlock({
+      title,
+      cc,
+      options: RESONATOR_MODES,
+      onUpdateReadout: updateReadout,
+      noSpacer: true,
+    }, wrap);
+  });
   dipGrid.appendChild(wrap);
 }
 
@@ -680,7 +684,7 @@ function updateResonatorVisibility(): void {
 function maybeAskFirmware(): void {
   if (stateService.newFirmware !== null) return;
   showConfirm(
-    'A Lost + Found firmware update added 3 resonator modes, which this editor can control (via CC33).\n\nHas your pedal been updated to the latest firmware?\n\nTo update, visit https://firmware.chasebliss.com. You can change this answer any time with the "New Firmware" toggle in General Settings.',
+    'A Lost + Found firmware update added 3 resonator modes, which this editor can control (via CC31/CC33).\n\nHas your pedal been updated to the latest firmware?\n\nTo update, visit https://firmware.chasebliss.com. You can change this answer any time with the "New Firmware" toggle in General Settings.',
     'Firmware Check',
     'Yes, updated',
     'Not yet'
@@ -800,10 +804,10 @@ const RESONATOR_MODES_SHORT = ['Hybr', 'Orig', 'Dist'];
 
 // Mini resonator mode selector shown under a Modify knob while that channel
 // runs the Sympathetic Resonator (Synth family, B variant) on the new
-// firmware. CC33 keeps its single registered control (the General Settings
-// selector); these buttons write through stateService.set and are repainted
+// firmware. CC31/CC33 keep their single registered controls (the General Settings
+// selectors); these buttons write through stateService.set and are repainted
 // from updateReadout, which keeps every selector in sync.
-function ensureMiniResonator(cc: CCNumber): HTMLElement | null {
+function ensureMiniResonator(cc: CCNumber, resCC: CCNumber): HTMLElement | null {
   const block = stateService.getControl(cc)?.subLabel?.closest('.knobBlock');
   if (!block) return null;
 
@@ -817,7 +821,7 @@ function ensureMiniResonator(cc: CCNumber): HTMLElement | null {
       b.textContent = name;
       b.title = RESONATOR_MODES[i];
       b.addEventListener('click', () => {
-        stateService.set(33, triValueForCC(33, i as 0 | 1 | 2));
+        stateService.set(resCC, triValueForCC(resCC, i as 0 | 1 | 2));
         updateReadout();
       });
       mini!.appendChild(b);
@@ -827,14 +831,14 @@ function ensureMiniResonator(cc: CCNumber): HTMLElement | null {
   return mini;
 }
 
-function updateMiniResonator(cc: CCNumber, family: string, variant: string): void {
-  const mini = ensureMiniResonator(cc);
+function updateMiniResonator(cc: CCNumber, resCC: CCNumber, family: string, variant: string): void {
+  const mini = ensureMiniResonator(cc, resCC);
   if (!mini) return;
 
   const show = stateService.newFirmware === true && family === 'Synth' && variant === 'B';
   mini.style.display = show ? '' : 'none';
   if (show) {
-    const pos = triPosFromValue(33, stateService.get(33));
+    const pos = triPosFromValue(resCC, stateService.get(resCC));
     [...mini.children].forEach((b, i) => b.classList.toggle('active', i === pos));
   }
 }
@@ -918,8 +922,8 @@ function updateReadout(): void {
   }
 
   // Mini resonator selectors under the Modify knobs
-  updateMiniResonator(17, leftFamily, leftAB);
-  updateMiniResonator(19, rightFamily, rightAB);
+  updateMiniResonator(17, 31, leftFamily, leftAB);
+  updateMiniResonator(19, 33, rightFamily, rightAB);
 }
 
 // Setup event listeners

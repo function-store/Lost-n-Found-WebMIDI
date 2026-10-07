@@ -15,7 +15,7 @@ function getEffectTooltip(blockTitle: string, optionName: string): string | null
     // The block itself has a tooltip, but not each option
     return null;
   }
-  else if (blockTitle === 'Resonator') {
+  else if (blockTitle.startsWith('Resonator')) {
     const optionTooltips = TOOLTIPS.resonator.options as Record<string, string>;
     return optionTooltips[optionName] || null;
   }
@@ -35,7 +35,7 @@ function getBlockTooltip(blockTitle: string): string | null {
   if (blockTitle === 'Spread') {
     return TOOLTIPS.stereo.spread.description;
   }
-  if (blockTitle === 'Resonator') {
+  if (blockTitle.startsWith('Resonator')) {
     return TOOLTIPS.resonator.description;
   }
 

@@ -20,6 +20,7 @@
     "routing": 22,
     "rEffectsMode": 23,
     "spread": 32,
+    "resonatorL": 31,
     "resonator": 33,
     "midiClockFollow": 51,
     "rampEnabled": 52,
@@ -111,6 +112,7 @@
       28,
       29,
       30,
+      31,
       32,
       33,
       51,
@@ -147,6 +149,7 @@
       93
     ],
     "neverRandomCCs": [
+      31,
       33,
       52,
       57,

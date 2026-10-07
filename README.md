@@ -219,7 +219,7 @@ The Lost + Found's ramping system allows knobs to sweep automatically:
 
 ### Resonator Modes (New Firmware)
 
-The latest Lost + Found firmware adds 3 resonator modes, selectable via MIDI CC33:
+The latest Lost + Found firmware adds 3 resonator modes, selectable via MIDI CC31 (left channel, with L Swap on) and CC33 (right channel):
 
 | Mode | Description |
 |------|-------------|

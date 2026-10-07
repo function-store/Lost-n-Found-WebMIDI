@@ -126,7 +126,7 @@ class StateService {
     this.uiControls.forEach((control, cc) => {
       if (cc === 55) return; // mix-lock companion CC, follows the lock state
       if (this.lockedKnobs.has(cc)) return;
-      if (cc === 33 && this.newFirmware !== true) return;
+      if ((cc === 31 || cc === 33) && this.newFirmware !== true) return;
       this.set(cc, this.getResetDefault(cc, control.type));
     });
   }
@@ -251,9 +251,9 @@ class StateService {
 
   // Push all state to pedal
   pushToPedal(done?: () => void): void {
-    // Resonator mode (CC33) only exists on the new firmware
+    // Resonator modes (CC31 left, CC33 right) only exists on the new firmware
     const ccs = [...CONTROL_CCS]
-      .filter(cc => cc !== 33 || this.newFirmware === true)
+      .filter(cc => (cc !== 31 && cc !== 33) || this.newFirmware === true)
       .sort((a, b) => a - b);
     let idx = 0;
 

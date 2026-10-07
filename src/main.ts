@@ -803,7 +803,7 @@ const RESONATOR_MODES = ['Hybrid', 'Original', 'Distorted'];
 const RESONATOR_MODES_SHORT = ['Hybr', 'Orig', 'Dist'];
 
 // Mini resonator mode selector shown under a Modify knob while that channel
-// runs the Sympathetic Resonator (Synth family, B variant) on the new
+// is on the Synth family (dimmed unless B / Resonator) on the new
 // firmware. CC31/CC33 keep their single registered controls (the General Settings
 // selectors); these buttons write through stateService.set and are repainted
 // from updateReadout, which keeps every selector in sync.
@@ -835,8 +835,11 @@ function updateMiniResonator(cc: CCNumber, resCC: CCNumber, family: string, vari
   const mini = ensureMiniResonator(cc, resCC);
   if (!mini) return;
 
-  const show = stateService.newFirmware === true && family === 'Synth' && variant === 'B';
+  // Visible whenever the channel is on Synth; dimmed until the Modify knob
+  // is on the Resonator (B) side, where the mode actually applies
+  const show = stateService.newFirmware === true && family === 'Synth';
   mini.style.display = show ? '' : 'none';
+  mini.classList.toggle('inactive', variant !== 'B');
   if (show) {
     const pos = triPosFromValue(resCC, stateService.get(resCC));
     [...mini.children].forEach((b, i) => b.classList.toggle('active', i === pos));

@@ -74,9 +74,21 @@ body.midi-disabled {
   white-space: nowrap;
 }
 
-.tbGroup:last-child {
+/* Single row: the first two groups give way (selects shrink and truncate)
+   so the last group (info / cloud) always stays inside the card */
+.tbGroup:not(:last-child) {
   flex-shrink: 1;
   min-width: 0;
+}
+
+.tbGroup:not(:last-child) select,
+.tbGroup:not(:last-child) .pillLabel {
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.tbGroup:last-child {
+  flex-shrink: 0;
 }
 
 #cloudStatus {
@@ -1643,6 +1655,10 @@ button:active:not(:disabled) {
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.knobBlock .resonatorMini.inactive {
+  opacity: 0.45;
 }
 
 .resonatorMini button:hover {
